@@ -11,7 +11,70 @@
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="Gradient1" cx="50%" cy="50%" fx="10%" fy="50%" r=".5">
+          <animate attributeName="fx" dur="34s" values="0%;3%;0%" repeatCount="indefinite" />
+          <stop offset="0%" stop-color="#72dce9" />
+          <stop offset="100%" stop-color="#11d0b700" />
+        </radialGradient>
+        <radialGradient id="Gradient2" cx="50%" cy="50%" fx="10%" fy="50%" r=".5">
+          <animate attributeName="fx" dur="23.5s" values="0%;3%;0%" repeatCount="indefinite" />
+          <stop offset="0%" stop-color="#8980f2" />
+          <stop offset="100%" stop-color="#695eef00" />
+        </radialGradient>
+        <radialGradient id="Gradient3" cx="50%" cy="50%" fx="50%" fy="50%" r=".5">
+          <animate attributeName="fx" dur="21.5s" values="0%;3%;0%" repeatCount="indefinite" />
+          <stop offset="0%" stop-color="#c658ff" />
+          <stop offset="100%" stop-color="#f0f0" />
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="70%" height="70%" fill="url(#Gradient1)">
+        <animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite" />
+        <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="17s" repeatCount="indefinite" />
+      </rect>
+      <rect x="0" y="0" width="60%" height="60%" fill="url(#Gradient2)">
+        <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite" />
+        <animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="18s" repeatCount="indefinite" />
+      </rect>
+      <rect x="0" y="0" width="50%" height="50%" fill="url(#Gradient3)">
+        <animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite" />
+        <animate attributeName="y" dur="26s" values="0%;25%;0%" repeatCount="indefinite" />
+        <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="19s" repeatCount="indefinite" />
+      </rect>
+    </svg>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
+  <style>
+    svg {
+      position: fixed;
+      top: 0;
+      left:0;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  
+    body {
+      max-width: 1920px;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: rgb(156,194,255);
+      background: linear-gradient(0deg, rgba(156,194,255,1) 35%, rgba(255,255,255,1) 100%);
+    }
+  </style>
 </html>
