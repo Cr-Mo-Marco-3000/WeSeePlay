@@ -1,0 +1,369 @@
+/* MainPage CSS */
+
+#first-page-box {
+  padding: 0 3rem;
+  min-height: 100vh;
+}
+
+svg {
+  position: fixed;
+  top: 0;
+  left:0;
+  width: 100vw;
+  height: 100vh;
+}
+
+strong {
+  font-weight: 600;
+}
+
+#state-box{
+  height: 35rem;
+  width: 100%;
+  padding: 1rem 0rem;
+}
+
+.overlay {
+  width: 100%;
+  max-width: 1140px;
+  max-height: 740px;
+  padding: 2rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.375);
+  box-shadow: 0 0.75rem 2rem 0 rgba(0, 0, 0, 0.1);
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  position: relative;
+  height: 40rem;
+  margin: auto;
+  bottom: 3rem;
+}
+
+.overlay__inner {
+  max-width: 36rem;
+}
+
+.overlay__title {
+  font-size: 1.875rem;
+  line-height: 2.75rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin-bottom: 2rem;
+}
+
+.text-gradient {
+  background-image: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(120,9,121,1) 0%, rgba(0,212,255,1) 81%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+}
+
+.overlay__description {
+  font-size: 1rem;
+  line-height: 1.75rem;
+  margin-bottom: 3rem;
+}
+
+.overlay__btns {
+  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.overlay__btn {
+  width: 50%;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  background: black;
+  border: none;
+  border-radius: 0.5rem ;
+  transition: transform 150ms ease;
+}
+
+.overlay__btn:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.overlay__btn--transparent {
+  background: transparent;
+  color: rgb(0, 0, 0);
+  border: 2px solid black;
+  border-width: 2px;
+  margin-right: 0.75rem;
+}
+
+
+/* Not too many browser support this yet but it's good to add! */
+@media (prefers-contrast: high) {
+  .orb-canvas {
+    display: none;
+  }
+}
+
+/* @media only screen and (max-width: 1140px) {
+  .overlay {
+    padding: 1rem 4rem;
+  }
+} */
+
+@media only screen and (max-width: 840px) {
+  body {
+    padding: 1.5rem;
+  }
+
+  .overlay {
+    padding: 4rem;
+  }
+
+  .overlay__title {
+    font-size: 1.25rem;
+    line-height: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .overlay__description {
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .overlay {
+    padding: 1rem;
+  }
+
+  .overlay__btns {
+    flex-wrap: wrap;
+  }
+
+  .overlay__btn {
+    width: 100%;
+    font-size: 0.75rem;
+    margin-right: 0;
+  }
+
+  .overlay__btn:first-child {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Carousel CSS */
+.q-pa-md {
+  width: 100%;
+  top: -10rem;
+  /* margin-bottom: 2rem; */
+}
+
+.q-carousel {
+  background-color: transparent !important;
+  width: 100%;
+}
+
+
+.q-carousel--arrows-horizontal.q-carousel--with-padding .q-carousel__slide{
+  padding: 30px !important;
+}
+
+
+
+.logo-img {
+  width: 50%;
+  height: 50%;
+}
+
+.first-carousel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+/* Login & Signup CSS */
+#signup-box {
+  width: 100%;
+  display: flex;
+}
+#user-box {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-input {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.user-input span{
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+.user-input input{
+  margin: .5rem 0;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0 1rem;
+  border: solid 2px rgba(0, 0, 0, 0.616);
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.user-input input:focus{
+  background: rgb(105,94,239);
+background: linear-gradient(90deg, rgba(105,94,239,0.4) 0%, rgba(114,220,233,0.4) 87%);
+}
+
+#user-box .overlay__btn{
+  margin-top: .6rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+#user-box > span{
+  color:  #695eef;
+  transition: transform 150ms ease;
+  margin: .5rem 0;
+}
+
+#user-box > span:hover{
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+#user-box .kakao-btn{
+  color:black;
+  font-size: .9rem;
+}
+
+.kakao-btn{
+  display: flex;
+}
+
+.kakao-btn img{
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-left: .2rem;
+}
+
+.kakao-btn p{
+  margin: 0;
+}
+
+.error-message{
+  position: relative;
+  height: .9rem;
+}
+
+@media only screen and (max-width: 840px){
+  .user-input input,
+  #user-box .overlay__btn{
+    width: 100%;
+  }
+
+  #first-page-box{
+    padding: 1rem;
+  }
+}
+
+
+/* signup  CSS */
+
+.signup-email-input div{
+  width: 100%;
+  display: flex;
+}
+
+.signup-email-input input{
+  width: 75%;
+}
+
+.signup-email-input button{
+  width: 25%;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: .5rem;
+  background: rgba(0, 0, 0, 0.616);
+  height: 2.5rem;
+  margin: .5rem 0;
+  margin-left: .3rem;
+  transition: transform 150ms ease;
+}
+
+.signup-email-input button:hover{
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.signup-password-input {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.signup-password-input .user-input{
+  margin-right: .3rem;
+}
+
+
+#clause-box {
+  width: 50%;
+  display: block;
+}
+
+.clause-text {
+  text-align: start;
+  height: 27rem;
+  overflow-y: auto;
+  background: white;
+  margin-top: 2rem;
+  margin-left: 4rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border: solid 2px rgba(0, 0, 0, 0.6);
+}
+
+.clause-text::-webkit-scrollbar {
+  background: transparent;
+}
+
+.clause-text::-webkit-scrollbar-thumb {
+  background: rgba(121, 121, 121, 0.2);
+  height: 10%;
+  border-radius: .5rem;
+}
+
+.info-text{
+  color: black;
+}
+
+@media only screen and (max-width: 840px){
+  #clause-box {
+    display: none;
+  }
+
+  #user-box {
+    width: 100%;
+  }
+
+  #state-box {
+    padding: 0 ;
+  }
+}
