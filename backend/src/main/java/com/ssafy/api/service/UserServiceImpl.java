@@ -113,4 +113,16 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	@Override
+	public User updateLastLogin(String userEmail) {
+		User user = userRepository.findUserByUserEmail(userEmail).get();
+		
+		if (user != null) {
+			user.setLastLogin(LocalDateTime.now());
+			return userRepository.save(user);
+		}
+		
+		return null;
+	}
+
 }
