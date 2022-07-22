@@ -24,6 +24,6 @@ public class Email extends BaseEntity{
     String certificationCheck;
 	
 	@CreationTimestamp
-    @Column(name="register_time", updatable = false)
+    @Column(name="register_time")
     private LocalDateTime registerTime;
 }

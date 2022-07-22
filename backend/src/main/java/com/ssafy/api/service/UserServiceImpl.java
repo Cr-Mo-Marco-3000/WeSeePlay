@@ -72,8 +72,19 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Email createCertificationCheck(String userEmail) {
 		Email email=new Email();
-		email.setUserEmail(userEmail);
-		email.setCertificationCheck("0");
+		Optional<Email> target = emailRepository.findByUserEmail(userEmail);
+		if(target.isPresent()) {
+			email.setCertificationCheck("0");
+			email.setUserEmail(userEmail);
+			email.setId(target.get().getId());
+			LocalDateTime registertime=LocalDateTime.now();
+			email.setRegisterTime(registertime);
+			System.out.println(registertime);
+		}else {
+			System.out.println("22222");
+			email.setUserEmail(userEmail);
+			email.setCertificationCheck("0");
+		}
 		return emailRepository.save(email);
 	}
 	
