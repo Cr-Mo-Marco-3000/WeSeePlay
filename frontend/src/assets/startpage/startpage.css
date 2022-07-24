@@ -231,7 +231,7 @@ background: linear-gradient(90deg, rgba(105,94,239,0.4) 0%, rgba(114,220,233,0.4
 }
 
 #user-box .overlay__btn{
-  margin-top: .6rem;
+  margin-top: 1rem;
   margin-bottom: 2rem;
   width: 100%;
 }
@@ -239,10 +239,11 @@ background: linear-gradient(90deg, rgba(105,94,239,0.4) 0%, rgba(114,220,233,0.4
 #user-box > span{
   color:  #695eef;
   transition: transform 150ms ease;
-  margin: .5rem 0;
+  margin: .3rem 0;
 }
 
-#user-box > span:hover{
+#user-box .forget-pw-text:hover,
+#user-box .kakao-btn:hover{
   cursor: pointer;
   transform: scale(1.05);
 }
@@ -285,30 +286,50 @@ background: linear-gradient(90deg, rgba(105,94,239,0.4) 0%, rgba(114,220,233,0.4
 
 /* signup  CSS */
 
-.signup-email-input div{
+.signup-email-input > div{
   width: 100%;
   display: flex;
 }
 
-.signup-email-input input{
-  width: 75%;
+.email-input {
+  width: 100%;
+}
+
+.email-auth-btns {
+  width: 35%;
 }
 
 .signup-email-input button{
-  width: 25%;
+  width: 100%;
   border: none;
   color: rgba(255, 255, 255, 0.8);
   border-radius: .5rem;
   background: rgba(0, 0, 0, 0.616);
   height: 2.5rem;
   margin: .5rem 0;
-  margin-left: .3rem;
+  margin-left: .2rem;
   transition: transform 150ms ease;
 }
 
 .signup-email-input button:hover{
   transform: scale(1.05);
   cursor: pointer;
+}
+
+.email-auth-btns-false{
+  padding: 0;
+  margin: 0;
+}
+
+.email-auth-btns-true{
+  display: flex;
+  width: 100%;
+}
+
+.email-auth-btns-true .resend-btn {
+  background: transparent;
+  color: rgba(0, 0, 0, 0.616);
+  border: solid 2px rgba(0, 0, 0, 0.616);
 }
 
 .signup-password-input {
@@ -348,10 +369,6 @@ background: linear-gradient(90deg, rgba(105,94,239,0.4) 0%, rgba(114,220,233,0.4
   background: rgba(121, 121, 121, 0.2);
   height: 10%;
   border-radius: .5rem;
-}
-
-.info-text{
-  color: black;
 }
 
 @media only screen and (max-width: 840px){

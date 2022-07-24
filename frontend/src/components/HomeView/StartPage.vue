@@ -74,5 +74,5 @@ export default {
 </script>
 
 <style>
-@import "../../assets/mainpage.css";
+@import "../../assets/startpage/startpage.css";
 </style>
