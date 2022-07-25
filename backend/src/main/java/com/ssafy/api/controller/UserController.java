@@ -56,10 +56,10 @@ public class UserController {
 		@ApiResponse(code = 500, message = "서버 오류")
 	})
 	public ResponseEntity<? extends BaseResponseBody> duplicateCheck(
-			@RequestBody @ApiParam(value="이메일 주소", required = true) UserRegisterPostReq registerInfo) {
+			@RequestParam @ApiParam(value="이메일 주소", required = true) String userEmail) {
 		
 		//중복 아이디가 있는지 확인
-		boolean existUser=userService.duplicateCheck(registerInfo.getUserEmail());
+		boolean existUser=userService.duplicateCheck(userEmail);
 		if(existUser) {
 			return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Exist Email"));
 		}
