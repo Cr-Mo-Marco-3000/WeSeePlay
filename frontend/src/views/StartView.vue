@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import StartPage from '@/components/HomeView/StartPage.vue'
+import StartPage from '@/components/StartView/StartPage.vue'
 
 export default {
-  name: 'HomeView',
+  name: 'StartView',
   components: {
     StartPage
   }
