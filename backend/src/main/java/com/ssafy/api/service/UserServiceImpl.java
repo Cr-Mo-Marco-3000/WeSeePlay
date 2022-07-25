@@ -34,19 +34,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User createUser(UserRegisterPostReq userRegisterInfo) {
 		User user = new User();
-		System.out.println(userRegisterInfo.toString());
 		user.setUserEmail(userRegisterInfo.getUserEmail());
-		System.out.println(userRegisterInfo.getUserPassword());
 		// 보안을 위해서 유저 패스워드 암호화 하여 디비에 저장.
 		user.setUserPassword(passwordEncoder.encode(userRegisterInfo.getUserPassword()));
 		user.setUserNickname(userRegisterInfo.getUserNickname());
 		user.setRegisterTime(LocalDateTime.now());
 		user.setLastLogin(LocalDateTime.now());
-		System.out.println("user 정보");
-		System.out.println(user.getUserEmail());
-		System.out.println(user.getUserPassword());
-		System.out.println(user.getUserNickname());
-		System.out.println(user.getRegisterTime());
 		return userRepository.save(user);
 	}
 
@@ -54,9 +47,6 @@ public class UserServiceImpl implements UserService {
 	public User getUserByUserEmail(String userEmail) {
 		// 디비에 유저 정보 조회 (userId 를 통한 조회).
 		Optional<User> user = userRepositorySupport.findUserByUserEmail(userEmail);
-//		Optional<User> user=userRepository.findUserByUserId(userId);
-//		Optional<User> user=userRepository.findByUserId(userId);
-		System.out.println("user_id = "+userEmail);
 		if(user.isPresent()) {
 			return user.get();
 		}
@@ -79,9 +69,7 @@ public class UserServiceImpl implements UserService {
 			email.setId(target.get().getId());
 			LocalDateTime registertime=LocalDateTime.now();
 			email.setRegisterTime(registertime);
-			System.out.println(registertime);
 		}else {
-			System.out.println("22222");
 			email.setUserEmail(userEmail);
 			email.setCertificationCheck("0");
 		}
@@ -122,6 +110,21 @@ public class UserServiceImpl implements UserService {
 			return userRepository.save(user);
 		}
 		
+		return null;
+	}
+
+	@Override
+	public User updatePassword(String userEmail, String tempPw) {
+		Optional<User> user = userRepositorySupport.findUserByUserEmail(userEmail);
+		if(user.isPresent()) {
+			User updateUser = new User();
+			updateUser.setId(user.get().getId());
+			updateUser.setUserEmail(userEmail);
+			// 보안을 위해서 유저 패스워드 암호화 하여 디비에 저장.
+			updateUser.setUserPassword(passwordEncoder.encode(tempPw));
+			updateUser.setUserNickname(user.get().getUserNickname());
+			return userRepository.save(updateUser);
+		}
 		return null;
 	}
 

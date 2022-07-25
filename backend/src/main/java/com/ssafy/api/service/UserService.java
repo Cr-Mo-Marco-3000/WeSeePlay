@@ -18,4 +18,5 @@ public interface UserService {
 	void delCertification(Email userEmail);
 	Email updateCertification(String userEmail);
 	User updateLastLogin(String userEmail);
+	User updatePassword(String userEmail, String tempPw);
 }

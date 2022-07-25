@@ -49,10 +49,14 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
+	@Autowired
+	SendEmailUtil sendEmailUtil;
+	
 	@GetMapping("/email/duplicate/check")
 	@ApiOperation(value = "중복 이메일 확인", notes = "<strong>중복 체크를 실행한다.") 
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
+		@ApiResponse(code = 409, message = "존재하는 이메일"),
 		@ApiResponse(code = 500, message = "서버 오류")
 	})
 	public ResponseEntity<? extends BaseResponseBody> duplicateCheck(
@@ -70,8 +74,7 @@ public class UserController {
 	@ApiOperation(value = "이메일 확인", notes = "<strong>이메일 인증을 실행한다.") 
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
-		@ApiResponse(code = 401, message = "인증 실패"),
-		@ApiResponse(code = 404, message = "사용자 없음"),
+		@ApiResponse(code = 400, message = "주소 오류"),
 		@ApiResponse(code = 500, message = "서버 오류")
 	})
 	public ResponseEntity<? extends BaseResponseBody> emailCertification(
@@ -126,9 +129,8 @@ public class UserController {
 	@PostMapping()
 	@ApiOperation(value = "회원 가입", notes = "<strong>아이디와 패스워드</strong>를 통해 회원가입 한다.") 
     @ApiResponses({
-        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 201, message = "가입 완료"),
         @ApiResponse(code = 401, message = "인증 실패"),
-        @ApiResponse(code = 404, message = "사용자 없음"),
         @ApiResponse(code = 500, message = "서버 오류")
     })
 	public ResponseEntity<? extends BaseResponseBody> register(
@@ -143,7 +145,7 @@ public class UserController {
 			if(user != null) {
 				return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Created"));
 			}else {
-				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Null"));
+				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
 			}
 		}
 		
@@ -185,8 +187,8 @@ public class UserController {
 		//이메일 존재하면 임시 비밀번호 이메일 발송
 		if(existUser) {
 			try {
-				String tempPw=SendEmailUtil.SendPwEmail(registerInfo.getUserEmail());
-				
+				String tempPw=sendEmailUtil.SendPwEmail(registerInfo.getUserEmail());
+				userService.updatePassword(registerInfo.getUserEmail(),tempPw);
 			} catch (MessagingException e) {
 				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
 			}
