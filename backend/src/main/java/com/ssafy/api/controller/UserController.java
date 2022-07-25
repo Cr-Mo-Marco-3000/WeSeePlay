@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,17 +49,17 @@ public class UserController {
 	@Autowired
 	UserService userService;
 	
-	@PostMapping("/email/duplicate/check")
+	@GetMapping("/email/duplicate/check")
 	@ApiOperation(value = "중복 이메일 확인", notes = "<strong>중복 체크를 실행한다.") 
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
 		@ApiResponse(code = 500, message = "서버 오류")
 	})
 	public ResponseEntity<? extends BaseResponseBody> duplicateCheck(
-			@RequestBody @ApiParam(value="이메일 주소", required = true) UserRegisterPostReq registerInfo) {
+			@RequestParam @ApiParam(value="이메일 주소", required = true) String userEmail) {
 		
 		//중복 아이디가 있는지 확인
-		boolean existUser=userService.duplicateCheck(registerInfo.getUserEmail());
+		boolean existUser=userService.duplicateCheck(userEmail);
 		if(existUser) {
 			return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Exist Email"));
 		}
@@ -102,6 +103,24 @@ public class UserController {
 		HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/"));
         return new RedirectView("/");
+	}
+	
+	@GetMapping("/email/certification/check")
+	@ApiOperation(value = "이메일 인증 링크", notes = "<strong>이메일 인증을 실행한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 401, message = "인증 실패"),
+        @ApiResponse(code = 500, message = "서버 오류")
+    })
+	public ResponseEntity<? extends BaseResponseBody> certificationCheck(
+			@RequestParam (value="userEmail", required = true) String userEmail) {
+	
+		Optional<Email> email = userService.certificationCheck(userEmail);
+		if(email.isPresent() && email.get().getCertificationCheck().equals("1")) {
+			return ResponseEntity.status(201).body(BaseResponseBody.of(200, "Success"));
+		}else {
+			return ResponseEntity.status(500).body(BaseResponseBody.of(401, "Unauthorized"));
+		}
 	}
 	
 	@PostMapping()
@@ -151,5 +170,30 @@ public class UserController {
 		User user = userService.getUserByUserEmail(userEmail);
 		
 		return ResponseEntity.status(200).body(UserRes.of(user));
+	}
+	
+	@PutMapping("/resetpw")
+	@ApiOperation(value = "비밀번호 초기화", notes = "임의 생성된 문자열로 비밀번호를 초기화 한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 404, message = "계정 없음"),
+        @ApiResponse(code = 500, message = "서버 오류")
+    })
+	public ResponseEntity<? extends BaseResponseBody> resetPw
+	(@RequestBody @ApiParam(value="이메일 주소", required = true) UserRegisterPostReq registerInfo) {
+		boolean existUser=userService.duplicateCheck(registerInfo.getUserEmail());
+		//이메일 존재하면 임시 비밀번호 이메일 발송
+		if(existUser) {
+			try {
+				String tempPw=SendEmailUtil.SendPwEmail(registerInfo.getUserEmail());
+				
+			} catch (MessagingException e) {
+				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
+			}
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		//이메일 없다면 오류 반환
+		}else {
+			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Not Found"));
+		}
 	}
 }
