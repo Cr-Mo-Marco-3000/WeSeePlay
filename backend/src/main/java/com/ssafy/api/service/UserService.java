@@ -17,4 +17,5 @@ public interface UserService {
 	Optional<Email> certificationCheck(String userEmail);
 	void delCertification(Email userEmail);
 	Email updateCertification(String userEmail);
+	User updateLastLogin(String userEmail);
 }
