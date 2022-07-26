@@ -39,6 +39,7 @@
 .top button{
   outline: none;
   border: none;
+  position: relative;
 }
 
 

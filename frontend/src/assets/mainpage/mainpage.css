@@ -2,6 +2,7 @@
 /* 배경에 내리기 용*/
 #meeting-list-page{
   position:relative;
+  min-width: 100vw;
 }
 /*  로고 박히는 부분 */
 #header {

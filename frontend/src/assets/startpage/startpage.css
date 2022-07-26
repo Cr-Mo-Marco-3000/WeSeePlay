@@ -161,6 +161,8 @@ svg {
 
   .overlay__btns {
     flex-wrap: wrap;
+    position: relative;
+    bottom: .5rem;
   }
 
   .overlay__btn {
