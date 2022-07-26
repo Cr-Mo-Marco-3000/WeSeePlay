@@ -54,53 +54,6 @@ export default {
 
 <style scoped>
 
-#card-container {
-  width: 100%;
-  margin-bottom:5%;
-  height: 80%;
-  padding: 5%;
-  background: rgba(255, 255, 255, 0.375);
-  box-shadow: 0 0.75rem 2rem 0 rgba(0, 0, 0, 0.1);
-  border-radius: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.125);
-}
-#card-head{
-  text-align: left;
-}
-#card-title{
-  margin:0%;
-  margin-top:3%;
-  margin-bottom:15%;
-}
-#card-host{
-  min-height: 50px;
-}
-#isprivate-icon{
-  position: relative;
-  display:block;
-  color:#027BE3;
-  font-size: 300%;
-}
-
-#people-number {
-  vertical-align: 20%;
-
-}
-#card-container:hover,
-#card-container:focus {
-  box-shadow: inset 6.5em 0 0 0 var(--hover);
-}
-@media only screen and (min-width: 600px){
-  #card-container {
-    width: 95%;
-    margin-bottom:5%;
-    height: 80%;
-    padding: 5%;
-    background: rgba(255, 255, 255, 0.375);
-    box-shadow: 0 0.75rem 2rem 0 rgba(0, 0, 0, 0.1);
-    border-radius: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.125);
-  }
-}
+@import '../../assets/mainpage/card.css';
 </style>
 

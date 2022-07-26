@@ -50,10 +50,5 @@ export default {
 </script>
 
 <style scoped>
-#sort-area {
-    display: block;
-    margin-left: 4%;
-    text-align: center;
-    text-align: right;
-}
+@import '../../assets/mainpage/mainpage.css';
 </style>

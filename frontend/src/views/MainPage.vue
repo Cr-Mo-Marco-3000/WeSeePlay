@@ -2,7 +2,6 @@
   <div id="meeting-list-page">
     <nav-bar></nav-bar>
     <div class="flex flex-center">
-
       <div id="container" class="flex flex-center">
         <header id="header">
           <div id="header-name">
@@ -27,9 +26,10 @@
           </div>
         </header>
 
-        <div class="row">
+        <div id="body-content" class="row">
+          
           <div id="tool-bar" class="row col-12 flex items-center justify-center">
-            <button id="room-create-btn" class="col-md-2 col-sm-2 col-12" @click="createRoomModal = true">
+            <button id="room-create-btn" class="col-12 col-sm-2 col-md-2" @click="createRoomModal = true">
               방 생성
               <span 
                 class="material-icons"
@@ -49,6 +49,7 @@
                 <input v-model="lookupInfo.isprivate" class="tgl tgl-light" id="cb1" type="checkbox"/>
                 <label class="tgl-btn" for="cb1"></label>
               </div>
+
               <div id="sort-method" class="col-6 row items-center justify-end">
                 <meeting-card-sort
                   :sortinglevel="sortinglevel"
@@ -58,10 +59,12 @@
                 ></meeting-card-sort>
               </div>
             </div>
+
             <div id="separator">
               <hr>
             </div>
           </div>
+
           <div
             class="col-lg-4 col-md-6 col-12"
             v-for="info in meetingInfo"
@@ -97,11 +100,11 @@ import SearchEnzine from '@/components/MainPage/SearchEnzine'
 import NavBar from '@/components/MainPage/NavBar'
 import MeetingCard from '@/components/MainPage/MeetingCard'
 import MeetingCardSort from '@/components/MainPage/MeetingCardSort'
-// import MeetingToggleBtn from '@/components/MainPage/MeetingToggleBtn'
 import CardModal from '@/components/MainPage/CardModal' 
 import { reactive, ref, watchEffect  } from 'vue'
 import axios from 'axios'
 import api from '@/api/api'
+import { useStore } from "vuex"
 
 
 export default {
@@ -114,6 +117,8 @@ export default {
     CardModal
   },
   setup(){
+    const store = useStore();
+    const token = store.state.users.token
     // meetingquery
     let meetingquery = ref('')
     let lookupErrorMsg = ref('')
@@ -180,12 +185,16 @@ export default {
     // data 획득
     const roomData = async function () {
       try {
+        let querystring = '/?'
+        for(let key in lookupInfo){
+          let value = lookupInfo[key]
+          querystring +=key+"="+value+"&"
+        }
+        console.log(querystring.slice(0, -1))
         const response = await axios({
-          url: api.room.createRoom(),
+          url: api.room.createRoom()+querystring.slice(0, -1),
           method: 'POST',
-          data: {
-            userEmail: lookupInfo,
-          },
+          headers:{"authorization":"Bearer"+ token.value},
         })
         if (response.data.statusCode === 200) {
           console.log('조회 성공!')
@@ -216,8 +225,6 @@ export default {
     // }
 
     watchEffect(() => {
-      // console.log(sortinglevel.value, meetingquery.value)
-      // console.log(lookupInfo)
       meetingInfo.value={
         ...tmparr.value.slice(6*currentpage.value-6, 6*currentpage.value)
       }
@@ -254,189 +261,6 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-#header {
-  margin-bottom:5%;
-  height: 80%;
-  padding: 5%;
-  background: rgba(255, 255, 255, 0.375);
-  box-shadow: 0 0.75rem 2rem 0 rgba(0, 0, 0, 0.1);
-  border-radius: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.125);
-}
-#header-name{
-  display: none;
-}
-#header-slogan{
-
-  display:none;
-}
-#header-slogan2{
-  display:none;
-}
-
-#meeting-list-page{
-  position:relative;
-}
-#container {
-  width:80%;
-}
-/* #search-enzine-section {
-  margin:2rem;
-} */
-#room-create-btn{
-  border-radius: 0.5rem;
-  background-color: #9C27B0;
-  color:white;
-  min-height: 37.375px;
-}
-#private-btn{
-  margin-left: 4%;
-  margin-bottom: 0.5%
-}
-#tool-bar{
-  margin-bottom: 3%;
-}
-#sort-line{
-  margin-top: 1%;
-}
-#separator {
-  background-color: white;
-  width: 95%;
-  margin-left: 1%;
-  margin-right: 1%
-}
-
-.tgl {
-  display: none;
-}
-.tgl, .tgl:after, .tgl:before, .tgl *, .tgl *:after, .tgl *:before, .tgl + .tgl-btn {
-  box-sizing: border-box;
-}
-.tgl::-moz-selection, .tgl:after::-moz-selection, .tgl:before::-moz-selection, .tgl *::-moz-selection, .tgl *:after::-moz-selection, .tgl *:before::-moz-selection, .tgl + .tgl-btn::-moz-selection {
-  background: none;
-}
-.tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
-  background: none;
-}
-.tgl + .tgl-btn {
-  outline: 0;
-  display: block;
-  width: 4rem;
-  height: 2rem;
-  position: relative;
-  cursor: pointer;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-}
-.tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
-  position: relative;
-  display: block;
-  content: "";
-  width: 50%;
-  height: 100%;
-}
-.tgl + .tgl-btn:after {
-  left: 0;
-}
-.tgl + .tgl-btn:before {
-  display: none;
-}
-.tgl:checked + .tgl-btn:after {
-  left: 50%;
-}
-
-.tgl-light + .tgl-btn {
-  background: #f0f0f0;
-  border-radius: 2rem;
-  padding: 2px;
-  transition: all 0.4s ease;
-}
-.tgl-light + .tgl-btn:after {
-  border-radius: 50%;
-  background: #fff;
-  transition: all 0.2s ease;
-}
-.tgl-light:checked + .tgl-btn {
-  background: #027BE3;
-}
-
-@media only screen and (min-width: 600px){
-  #room-create-btn{
-    border-radius: 0.5rem;
-    margin-left: 0.5%;
-    margin-right: 1%;
-    background-color: #9C27B0;
-    color:white;
-  }
-  #header {
-    margin-bottom:5%;
-    margin-left:2%;
-    margin-right:2%;
-    padding: 5%;
-    background: rgba(255, 255, 255, 0.375);
-    box-shadow: 0 0.75rem 2rem 0 rgba(0, 0, 0, 0.1);
-    border-radius: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.125);
-  }
-}
-
-@media only screen and (min-width: 770px){
-  /* #room-create-btn{
-    border-radius: 0.5rem;
-    margin:0.75%;
-    background-color: #9C27B0;
-    color:white;
-  } */
-}
-
-@media only screen and (min-width: 1024px){
-  /* #room-create-btn{
-    border-radius: 0.5rem;
-    margin:1px;
-    background-color: #9C27B0;
-    color:white;
-  } */
-  #header-slogan2{
-    font-size: 300%;
-    left: 0; 
-    right: 0; 
-    margin-left: auto; 
-    margin-right: auto; 
-    top:29%;
-    display:block;
-  }
-}
-
-@media only screen and (min-width: 1125px){
-  #header-slogan2{
-    font-size: 300%;
-    left: 0; 
-    right: 0; 
-    margin-left: auto; 
-    margin-right: auto; 
-    top:36%;
-    display:block;
-  }
-}
-
-@media only screen and (min-width: 1440px){
-  #header-slogan2{
-    display:none;
-  }
-  #header-name{
-    position: absolute;
-    font-size: 700%;
-    display:block;
-  }
-  #header-slogan{
-    position: absolute;
-    font-size: 450%;
-    right: 15%;
-    top:34%;
-    display:block;
-  }
-}
+<style>
+@import '../assets/mainpage/mainpage.css';
 </style>

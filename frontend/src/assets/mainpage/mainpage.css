@@ -1,0 +1,224 @@
+/* mainpage */
+/* 배경에 내리기 용*/
+#meeting-list-page{
+  position:relative;
+}
+/*  로고 박히는 부분 */
+#header {
+  margin-bottom:5%;
+  height: 80%;
+  padding: 5%;
+  background: rgba(255, 255, 255, 0.375);
+  box-shadow: 0 0.75rem 2rem 0 rgba(0, 0, 0, 0.1);
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+/* 큰 화면 우상단 WEE SEE PLAY 현재 absolute로 위치 선정;;*/
+#header-name{
+  display: none;
+}
+/* 큰 화면 우상단 슬로건 현재 absolute로 위치 선정;;*/
+#header-slogan{
+  display:none;
+}
+/* 중간 화면 키위새 하단 슬로건 현재 absolute로 위치 선정;;*/
+#header-slogan2{
+  display:none;
+}
+
+/* mainpage의 화면을 80%만 이용 */
+#container {
+  width:80%;
+}
+
+#body-content{
+  width:90%;
+}
+
+
+/* 방 생성 버튼 */
+#room-create-btn{
+  border-radius: 0.5rem;
+  background-color: #9C27B0;
+  color:white;
+  min-height: 37.375px;
+}
+/* private 여부에 따라 조회하는 버튼 */
+#private-btn{
+  margin-left: 4%;
+  margin-bottom: 0.5%
+}
+/* 방생성 버튼, 검색 엔진,  privateBtn, 정렬방법 */
+#tool-bar{
+  margin-bottom: 3%;
+}
+/* 검색 엔진 css (component/mainpage/SearchEnzine) */
+#search-enzine-bar{
+  margin: .5rem 0;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0 1rem;
+  border: solid 2px rgba(0, 0, 0, 0.616);
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+/* 검색 엔진 css.focus (component/mainpage/SearchEnzine) */
+#search-enzine-bar:focus{
+  background: rgb(105,94,239);
+	background: linear-gradient(90deg, rgba(105,94,239,0.4) 0%, rgba(114,220,233,0.4) 87%);
+}
+/* privateBtn, 정렬방법 */
+#sort-line{
+  margin-top: 1%;
+}
+/* ㅇㅇ순|오름, 내림 (component/mainpage/MeetingCardSort) */
+#sort-area {
+  display: block;
+  margin-left: 4%;
+  text-align: center;
+  text-align: right;
+}
+/* 툴바 하단 하얀 줄(hr) */
+#separator {
+  background-color: white;
+  width: 95%;
+  margin-left: 1%;
+  margin-right: 1%
+}
+
+/* 이 아래로 private-btn 구현(by codepen) */
+.tgl {
+  display: none;
+}
+.tgl, .tgl:after, .tgl:before, .tgl *, .tgl *:after, .tgl *:before, .tgl + .tgl-btn {
+  box-sizing: border-box;
+}
+.tgl::-moz-selection, .tgl:after::-moz-selection, .tgl:before::-moz-selection, .tgl *::-moz-selection, .tgl *:after::-moz-selection, .tgl *:before::-moz-selection, .tgl + .tgl-btn::-moz-selection {
+  background: none;
+}
+.tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
+  background: none;
+}
+.tgl + .tgl-btn {
+  outline: 0;
+  display: block;
+  width: 4rem;
+  height: 2rem;
+  position: relative;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+.tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
+  position: relative;
+  display: block;
+  content: "";
+  width: 50%;
+  height: 100%;
+}
+.tgl + .tgl-btn:after {
+  left: 0;
+}
+.tgl + .tgl-btn:before {
+  display: none;
+}
+.tgl:checked + .tgl-btn:after {
+  left: 50%;
+}
+
+.tgl-light + .tgl-btn {
+  background: #f0f0f0;
+  border-radius: 2rem;
+  padding: 2px;
+  transition: all 0.4s ease;
+}
+.tgl-light + .tgl-btn:after {
+  border-radius: 50%;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+.tgl-light:checked + .tgl-btn {
+  background: #695EEF;
+}
+
+/* absolute로 포지션 잡은 헤더들 반응성 처럼 쓰려고,, */
+/* + 툴바 크기 조정 */
+@media only screen and (min-width: 600px){
+  #room-create-btn{
+    border-radius: 0.5rem;
+    margin-left: 0.5%;
+    margin-right: 1%;
+    background-color: #9C27B0;
+    color:white;
+  }
+  #header {
+    margin-bottom:5%;
+    margin-left:2%;
+    margin-right:2%;
+    padding: 5%;
+    background: rgba(255, 255, 255, 0.375);
+    box-shadow: 0 0.75rem 2rem 0 rgba(0, 0, 0, 0.1);
+    border-radius: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.125);
+  }
+}
+
+@media only screen and (min-width: 770px){
+  /* #room-create-btn{
+    border-radius: 0.5rem;
+    margin:0.75%;
+    background-color: #9C27B0;
+    color:white;
+  } */
+}
+
+@media only screen and (min-width: 1024px){
+  /* #room-create-btn{
+    border-radius: 0.5rem;
+    margin:1px;
+    background-color: #9C27B0;
+    color:white;
+  } */
+  #header-slogan2{
+    font-size: 300%;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    top:29%;
+    display:block;
+  }
+}
+
+@media only screen and (min-width: 1125px){
+  #header-slogan2{
+    font-size: 300%;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    top:36%;
+    display:block;
+  }
+}
+
+@media only screen and (min-width: 1440px){
+  #header-slogan2{
+    display:none;
+  }
+  #header-name{
+    position: absolute;
+    font-size: 700%;
+    display:block;
+  }
+  #header-slogan{
+    position: absolute;
+    font-size: 450%;
+    right: 15%;
+    top:34%;
+    display:block;
+  }
+}

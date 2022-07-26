@@ -13,16 +13,8 @@
         <p>description</p>
         <input
           type="text"
-          name="description"
-          v-model="roomInfo.description"
-        />
-      </div>
-      <div>
-        <p>hostId</p>
-        <input
-          type="number"
-          name="hostId"
-          v-model="roomInfo.hostId"
+          name="descript"
+          v-model="roomInfo.descript"
         />
       </div>
       <div>
@@ -31,14 +23,6 @@
           type="password"
           name="conferencePassword"
           v-model="roomInfo.conferencePassword"
-        />
-      </div>
-      <div>
-        <p>game</p>
-        <input
-          type="number"
-          name="game"
-          v-model="roomInfo.game"
         />
       </div>
       <div>
@@ -56,6 +40,8 @@
 
 <script>
 import { ref, reactive } from 'vue'
+// import { computed } from "vue"
+import { useStore } from "vuex"
 import api from '@/api/api'
 import axios from 'axios'
 
@@ -63,13 +49,14 @@ import axios from 'axios'
 export default {
 
   setup(){
+    const store = useStore();
+    const token = store.state.users.token
     // 방 생성 정보
     let roomInfo = reactive({
       title: '',
-      description: '',
-      hostId: '',
-      conferencePassword: '',
-      game:'',
+      descript: '어서와요',
+      roomPassword: '',
+      game:0,
       is_private:false
     })
 
@@ -77,10 +64,10 @@ export default {
     const roomCreateError = ref('') 
     const createRoom = async function () {
       try {
-        console.log(roomInfo)
         const response = await axios({
           url: api.room.createRoom(),
           method: 'POST',
+          headers:{"authorization":"Bearer"+ token.value},
           data: roomInfo
         })
         if (response.data.statusCode === 201) {
