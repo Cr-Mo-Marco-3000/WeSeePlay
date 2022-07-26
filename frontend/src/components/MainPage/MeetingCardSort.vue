@@ -2,7 +2,7 @@
     <div id="sort-area">
         <a
             style="color: black; cursor: pointer;"
-            v-if="sortingmethod === 'bytime'"
+            v-if="sortingmethod === 'byTime'"
             @click="changeSortMethod"
         >시간 순 </a>
         <a
@@ -13,7 +13,7 @@
         <span> | </span>
         <a
             style="color: black; cursor: pointer;"
-            v-if="sortinglevel === 'toup'"
+            v-if="sortinglevel === 'toUp'"
             @click="changeSortLevel"
         >오름 </a>
         <a
@@ -51,6 +51,9 @@ export default {
 
 <style scoped>
 #sort-area {
-    margin-right: 10%;
+    display: block;
+    margin-left: 4%;
+    text-align: center;
+    text-align: right;
 }
 </style>

@@ -3,7 +3,7 @@ const HOST = 'http://localhost:8080/api/v1'
 const USERS = '/users'
 const EMAIL = '/email'
 
-const ROOMS = '/rooms'
+const ROOMS = '/conference'
 
 export default {
   // 회원 관련 API
