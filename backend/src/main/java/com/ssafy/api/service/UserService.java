@@ -2,6 +2,7 @@ package com.ssafy.api.service;
 
 import java.util.Optional;
 
+import com.ssafy.api.request.ChangeUserPasswordReq;
 import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.db.entity.Email;
 import com.ssafy.db.entity.User;
@@ -20,4 +21,5 @@ public interface UserService {
 	User updateLastLogin(String userEmail);
 	User updatePassword(String userEmail, String tempPw);
 	User changeNickname(String userEmail, String userNewNickname);
+	User changePassword(ChangeUserPasswordReq changeInfo);
 }

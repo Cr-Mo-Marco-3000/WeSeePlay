@@ -1,6 +1,7 @@
 package com.ssafy.api.controller;
 
 import java.net.URI;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.mail.MessagingException;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,11 +27,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.ssafy.api.request.ChangeNicknameReq;
+import com.ssafy.api.request.ChangeUserPasswordReq;
 import com.ssafy.api.request.UserRegisterPostReq;
+import com.ssafy.api.response.UserLoginPostRes;
 import com.ssafy.api.response.UserRes;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
+import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.common.util.SendEmailUtil;
 import com.ssafy.db.entity.Email;
 import com.ssafy.db.entity.User;
@@ -53,6 +58,9 @@ public class UserController {
 	
 	@Autowired
 	SendEmailUtil sendEmailUtil;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
 	
 	@GetMapping("/email/duplicate/check")
 	@ApiOperation(value = "중복 이메일 확인", notes = "<strong>중복 체크를 실행한다.") 
@@ -219,5 +227,34 @@ public class UserController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "닉네임 변경 성공"));
 	}
 	
+	@PatchMapping("/password")
+	@ApiOperation(value = "비밀번호 변경", notes = "비밀번호를 변경한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 401, message = "비밀번호 다름"),
+        @ApiResponse(code = 404, message = "사용자 없음"),
+        @ApiResponse(code = 500, message = "서버 오류")
+    })
+	public ResponseEntity<? extends BaseResponseBody> changeUserPassword(@RequestBody @ApiParam(value="변경 요청 정보", required = true) ChangeUserPasswordReq changeInfo) {
+		String userEmail = changeInfo.getUserEmail();
+		String userPassword = changeInfo.getUserPassword();
+		
+		User user = null;
+		try {
+			user = userService.getUserByUserEmail(userEmail);
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.status(404).body(UserLoginPostRes.of(404, "존재하지 않는 계정입니다.", null));
+		}
+		
+		if (passwordEncoder.matches(userPassword, user.getUserPassword())) {
+			// 새로운 비밀번호로 변경
+			userService.changePassword(changeInfo);
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "비밀번호 변경 성공"));
+		} else {
+			// 기존 비밀번호가 맞지 않으므로 에러
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "비밀번호가 맞지 않습니다."));
+		}
+		
+	}
 	
 }
