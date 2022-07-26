@@ -24,8 +24,6 @@
   border: solid 2px rgba(255, 255, 255, 0.5);
   border-radius: 1rem ;
   transition: transform 150ms ease;
-  font-size: 0.875rem;
-  font-weight: 600;
 }
 
 .content {
@@ -58,41 +56,33 @@
   margin-bottom: 1.5rem;
 }
 
-.auth-done-false > span{
-  color: #695eef;
-  display: flex;
-  align-self: flex-start;
-  margin-bottom: 1rem;
-}
-
 .email-input{
   width: 100%;
   display: flex;
   align-items: flex-start;
 }
 
-.email-input button{
-  margin: 0.5rem 0;
-  margin-left: .2rem;
-}
-
 .user-input input{
   margin: 0;
 }
 
-.auth-done-true span{
+.auth-done-true p{
   font-size: 1.2rem;
   color: #9c27b0;
 }
+
+#modal-content .error-message{
+  margin-bottom: 2rem;
+}
+
 
 @media only screen and (max-width: 600px){
   .email-input {
     display: flex;
     flex-direction: column;
   }
-
-  .email-input button{
-    margin: 0;
-    margin-bottom: .7rem;
+  
+  #modal-content .email-auth-btns {
+    width: 100%;
   }
 }

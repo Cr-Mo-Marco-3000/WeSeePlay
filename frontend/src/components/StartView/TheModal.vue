@@ -7,9 +7,6 @@
         <div class="content">
           <slot />
         </div>
-        <!-- <div class="bottom">
-          <button @click="$emit('close')" class="overlay__btn overlay__btn--transparent">Close</button>
-        </div> -->
       </div>
     </div>
 </template>
