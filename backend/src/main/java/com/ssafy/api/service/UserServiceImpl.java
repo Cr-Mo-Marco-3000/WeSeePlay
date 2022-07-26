@@ -6,11 +6,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.api.request.ChangeUserPasswordReq;
 import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.db.entity.Email;
+import com.ssafy.db.entity.EmailPw;
 import com.ssafy.db.entity.User;
+import com.ssafy.db.repository.EmailPwRepository;
 import com.ssafy.db.repository.EmailRepository;
 import com.ssafy.db.repository.UserRepository;
 import com.ssafy.db.repository.UserRepositorySupport;
@@ -25,6 +28,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	EmailRepository emailRepository;
+	
+	@Autowired
+	EmailPwRepository emailPwRepository;
 	
 	@Autowired
 	UserRepositorySupport userRepositorySupport;
@@ -68,8 +74,7 @@ public class UserServiceImpl implements UserService {
 			email.setCertificationCheck("0");
 			email.setUserEmail(userEmail);
 			email.setId(target.get().getId());
-			LocalDateTime registertime=LocalDateTime.now();
-			email.setRegisterTime(registertime);
+			email.setRegisterTime(LocalDateTime.now());
 		}else {
 			email.setUserEmail(userEmail);
 			email.setCertificationCheck("0");
@@ -78,8 +83,35 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
+	public EmailPw createCertificationCheckPw(String userEmail) {
+		EmailPw emailPw=new EmailPw();
+		Optional<User> target = userRepository.findUserByUserEmail(userEmail);
+		//계정이 존재할 경우 temp 테이블 확인 후 이메일 발송
+		if(target.isPresent()) {
+			Optional<EmailPw> target2=emailPwRepository.findByUserEmail(userEmail);
+			//이미 temp 테이블에 있을 때
+			if (target2.isPresent()) {
+				emailPw.setId(target2.get().getId());
+				
+			}
+			emailPw.setCertificationCheck("0");
+			emailPw.setUserEmail(userEmail);
+			emailPw.setRegisterTime(LocalDateTime.now());
+			return emailPwRepository.save(emailPw);
+		//계정이 없다면 오류 메시지 반환
+		}
+		return null;
+	}
+	
+	@Override
 	public Optional<Email> certificationCheck(String userEmail) {
 		return emailRepository.findByUserEmail(userEmail);
+	}
+	
+	@Override
+	public Optional<EmailPw> certificationPwCheck(String userEmail) {
+		// TODO Auto-generated method stub
+		return emailPwRepository.findByUserEmail(userEmail);
 	}
 
 	@Override
@@ -102,6 +134,20 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	@Override
+	public EmailPw updateCertificationPw(String userEmail) {
+		EmailPw emailPw=new EmailPw();
+		Optional<EmailPw> target=emailPwRepository.findByUserEmail(userEmail);
+		if(target.get()!=null) {
+			emailPw.setId(target.get().getId());
+			emailPw.setUserEmail(userEmail);
+			emailPw.setCertificationCheck("1");
+			emailPw.setRegisterTime(LocalDateTime.now());
+			return emailPwRepository.save(emailPw);
+		}
+		return null;
+	}
+	
 	@Override
 	public User updateLastLogin(String userEmail) {
 		User user = userRepository.findUserByUserEmail(userEmail).get();
@@ -152,7 +198,10 @@ public class UserServiceImpl implements UserService {
 		
 		return null;
 	}
-	
-	
 
+	@Override
+	@Transactional
+	public void delCertificationPw(String userEmail) {
+		emailPwRepository.deleteByUserEmail(userEmail);
+	}
 }

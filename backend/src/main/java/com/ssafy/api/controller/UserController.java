@@ -37,6 +37,7 @@ import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.common.util.SendEmailUtil;
 import com.ssafy.db.entity.Email;
+import com.ssafy.db.entity.EmailPw;
 import com.ssafy.db.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -80,6 +81,23 @@ public class UserController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
 	
+	@GetMapping("/email/exist/check")
+	@ApiOperation(value = "이메일 존재 확인", notes = "비번찾기 과정에서 존재하는 이메일인지 체크") 
+	@ApiResponses({
+		@ApiResponse(code = 200, message = "성공"),
+		@ApiResponse(code = 409, message = "존재하는 이메일"),
+		@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<? extends BaseResponseBody> existCheck(
+			@RequestParam @ApiParam(value="이메일 주소", required = true) String userEmail) {
+		//중복 아이디가 있는지 확인
+		boolean existUser=userService.duplicateCheck(userEmail);
+		if(existUser) {
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		}
+		return ResponseEntity.status(409).body(BaseResponseBody.of(404, "Not Found"));
+	}
+	
 	@PostMapping("/email/certification")
 	@ApiOperation(value = "이메일 확인", notes = "<strong>이메일 인증을 실행한다.") 
 	@ApiResponses({
@@ -92,6 +110,26 @@ public class UserController {
 		try {
 			userService.createCertificationCheck(registerInfo.getUserEmail());
 			SendEmailUtil.SendEmail(registerInfo.getUserEmail());
+		} catch (AddressException e) {
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "AddressException"));
+		} catch (MessagingException e) {
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "MessagingException"));
+		}
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+	}
+	
+	@PostMapping("/email/certification/pw")
+	@ApiOperation(value = "이메일 인증", notes = "비밀번호 찾기를 위한 이메일 인증을 실시한다.") 
+	@ApiResponses({
+		@ApiResponse(code = 200, message = "성공"),
+		@ApiResponse(code = 400, message = "주소 오류"),
+		@ApiResponse(code = 500, message = "서버 오류")
+	})
+	public ResponseEntity<? extends BaseResponseBody> emailCertificationPw(
+			@RequestBody @ApiParam(value="이메일 주소", required = true) UserRegisterPostReq registerInfo) {
+		try {
+			userService.createCertificationCheckPw(registerInfo.getUserEmail());
+			SendEmailUtil.SendEmailPw(registerInfo.getUserEmail());
 		} catch (AddressException e) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "AddressException"));
 		} catch (MessagingException e) {
@@ -118,8 +156,26 @@ public class UserController {
         return new RedirectView("/");
 	}
 	
-	@GetMapping("/email/certification/check")
+	@GetMapping("/email/certification/pw")
 	@ApiOperation(value = "이메일 인증 링크", notes = "<strong>이메일 인증을 실행한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 401, message = "인증 실패"),
+        @ApiResponse(code = 404, message = "사용자 없음"),
+        @ApiResponse(code = 500, message = "서버 오류")
+    })
+	public RedirectView updateCertificationPw(
+			@RequestParam (value="userEmail", required = true) String userEmail) {
+	
+		EmailPw res=userService.updateCertificationPw(userEmail);
+
+		HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("/"));
+        return new RedirectView("/");
+	}
+	
+	@GetMapping("/email/certification/check")
+	@ApiOperation(value = "이메일 인증 확인", notes = "<strong>이메일 인증을 실행한다.") 
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공"),
         @ApiResponse(code = 401, message = "인증 실패"),
@@ -130,6 +186,32 @@ public class UserController {
 	
 		Optional<Email> email = userService.certificationCheck(userEmail);
 		if(email.isPresent() && email.get().getCertificationCheck().equals("1")) {
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		}else {
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+		}
+	}
+	
+	@GetMapping("/email/certification/pw/check")
+	@ApiOperation(value = "이메일 인증 확인", notes = "<strong>이메일 인증을 실행한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 401, message = "인증 실패"),
+        @ApiResponse(code = 500, message = "서버 오류")
+    })
+	public ResponseEntity<? extends BaseResponseBody> certificationPwCheck(
+			@RequestParam (value="userEmail", required = true) String userEmail) {
+	
+		Optional<EmailPw> emailPw = userService.certificationPwCheck(userEmail);
+		if(emailPw.isPresent() && emailPw.get().getCertificationCheck().equals("1")) {
+			try {
+				String tempPw=sendEmailUtil.SendPwEmail(userEmail);
+				userService.updatePassword(userEmail,tempPw);
+				userService.delCertificationPw(userEmail);
+			}catch (MessagingException e) {
+				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
+			}
+			
 			return ResponseEntity.status(201).body(BaseResponseBody.of(200, "Success"));
 		}else {
 			return ResponseEntity.status(500).body(BaseResponseBody.of(401, "Unauthorized"));
@@ -184,31 +266,6 @@ public class UserController {
 		return ResponseEntity.status(200).body(UserRes.of(user));
 	}
 	
-	@PutMapping("/resetpw")
-	@ApiOperation(value = "비밀번호 초기화", notes = "임의 생성된 문자열로 비밀번호를 초기화 한다.") 
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "성공"),
-        @ApiResponse(code = 404, message = "계정 없음"),
-        @ApiResponse(code = 500, message = "서버 오류")
-    })
-	public ResponseEntity<? extends BaseResponseBody> resetPw
-	(@RequestBody @ApiParam(value="이메일 주소", required = true) UserRegisterPostReq registerInfo) {
-		boolean existUser=userService.duplicateCheck(registerInfo.getUserEmail());
-		//이메일 존재하면 임시 비밀번호 이메일 발송
-		if(existUser) {
-			try {
-				String tempPw=sendEmailUtil.SendPwEmail(registerInfo.getUserEmail());
-				userService.updatePassword(registerInfo.getUserEmail(),tempPw);
-			} catch (MessagingException e) {
-				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
-			}
-			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-		//이메일 없다면 오류 반환
-		}else {
-			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Not Found"));
-		}
-	}
-	
 	@PatchMapping("/nickname")
 	@ApiOperation(value = "닉네임 변경", notes = "닉네임을 변경한다.") 
     @ApiResponses({
@@ -256,5 +313,4 @@ public class UserController {
 		}
 		
 	}
-	
 }
