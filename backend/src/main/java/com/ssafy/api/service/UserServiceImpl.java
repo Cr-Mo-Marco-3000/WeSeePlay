@@ -128,4 +128,18 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	@Override
+	public User changeNickname(String userEmail, String userNewNickname) {
+		User user = userRepository.findUserByUserEmail(userEmail).get();
+		
+		if (user != null) {
+			user.setUserNickname(userNewNickname);
+			return userRepository.save(user);
+		}
+		
+		return null;
+	}
+	
+	
+
 }

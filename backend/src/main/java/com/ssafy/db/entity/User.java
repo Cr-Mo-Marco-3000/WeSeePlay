@@ -40,7 +40,6 @@ public class User extends BaseEntity{
     @Column(name="register_time", updatable = false)
     private LocalDateTime registerTime;
     
-    @UpdateTimestamp
     @Column(name="last_login")
     private LocalDateTime lastLogin;
     
@@ -50,8 +49,4 @@ public class User extends BaseEntity{
     	lastLogin=LocalDateTime.now();
     }
     
-    @PreUpdate
-    public void beforeUpdate() {
-    	lastLogin=LocalDateTime.now();
-    }
 }

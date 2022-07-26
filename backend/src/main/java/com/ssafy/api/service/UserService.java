@@ -19,4 +19,5 @@ public interface UserService {
 	Email updateCertification(String userEmail);
 	User updateLastLogin(String userEmail);
 	User updatePassword(String userEmail, String tempPw);
+	User changeNickname(String userEmail, String userNewNickname);
 }

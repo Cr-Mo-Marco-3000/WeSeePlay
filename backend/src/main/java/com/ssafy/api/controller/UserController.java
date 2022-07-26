@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.ssafy.api.request.ChangeNicknameReq;
 import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.api.response.UserRes;
 import com.ssafy.api.service.UserService;
@@ -198,4 +200,24 @@ public class UserController {
 			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Not Found"));
 		}
 	}
+	
+	@PatchMapping("/nickname")
+	@ApiOperation(value = "닉네임 변경", notes = "닉네임을 변경한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 404, message = "사용자 없음"),
+        @ApiResponse(code = 500, message = "서버 오류")
+    })
+	public ResponseEntity<? extends BaseResponseBody> changeNickname(@RequestBody @ApiParam(value="변경 요청 정보", required = true) ChangeNicknameReq changeInfo) {
+		try {
+			User user = userService.changeNickname(changeInfo.getUserEmail(), changeInfo.getUserNewNickname());
+			if (user == null) return ResponseEntity.status(404).body(BaseResponseBody.of(404, "이메일에 해당하는 유저가 없습니다")); // 로그인된 사용자만 사용하기 때문에 필요할지
+		} catch (Exception e) {
+			return ResponseEntity.status(404).body(BaseResponseBody.of(500, "닉네임 변경 실패"));
+		}
+		
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "닉네임 변경 성공"));
+	}
+	
+	
 }
