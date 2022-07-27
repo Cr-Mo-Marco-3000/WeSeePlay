@@ -80,12 +80,12 @@ export default {
               userPassword: credentials.password,
             },
           })
-          // 모임 이거 토큰 몰로 옴?
-          store.dispatch('saveToken', response.data.key)
-          store.dispatch('fetchMe')
-          // 로그인이 끝나면 메인페이지로 전송
-          router.push({ name: 'mainpage' })
-          return
+          if (response.status === 200) {
+            store.dispatch('saveToken', response.data.accessToken)
+            store.dispatch('fetchMe')
+            // 로그인이 끝나면 메인페이지로 전송
+            router.push({ name: 'mainpage' })
+          }
         } else {
           loginErrorMsg.value = '아이디와 비밀번호를 입력하세요'
           return
