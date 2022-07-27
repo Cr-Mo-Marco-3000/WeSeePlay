@@ -3,9 +3,9 @@
       <div id="card-container" @click="icon = true">
         <div id="card-head" class="row">
    
-          <h4 id="card-title" class="col-11">
+          <h5 id="card-title" class="col-11">
             {{cardInfo.title}}
-          </h4>
+          </h5>
           <i
             id="isprivate-icon"
             class="material-icons col-1"

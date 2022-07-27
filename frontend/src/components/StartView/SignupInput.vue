@@ -23,11 +23,10 @@
           </div>
           <div v-if="!isAuthDone" class="email-auth-btns">
             <div v-if="!isAuthOpen" class="email-auth-btns-false">
-              <button @click="checkEmail">중복확인</button>
+              <button @click="checkEmail">이메일 인증</button>
             </div>
             <div v-else class="email-auth-btns-true">
               <button class="resend-btn" @click="sendEmail">재발송</button>
-              <button @click="confirmEmail">완료</button>
             </div>
           </div>
         </div>
@@ -86,7 +85,7 @@ export default {
 
     // 오류 메시지
     // 오류 발생시 해당 문자열을 오류메세지로 변경
-    const emailErrorMsg = ref('중복확인 & 이메일 인증을 완료해주세요')
+    const emailErrorMsg = ref('')
     const passwordErrorMsg = ref(
       '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
     )
@@ -131,7 +130,7 @@ export default {
     // 이메일 캔슬
     const cancelEmail = function () {
       credentials.email = ''
-      emailErrorMsg.value = '중복확인 & 이메일 인증을 완료해주세요'
+      emailErrorMsg.value = ''
       isAuthDone.value = false
       isAuthOpen.value = false
     }
@@ -139,6 +138,7 @@ export default {
     // 이메일 전송 & 재전송 함수
     const sendEmail = async function () {
       try {
+        emailErrorMsg.value = '인증 이메일이 발송 중 입니다.'
         const response = await axios({
           url: api.users.sendEmail(),
           method: 'POST',
@@ -147,7 +147,7 @@ export default {
           },
         })
         if (response.data.statusCode === 200) {
-          emailErrorMsg.value = '입력하신 주소로 인증 이메일이 발송되었습니다.'
+          emailErrorMsg.value = '인증 이메일이 발송되었습니다.'
         }
       } catch (err) {
         emailErrorMsg.value =

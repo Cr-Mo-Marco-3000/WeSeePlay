@@ -66,7 +66,7 @@
           </div>
 
           <div
-            class="col-lg-4 col-md-6 col-12"
+            class="col-md-4 col-sm-6 col-12"
             v-for="info in meetingInfo"
             :key="info"
           >
