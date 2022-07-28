@@ -1,4 +1,18 @@
 <template>
+<div id="logo-box">
+  <img src="../../assets/logo.png">
+  <div class="logo-box-text">
+    <h4>
+      <span class="text-gradient">WeSeePlay</span>
+    </h4>
+    <p>
+      저희 서비스는 말이죠웅 수빱뚜삐두바 뚜비두비두비 뚜비두비두비두비 두비두다~
+      저희 서비스는 말이죠웅 수빱뚜삐두바 뚜비두비두비 뚜비두비두비두비 두비두다~
+      저희 서비스는 말이죠웅 수빱뚜삐두바 뚜비두비두비 뚜비두비두비두비 두비두다~
+    </p>
+  </div>
+</div>
+<div id="carousel-box">
   <div class="q-pa-md">
     <q-carousel
       v-model="slide"
@@ -14,21 +28,7 @@
       class="text-purple rounded-borders"
     >
       <q-carousel-slide name="style" class="column no-wrap flex-center">
-        <div class="q-mt-md text-center text-black">
-          <div class="overlay__inner first-carousel">
-            <div class="text-box">
-              <h1 class="overlay__title">
-                Hey, would you like to learn how to create a
-                <span class="text-gradient">generative</span> UI just like this?
-              </h1>
-              <p class="overlay__description">
-                응애 서비스는 만들어야겠는데 템플릿 다시 짜기 귀찮아
-                <strong>We're gonna talk accessibility, too.</strong>
-              </p>
-            </div>
-            <img class="logo-img" src="../../assets/logo.png">
-          </div>
-        </div>
+        <FirstCarousel />
       </q-carousel-slide>
       <q-carousel-slide name="tv" class="column no-wrap flex-center">
         <div class="q-mt-md text-center text-black">
@@ -40,15 +40,20 @@
           3
         </div>
       </q-carousel-slide>
-    </q-carousel>
+    </q-carousel>  
   </div>
+</div>
 </template>
 
 <script>
 import { ref } from 'vue'
+import FirstCarousel from "./FirstCarousel.vue"
 
 export default {
   name: "TheCarousel",
+  components: {
+    FirstCarousel
+  },
   setup () {
     return {
       slide: ref('style'),
