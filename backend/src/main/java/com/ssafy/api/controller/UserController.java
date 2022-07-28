@@ -81,23 +81,6 @@ public class UserController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
 	
-	@GetMapping("/email/exist/check")
-	@ApiOperation(value = "이메일 존재 확인", notes = "비번찾기 과정에서 존재하는 이메일인지 체크") 
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "성공"),
-		@ApiResponse(code = 409, message = "존재하는 이메일"),
-		@ApiResponse(code = 500, message = "서버 오류")
-	})
-	public ResponseEntity<? extends BaseResponseBody> existCheck(
-			@RequestParam @ApiParam(value="이메일 주소", required = true) String userEmail) {
-		//중복 아이디가 있는지 확인
-		boolean existUser=userService.duplicateCheck(userEmail);
-		if(existUser) {
-			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-		}
-		return ResponseEntity.status(409).body(BaseResponseBody.of(404, "Not Found"));
-	}
-	
 	@PostMapping("/email/certification")
 	@ApiOperation(value = "이메일 확인", notes = "<strong>이메일 인증을 실행한다.") 
 	@ApiResponses({
@@ -127,15 +110,19 @@ public class UserController {
 	})
 	public ResponseEntity<? extends BaseResponseBody> emailCertificationPw(
 			@RequestBody @ApiParam(value="이메일 주소", required = true) UserRegisterPostReq registerInfo) {
-		try {
-			userService.createCertificationCheckPw(registerInfo.getUserEmail());
-			SendEmailUtil.SendEmailPw(registerInfo.getUserEmail());
-		} catch (AddressException e) {
-			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "AddressException"));
-		} catch (MessagingException e) {
-			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "MessagingException"));
+		boolean existUser=userService.duplicateCheck(registerInfo.getUserEmail());
+		if(existUser) {
+			try {
+				userService.createCertificationCheckPw(registerInfo.getUserEmail());
+				SendEmailUtil.SendEmailPw(registerInfo.getUserEmail());
+			} catch (AddressException e) {
+				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "AddressException"));
+			} catch (MessagingException e) {
+				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "MessagingException"));
+			}
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 		}
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		return ResponseEntity.status(403).body(BaseResponseBody.of(403, "Not Exist Email"));
 	}
 	
 	@GetMapping("/email/certification")
