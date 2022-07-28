@@ -2,8 +2,10 @@ package com.ssafy.api.service;
 
 import java.util.Optional;
 
+import com.ssafy.api.request.ChangeUserPasswordReq;
 import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.db.entity.Email;
+import com.ssafy.db.entity.EmailPw;
 import com.ssafy.db.entity.User;
 
 /**
@@ -17,5 +19,12 @@ public interface UserService {
 	Optional<Email> certificationCheck(String userEmail);
 	void delCertification(Email userEmail);
 	Email updateCertification(String userEmail);
+	EmailPw updateCertificationPw(String userEmail);
 	User updateLastLogin(String userEmail);
+	User updatePassword(String userEmail, String tempPw);
+	User changeNickname(String userEmail, String userNewNickname);
+	User changePassword(ChangeUserPasswordReq changeInfo);
+	EmailPw createCertificationCheckPw(String userEmail);
+	Optional<EmailPw> certificationPwCheck(String userEmail);
+	void delCertificationPw(String userEmail);
 }
