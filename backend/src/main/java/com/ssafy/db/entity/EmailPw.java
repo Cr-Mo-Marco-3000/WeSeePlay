@@ -12,11 +12,11 @@ import org.hibernate.annotations.DynamicUpdate;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name = "certification")
+@Entity(name = "certificationpw")
 @Getter
 @Setter
 @DynamicUpdate
-public class Email extends BaseEntity{
+public class EmailPw extends BaseEntity{
 	@Column(name="user_email")
     String userEmail;
 	

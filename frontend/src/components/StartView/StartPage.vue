@@ -1,22 +1,28 @@
 <template>
-<div id="first-page-box">
-  <canvas class="orb-canvas"></canvas>
-  <div class="overlay">
-    <div id="state-box">
-      <TheCarousel v-if="!isLoginOpen && !isSignupOpen" />
-      <LoginInput v-if="isLoginOpen" />
-      <SignupInput v-if="isSignupOpen" />
-    </div>
-    <div class="overlay__btns">
-      <button @click="loginOpen" class="overlay__btn overlay__btn--transparent login-btn">
-        <span>{{ loginText }}</span>
-      </button>
-      <button @click="signupOpen" class="overlay__btn overlay__btn--colors signup-btn">
-        <span>{{ signupText }}</span>
-      </button>
+  <div id="first-page-box">
+    <canvas class="orb-canvas"></canvas>
+    <div class="overlay">
+      <div id="state-box">
+        <TheCarousel v-if="!isLoginOpen && !isSignupOpen" />
+        <LoginInput v-if="isLoginOpen" />
+        <SignupInput v-if="isSignupOpen" @signup-done="loginOpen" />
+      </div>
+      <div class="overlay__btns">
+        <button
+          @click="loginOpen"
+          class="overlay__btn overlay__btn--transparent login-btn"
+        >
+          <span>{{ loginText }}</span>
+        </button>
+        <button
+          @click="signupOpen"
+          class="overlay__btn overlay__btn--colors signup-btn"
+        >
+          <span>{{ signupText }}</span>
+        </button>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -26,11 +32,11 @@ import LoginInput from './LoginInput.vue'
 import SignupInput from './SignupInput.vue'
 
 export default {
-  name: "FisrtPage",
+  name: 'FisrtPage',
   components: {
     TheCarousel,
     LoginInput,
-    SignupInput
+    SignupInput,
   },
   setup() {
     const isLoginOpen = ref(false)
@@ -38,7 +44,7 @@ export default {
     const loginText = ref('로그인')
     const signupText = ref('회원가입')
 
-    const loginOpen = function() {
+    const loginOpen = function () {
       if (isLoginOpen.value === false && isSignupOpen.value === false) {
         loginText.value = '뒤로가기'
         isLoginOpen.value = !isLoginOpen.value
@@ -53,11 +59,11 @@ export default {
       }
     }
 
-    const signupOpen = function() {
+    const signupOpen = function () {
       if (isSignupOpen.value === false && isLoginOpen.value === false) {
         signupText.value = '뒤로가기'
         isSignupOpen.value = !isSignupOpen.value
-      } else if (isLoginOpen.value === true) {  
+      } else if (isLoginOpen.value === true) {
         loginText.value = '로그인'
         signupText.value = '뒤로가기'
         isLoginOpen.value = !isLoginOpen.value
@@ -68,11 +74,18 @@ export default {
       }
     }
 
-    return { isLoginOpen, isSignupOpen, loginOpen, signupOpen, loginText, signupText}
-  }
+    return {
+      isLoginOpen,
+      isSignupOpen,
+      loginOpen,
+      signupOpen,
+      loginText,
+      signupText,
+    }
+  },
 }
 </script>
 
 <style>
-@import "../../assets/mainpage.css";
+@import '../../assets/startpage/startpage.css';
 </style>

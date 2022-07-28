@@ -1,7 +1,9 @@
 package com.ssafy.common.util;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BCryptUtil {
 	public String encodeBcrypt(String userPw) {
 		return new BCryptPasswordEncoder().encode(userPw);

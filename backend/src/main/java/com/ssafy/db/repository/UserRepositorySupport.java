@@ -21,9 +21,6 @@ public class UserRepositorySupport {
     public Optional<User> findUserByUserEmail(String userEmail) {
     	User user = jpaQueryFactory.select(qUser).from(qUser)
                 .where(qUser.userEmail.eq(userEmail)).fetchOne();
-//        User user = jpaQueryFactory.select(qUser).from(qUser)
-//                .where(qUser.userId.eq(userId)).fetchOne();
-        System.out.println("findUserByUserEmail");
         if(user == null) return Optional.empty();
         return Optional.ofNullable(user);
     }

@@ -14,6 +14,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 /**
@@ -22,6 +23,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity(name = "user")
 @Getter
 @Setter
+@DynamicUpdate
 public class User extends BaseEntity{
 	@Column(name="user_email")
     String userEmail;
@@ -38,7 +40,6 @@ public class User extends BaseEntity{
     @Column(name="register_time", updatable = false)
     private LocalDateTime registerTime;
     
-    @UpdateTimestamp
     @Column(name="last_login")
     private LocalDateTime lastLogin;
     
@@ -48,8 +49,4 @@ public class User extends BaseEntity{
     	lastLogin=LocalDateTime.now();
     }
     
-    @PreUpdate
-    public void beforeUpdate() {
-    	lastLogin=LocalDateTime.now();
-    }
 }

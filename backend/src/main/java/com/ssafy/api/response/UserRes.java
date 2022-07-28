@@ -1,5 +1,7 @@
 package com.ssafy.api.response;
 
+import java.time.LocalDateTime;
+
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.User;
 
@@ -15,12 +17,21 @@ import lombok.Setter;
 @Setter
 @ApiModel("UserResponse")
 public class UserRes{
-	@ApiModelProperty(name="User ID")
-	String userId;
+	@ApiModelProperty(name="User Email")
+	String userEmail;
+	@ApiModelProperty(name="User Nickname")
+	String userNickname;
+	@ApiModelProperty(name="register time")
+	private LocalDateTime registerTime;
+	@ApiModelProperty(name="last login")
+	private LocalDateTime lastLogin;
 	
 	public static UserRes of(User user) {
 		UserRes res = new UserRes();
-		res.setUserId(user.getUserEmail());
+		res.setUserEmail(user.getUserEmail());
+		res.setUserNickname(user.getUserNickname());
+		res.setRegisterTime(user.getRegisterTime());
+		res.setLastLogin(user.getLastLogin());
 		return res;
 	}
 }
