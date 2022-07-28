@@ -51,7 +51,6 @@ export default {
           } catch (err) {
             console.log(err)
             dispatch('removeToken')
-            router.push({ name: 'home' })
           }
         }
         fetchMe()

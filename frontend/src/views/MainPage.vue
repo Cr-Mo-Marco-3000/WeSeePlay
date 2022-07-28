@@ -2,30 +2,55 @@
   <div id="meeting-list-page">
     <nav-bar></nav-bar>
     <div class="flex flex-center">
-
-      <div id="container">
-        <header class="header text-center">
-          <h3>Meeting List
-            <span class="material-icons">
-              group_add
+      <div id="container" class="flex flex-center">
+        <header id="header">
+          <div id="header-name">
+            <span>
+              We See
+              <br>
+              Play
             </span>
-          </h3>
-
+          </div>
+          <img class="logo-img" src="../assets/loungekiwi.png">
+          <div id="header-slogan">
+            <span>
+              We See!
+              <br>
+              We Play!
+            </span>
+          </div>
+          <div id="header-slogan2">
+            <span>
+              We See! We Play!
+            </span>
+          </div>
         </header>
-        <div class="row">
-          <div id="sort-line" class="col-12">
-            <div id="search-enzine-section">
+
+        <div id="body-content" class="row">
+          
+          <div id="tool-bar" class="row col-12 flex items-center justify-center">
+            <button id="room-create-btn" class="col-12 col-sm-2 col-md-2" @click="createRoomModal = true">
+              방 생성
+              <span 
+                class="material-icons"
+              >
+                group_add
+              </span>
+            </button>
+            <div id="search-enzine-section" class="col-md-9 col-sm-9 col-12">
               <search-enzine
-                :meetingquery="meetingquery"
+                :meetingquery="lookupInfo.query"
                 @queryFromChild="getQuery"
               ></search-enzine>
             </div>
 
-            <div class="row">
-              <div class="col-6">
-                <meeting-toggle-btn></meeting-toggle-btn>
+            <div id="sort-line" class="row col-12">
+              <div id="private-btn" class="col-5">
+                <input v-model="lookupInfo.isprivate" class="tgl tgl-light" id="cb1" type="checkbox"/>
+                <label class="tgl-btn" for="cb1"></label>
               </div>
-              <div class="col-6 flex items-end justify-end">
+
+              <div id="sort-method" class="col-6 row items-center justify-end">
                 <meeting-card-sort
                   :sortinglevel="sortinglevel"
                   :sortingmethod="sortingmethod"
@@ -35,8 +60,11 @@
               </div>
             </div>
 
-            <hr>
+            <div id="separator">
+              <hr>
+            </div>
           </div>
+
           <div
             class="col-md-4 col-sm-6 col-12"
             v-for="info in meetingInfo"
@@ -44,6 +72,7 @@
           >
             <meeting-card
               :info="info"
+              @click="getDetail"
             ></meeting-card>
           </div>
           <div class="col-12">
@@ -56,9 +85,12 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
-    
+    <card-modal
+      v-model="createRoomModal"
+    ></card-modal>
   </div>
   
 </template>
@@ -68,8 +100,12 @@ import SearchEnzine from '@/components/MainPage/SearchEnzine'
 import NavBar from '@/components/MainPage/NavBar'
 import MeetingCard from '@/components/MainPage/MeetingCard'
 import MeetingCardSort from '@/components/MainPage/MeetingCardSort'
-import MeetingToggleBtn from '@/components/MainPage/MeetingToggleBtn'
-import { ref, watchEffect  } from 'vue'
+import CardModal from '@/components/MainPage/CardModal' 
+import { reactive, ref, watchEffect  } from 'vue'
+import axios from 'axios'
+import api from '@/api/api'
+import { useStore } from "vuex"
+
 
 export default {
   name: 'MainPage',
@@ -78,34 +114,50 @@ export default {
     NavBar,
     MeetingCard,
     MeetingCardSort,
-    MeetingToggleBtn,
+    CardModal
   },
   setup(){
+    const store = useStore();
+    const token = store.state.users.token
     // meetingquery
     let meetingquery = ref('')
+    let lookupErrorMsg = ref('')
     function getQuery(data){
-      meetingquery = data
+      meetingquery.value = data
+      lookupInfo.query = data
     }
 
     // sorting level
-    let sortinglevel = ref("toup")
-    let sortingmethod = ref("bytime")
+    let sortinglevel = ref("toUp")
+    let sortingmethod = ref("byTime")
     function changeSortLevel(){
-      if(sortinglevel.value=="toup"){
-        sortinglevel.value="todown"
+      if(sortinglevel.value=="toUp"){
+        sortinglevel.value="toDown"
       }
       else{
-        sortinglevel.value="toup"
+        sortinglevel.value="toUp"
       }
     }
     function changeSortMethod(){
-      if(sortingmethod.value=="bytime"){
-        sortingmethod.value="bydomething"
+      if(sortingmethod.value=="byTime"){
+        sortingmethod.value="byNumber"
       }
       else{
-        sortingmethod.value="bytime"
+        sortingmethod.value="byTime"
       }
     }
+
+    // request용
+    let lookupInfo = reactive({
+      pageNumber: 1,
+      pageSize: 6,
+      sort: {
+        sortingLevel:sortinglevel.value,
+        sortingMethod:sortingmethod.value,
+      },
+      query: meetingquery.value,
+      isPrivate:true,
+    })
 
 
     //  적당한 input 생성용
@@ -130,6 +182,47 @@ export default {
     meetingInfo.value={
       ...tmparr.value.slice(6*currentpage.value-6, 6*currentpage.value)
     }
+    // data 획득
+    const roomData = async function () {
+      try {
+        let querystring = '/?'
+        for(let key in lookupInfo){
+          let value = lookupInfo[key]
+          querystring +=key+"="+value+"&"
+        }
+        console.log(querystring.slice(0, -1))
+        const response = await axios({
+          url: api.room.createRoom()+querystring.slice(0, -1),
+          method: 'POST',
+          headers:{"authorization":"Bearer"+ token.value},
+        })
+        if (response.data.statusCode === 200) {
+          console.log('조회 성공!')
+          const roomsInfo = response.content
+          console.log(roomsInfo)
+        }
+      } catch (err) {
+        lookupErrorMsg.value =
+          '조회 실패.'
+      }
+    }
+    // data 획득
+    // const getDetail = async function (conference_id) {
+    //   try {
+    //     const response = await axios({
+    //       url: api.room.createRoom()+conference_id,
+    //       method: 'get',
+    //     })
+    //     if (response.data.statusCode === 200) {
+    //       console.log('조회 성공!')
+    //       const roomDetail = response
+    //       console.log(roomDetail)
+    //     }
+    //   } catch (err) {
+    //     lookupErrorMsg.value =
+    //       '조회 실패.'
+    //   }
+    // }
 
     watchEffect(() => {
       meetingInfo.value={
@@ -156,8 +249,10 @@ export default {
       currentpage,
       maxpage,
 
-      // 함수
-
+      // 임시
+      lookupInfo,
+      createRoomModal: ref(false),
+      roomData,
       
     }
   }
@@ -166,17 +261,6 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-#meeting-list-page{
-  position:relative;
-}
-#container {
-  width:80%;
-}
-#search-enzine-section {
-  margin:2rem;
-}
-#sort-line{
-  margin-bottom: 4%;
-}
+<style>
+@import '../assets/mainpage/mainpage.css';
 </style>

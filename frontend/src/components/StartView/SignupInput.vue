@@ -7,7 +7,7 @@
         <div>
           <div class="email-input">
             <input
-              :readonly="isAuthDone"
+              :disabled="isAuthOpen"
               type="text"
               name="email"
               placeholder="email@address.com"
@@ -23,11 +23,10 @@
           </div>
           <div v-if="!isAuthDone" class="email-auth-btns">
             <div v-if="!isAuthOpen" class="email-auth-btns-false">
-              <button @click="checkEmail">중복확인</button>
+              <button @click="checkEmail">이메일 인증</button>
             </div>
             <div v-else class="email-auth-btns-true">
               <button class="resend-btn" @click="sendEmail">재발송</button>
-              <button @click="confirmEmail">완료</button>
             </div>
           </div>
         </div>
@@ -54,7 +53,7 @@
       <span class="info-text">{{ passwordErrorMsg }}</span>
       <div class="user-input">
         <span>닉네임</span>
-        <input type="text" name="nickname" v-model="nickname" />
+        <input type="text" name="nickname" v-model="credentials.nickname" />
       </div>
       <span class="info-text">{{ nicknameErrorMsg }}</span>
       <button @click="checkSignup" class="auth-btn overlay__btn">
@@ -88,9 +87,9 @@ export default {
     // 오류 발생시 해당 문자열을 오류메세지로 변경
     const emailErrorMsg = ref('')
     const passwordErrorMsg = ref(
-      '영문, 숫자, 특수문자를 각각 1개 이상 포함(9~16자)'
+      '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
     )
-    const nicknameErrorMsg = ref('한글 2~8자, 영문 4~16자(4~16 byte 이내)')
+    const nicknameErrorMsg = ref('한글 2~8자, 영문 6~24자(6~24 byte 이내)')
 
     // 회원정보 반응형
     let credentials = reactive({
@@ -109,21 +108,21 @@ export default {
           return
         }
         let response = await axios({
-          url: api.users.duplicateEmail(),
+          url: api.users.duplicateEmail(credentials.email),
           method: 'GET',
-          data: {
-            userEmail: credentials.email,
-          },
         })
-        if (response.statusCode === 200) {
+        if (response.status === 200) {
+          isAuthOpen.value = true
           response = sendEmail()
           // 중복확인 완료
-          isAuthOpen.value = true
           return
         }
       } catch (err) {
-        if (err.response.statusCode === 409) {
-          emailErrorMsg.value = '중복된 이메일이 존재합니다'
+        if (err.response.data.statusCode === 409) {
+          emailErrorMsg.value = '이미 가입한 이메일 주소입니다'
+        } else {
+          emailErrorMsg.value =
+            '서버 문제로 인해 인증을 완료할 수 없습니다. 나중에 다시 시도해 주세요'
         }
       }
     }
@@ -131,6 +130,7 @@ export default {
     // 이메일 캔슬
     const cancelEmail = function () {
       credentials.email = ''
+      emailErrorMsg.value = ''
       isAuthDone.value = false
       isAuthOpen.value = false
     }
@@ -138,6 +138,7 @@ export default {
     // 이메일 전송 & 재전송 함수
     const sendEmail = async function () {
       try {
+        emailErrorMsg.value = '인증 이메일이 발송 중 입니다.'
         const response = await axios({
           url: api.users.sendEmail(),
           method: 'POST',
@@ -146,8 +147,7 @@ export default {
           },
         })
         if (response.data.statusCode === 200) {
-          console.log('이메일 전송 성공!')
-          emailErrorMsg.value = '입력하신 주소로 인증 이메일이 발송되었습니다.'
+          emailErrorMsg.value = '인증 이메일이 발송되었습니다.'
         }
       } catch (err) {
         emailErrorMsg.value =
@@ -158,16 +158,23 @@ export default {
     // 이메일 인증 확인 함수
     const confirmEmail = async function () {
       try {
-        const response = await axios.get({
-          url: api.users.verifyEmail(credentials.email),
-        })
-        if (response.data.statusCode === 200) {
+        const response = await axios.get(
+          api.users.verifyEmail(credentials.email)
+        )
+        console.log(response)
+        if (response.status === 201) {
           isAuthDone.value = true
           alert('이메일 인증이 완료되었습니다.')
           emailErrorMsg.value = '이메일 인증이 완료되었습니다.'
         }
       } catch (err) {
-        alert('이메일 인증이 완료되지 않았습니다')
+        if (err.response.data.statusCode === 401) {
+          emailErrorMsg.value = '이메일 인증이 완료되지 않았습니다'
+        } else {
+          alert(
+            '서버 문제로 인해 인증을 완료할 수 없습니다. 나중에 다시 시도해 주세요'
+          )
+        }
       }
     }
 
@@ -176,7 +183,7 @@ export default {
       try {
         // 검증용 정규식
         const passwordRegex =
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{9,16}$/
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#()?&]{8,16}$/
         // 이메일
         if (!isAuthDone.value) {
           emailErrorMsg.value = '이메일 인증을 완료해 주세요'
@@ -185,72 +192,71 @@ export default {
         // 비밀번호
         if (!credentials.password || !credentials.passwordConfirm) {
           passwordErrorMsg.value = '비밀번호를 입력하세요'
+          setTimeout(() => {
+            passwordErrorMsg.value =
+              '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
+          }, 3000)
           return
         } else if (!passwordRegex.test(credentials.password)) {
           passwordErrorMsg.value = '비밀번호 형식이 잘못되었습니다.'
           setTimeout(() => {
             passwordErrorMsg.value =
-              '영문, 숫자, 특수문자를 각각 1개 이상 포함(9~16자)'
+              '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
           }, 3000)
           return
         } else if (credentials.password !== credentials.passwordConfirm) {
           passwordErrorMsg.value = '두 비밀번호가 일치하지 않습니다'
+          setTimeout(() => {
+            passwordErrorMsg.value =
+              '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
+          }, 3000)
           return
         }
         // 닉네임
         if (!credentials.nickname) {
           nicknameErrorMsg.value = '닉네임을 입력하세요'
           return
-          // UTF-8에서는 한글이 3바이트라는데?
         } else if (
           !(
-            4 <=
-              credentials.nickname.replace(
-                /[\0-\x7f]|([0-\u07ff]|(.))/g,
-                '$&$1$2'
-              ).length <=
-              16 && /^[ㄱ-ㅎ|가-힣|a-z|A-Z|]+$/.test(credentials.nickname)
-          )
+            6 <=
+            credentials.nickname.replace(
+              /[\0-\x7f]|([0-\u07ff]|(.))/g,
+              '$&$1$2'
+            ).length
+          ) ||
+          !(
+            credentials.nickname.replace(
+              /[\0-\x7f]|([0-\u07ff]|(.))/g,
+              '$&$1$2'
+            ).length <= 24
+          ) ||
+          !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|]+$/.test(credentials.nickname)
         ) {
           nicknameErrorMsg.value = '닉네임 형식이 잘못되었습니다.'
           setTimeout(() => {
-            nicknameErrorMsg.value = '한글 2~8자, 영문 4~16자(4~16 byte 이내)'
+            nicknameErrorMsg.value = '한글 2~8자, 영문 6~24자(6~24 byte 이내)'
           }, 3000)
           return
         }
-        // console.log('회원가입 후 로그인 완료')
         const response = await axios({
           url: api.users.signup(),
           method: 'POST',
-          body: {
+          data: {
             userEmail: credentials.email,
             userPassword: credentials.password,
             userNickname: credentials.nickname,
           },
         })
-        if (response.data.statusCode === 'Created') {
+        if (response.status === 201) {
           alert('회원가입이 완료되었습니다')
-          // 회원가입 완료되면 변수들 초기화
-          isAuthDone.value = false
-          isAuthOpen.value = false
-          emailErrorMsg.value = ''
-          passwordErrorMsg.value =
-            '영문, 숫자, 특수문자를 각각 1개 이상 포함(9~16자)'
-          nicknameErrorMsg.value = '한글 2~8자, 영문 4~16자(4~16 byte 이내)'
-          credentials = reactive({
-            email: '',
-            password: '',
-            passwordConfirm: '',
-            nickname: '',
-          })
           // 페이지 로그인 페이지로 전환
           context.emit('signup-done')
           return
         }
       } catch (err) {
-        if (err.response.statusCode === 400) {
+        if (err.response.data.statusCode === 401) {
           emailErrorMsg.value = '이메일 인증을 완료해 주세요'
-        } else if (err.response.statusCode === 500) {
+        } else {
           emailErrorMsg.value =
             '서버 문제로 회원가입이 실패하였습니다. 나중에 다시 시도해 주세요'
         }
