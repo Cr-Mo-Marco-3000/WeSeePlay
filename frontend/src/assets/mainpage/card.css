@@ -1,3 +1,8 @@
+#card-box{
+  margin: 0;
+  padding: 0;
+}
+
 #card-container {
     width: 100%;
     margin-bottom:5%;
@@ -8,6 +13,7 @@
     border-radius: 2rem;
     border: 1px solid rgba(255, 255, 255, 0.125);
   }
+  
   #card-head{
     text-align: left;
   }
@@ -24,6 +30,7 @@
     display:block;
     color:#027BE3;
     font-size: 300%;
+    right: 20px;
   }
   
   #people-number {
