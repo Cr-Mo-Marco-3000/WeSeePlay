@@ -20,6 +20,8 @@ svg {
 }
 
 .overlay {
+  margin: auto;
+  margin-top: 5vh;
   width: 100%;
   max-width: 1140px;
   max-height: 740px;
@@ -34,7 +36,6 @@ svg {
   border: 1px solid rgba(255, 255, 255, 0.125);
   position: relative;
   height: 40rem;
-  margin: auto;
   bottom: 3rem;
 }
 
@@ -92,7 +93,7 @@ svg {
   margin-right: 0.75rem;
 }
 
-#logo-box{
+#logo-box {
   display: none;
   width: 100%;
   flex-direction: column;
@@ -100,12 +101,12 @@ svg {
   align-items: center;
 }
 
-#logo-box img{
+#logo-box img {
   width: 100%;
   max-width: 25rem;
 }
 
-.logo-box-text{
+.logo-box-text {
   position: relative;
   bottom: 2rem;
 }
@@ -144,14 +145,13 @@ svg {
     margin-bottom: 2.5rem;
   }
 
-  #logo-box{
+  #logo-box {
     display: flex;
   }
 
-  #carousel-box{
+  #carousel-box {
     display: none;
   }
-
 }
 
 @media only screen and (max-width: 600px) {
@@ -162,7 +162,7 @@ svg {
   .overlay__btns {
     flex-wrap: wrap;
     position: relative;
-    bottom: .5rem;
+    bottom: 0.5rem;
   }
 
   .overlay__btn {
@@ -192,7 +192,6 @@ svg {
 .q-carousel--arrows-horizontal.q-carousel--with-padding .q-carousel__slide {
   padding: 30px !important;
 }
-
 
 .logo-img {
   width: 50%;

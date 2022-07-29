@@ -1,19 +1,20 @@
 <template>
   <div id="card-box" class="flex flex-center">
       <div id="card-container" @click="icon = true">
-        <div id="card-head" class="row">
+        <div id="card-head">
    
-          <h5 id="card-title" class="col-11">
+          <span id="card-title">
             {{cardInfo.title}}
-          </h5>
+          </span>
           <i
             id="isprivate-icon"
-            class="material-icons col-1"
+            class="fa-solid fa-lock"
             v-show="is_private"
-          >lock</i>   
-          <div id="card-host" class="col-12">
-            host: {{cardInfo.host}}
-          </div>
+          ></i>   
+        </div>
+
+        <div id="card-host" class="col-12">
+          host: {{cardInfo.host}}
         </div>
         
         <div class="col-12 flex justify-end items-center">
