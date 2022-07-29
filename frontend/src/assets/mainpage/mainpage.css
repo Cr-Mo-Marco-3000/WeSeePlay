@@ -37,7 +37,7 @@
 #room-create-btn{
   width: 30%;
   border-radius: 0.5rem;
-  background-color: #9C27B0;
+  background: #9b27b0f1;
   color:white;
   outline: none;
   border: none;
@@ -48,7 +48,7 @@
 }
 
 #room-create-btn:hover{
-  transform: scale(1.1);
+  transform: scale(1.03);
 }
 
 /* private 여부에 따라 조회하는 버튼 */
@@ -187,121 +187,10 @@
   background: #695EEF;
 }
 
-
-.toggle-button-cover {
-  display: table-cell;
-  width: 200px;
-  box-sizing: border-box;
-}
-
-.button-cover {
-  height: 100px;
-  margin: 20px;
-}
-
-.button-cover:before {
-  counter-increment: button-counter;
-  color: #d7e3e3;
-  font-size: 12px;
-  line-height: 1;
-  padding: 5px;
-}
-
-.button-cover,
-.knobs,
-.layer {
-  position: absolute;
-  right: 0;
-  left: 0;
-}
-
-.button {
-  /* position: relative; */
-  width: 74px;
-  height: 36px;
-  margin: -20px auto 0 auto;
-  overflow: hidden;
-}
-
-.button.r,
-.button.r .layer {
-  border-radius: 100px;
-}
-
-.button.b2 {
-  border-radius: 2px;
-}
-
-.checkbox {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 3;
-}
-
-.knobs {
-  z-index: 2;
-}
-
-.layer {
-  width: 100%;
-  background-color: #ebf7fc;
-  transition: 0.3s ease all;
-  z-index: 1;
-}
-
-#button-3 .knobs:before {
-  content: "YES";
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 20px;
-  height: 10px;
-  color: #fff;
-  font-size: 10px;
-  font-weight: bold;
-  text-align: center;
-  line-height: 1;
-  padding: 9px 4px;
-  background-color: #03a9f4;
-  border-radius: 50%;
-  transition: 0.3s ease all, left 0.3s cubic-bezier(0.18, 0.89, 0.35, 1.15);
-}
-
-#button-3 .checkbox:active + .knobs:before {
-  width: 46px;
-  border-radius: 100px;
-}
-
-#button-3 .checkbox:checked:active + .knobs:before {
-  margin-left: -26px;
-}
-
-#button-3 .checkbox:checked + .knobs:before {
-  content: "NO";
-  left: 42px;
-  background-color: #f44336;
-}
-
-#button-3 .checkbox:checked ~ .layer {
-  background-color: #fcebeb;
-}
-
-
-
 /* absolute로 포지션 잡은 헤더들 반응성 처럼 쓰려고,, */
 /* + 툴바 크기 조정 */
 @media only screen and (min-width: 600px){
-  #room-create-btn{
-    border-radius: 0.5rem;
 
-    background-color: #9C27B0;
-    color:white;
-  }
   #header {
     margin-bottom:5%;
     margin-left:2%;
