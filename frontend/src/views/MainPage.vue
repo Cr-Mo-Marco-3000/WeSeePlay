@@ -1,56 +1,39 @@
 <template>
-  <div id="meeting-list-page">
-    <nav-bar></nav-bar>
+  <div id="meeting-list-page">  
+  <nav-bar></nav-bar>
     <div class="flex flex-center">
       <div id="container" class="flex flex-center">
-        <header id="header">
-          <div id="header-name">
-            <span>
-              We See
-              <br>
-              Play
-            </span>
-          </div>
-          <img class="logo-img" src="../assets/loungekiwi.png">
-          <div id="header-slogan">
-            <span>
-              We See!
-              <br>
-              We Play!
-            </span>
-          </div>
-          <div id="header-slogan2">
-            <span>
-              We See! We Play!
-            </span>
-          </div>
-        </header>
-
+        <div class="main-text">
+          <img src="../assets/logo_nontext.png">
+          <h6>We See! Wee Play!</h6>
+        </div>
         <div id="body-content" class="row">
           
           <div id="tool-bar" class="row col-12 flex items-center justify-center">
-            <button id="room-create-btn" class="col-12 col-sm-2 col-md-2" @click="createRoomModal = true">
-              방 생성
-              <span 
-                class="material-icons"
-              >
-                group_add
-              </span>
-            </button>
-            <div id="search-enzine-section" class="col-md-9 col-sm-9 col-12">
-              <search-enzine
-                :meetingquery="lookupInfo.query"
-                @queryFromChild="getQuery"
-              ></search-enzine>
+            <div class="search-form">
+              <button id="room-create-btn" @click="createRoomModal = true">
+                방 생성
+                <span 
+                  class="material-icons"
+                >
+                  group_add
+                </span>
+              </button>
+              <div id="search-enzine-section">
+                <search-enzine
+                  :meetingquery="lookupInfo.query"
+                  @queryFromChild="getQuery"
+                ></search-enzine>
+              </div>
             </div>
 
-            <div id="sort-line" class="row col-12">
-              <div id="private-btn" class="col-5">
+            <div id="sort-line">
+              <div id="private-btn">
                 <input v-model="lookupInfo.isprivate" class="tgl tgl-light" id="cb1" type="checkbox"/>
                 <label class="tgl-btn" for="cb1"></label>
               </div>
 
-              <div id="sort-method" class="col-6 row items-center justify-end">
+              <div id="sort-method">
                 <meeting-card-sort
                   :sortinglevel="sortinglevel"
                   :sortingmethod="sortingmethod"

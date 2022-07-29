@@ -26,6 +26,7 @@
   height :50px;
   color :#fff;
   padding: 0 1rem;
+  margin-bottom: 30px;
 }
 
 .navbar ul{
@@ -75,8 +76,9 @@
 .navbar ul .nav-item:hover i{
   transform: scale(1.05);
 }
+
 .navbar ul .nav-item:hover > ul{
-    display :flex;
+  display: block;
 }
 
 

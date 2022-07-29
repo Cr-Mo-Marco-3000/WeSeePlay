@@ -21,7 +21,7 @@
               name="close"
             />
           </div>
-          <div v-if="!isAuthDone" class="email-auth-btns">
+          <div class="email-auth-btns">
             <div v-if="!isAuthOpen" class="email-auth-btns-false">
               <button @click="checkEmail">이메일 인증</button>
             </div>
@@ -80,7 +80,6 @@ export default {
   // eslint-disable-next-line
   setup(props, context) {
     // 이메일 인증 관련 변수
-    const isAuthDone = ref(false)
     const isAuthOpen = ref(false)
 
     // 오류 메시지
@@ -111,19 +110,18 @@ export default {
           url: api.users.duplicateEmail(credentials.email),
           method: 'GET',
         })
+        console.log(response.data)
         if (response.status === 200) {
           isAuthOpen.value = true
           response = sendEmail()
           // 중복확인 완료
           return
+        } else if (response.data.statusCode === 409) {
+          emailErrorMsg.value = '이미 가입한 이메일 주소입니다'
         }
       } catch (err) {
-        if (err.response.data.statusCode === 409) {
-          emailErrorMsg.value = '이미 가입한 이메일 주소입니다'
-        } else {
-          emailErrorMsg.value =
-            '서버 문제로 인해 인증을 완료할 수 없습니다. 나중에 다시 시도해 주세요'
-        }
+        emailErrorMsg.value =
+          '서버 문제로 인해 인증을 완료할 수 없습니다. 나중에 다시 시도해 주세요'
       }
     }
 
@@ -131,7 +129,6 @@ export default {
     const cancelEmail = function () {
       credentials.email = ''
       emailErrorMsg.value = ''
-      isAuthDone.value = false
       isAuthOpen.value = false
     }
 
@@ -155,39 +152,23 @@ export default {
       }
     }
 
-    // 이메일 인증 확인 함수
-    const confirmEmail = async function () {
-      try {
-        const response = await axios.get(
-          api.users.verifyEmail(credentials.email)
-        )
-        console.log(response)
-        if (response.status === 201) {
-          isAuthDone.value = true
-          alert('이메일 인증이 완료되었습니다.')
-          emailErrorMsg.value = '이메일 인증이 완료되었습니다.'
-        }
-      } catch (err) {
-        if (err.response.data.statusCode === 401) {
-          emailErrorMsg.value = '이메일 인증이 완료되지 않았습니다'
-        } else {
-          alert(
-            '서버 문제로 인해 인증을 완료할 수 없습니다. 나중에 다시 시도해 주세요'
-          )
-        }
-      }
-    }
-
     // 회원가입 함수
     const checkSignup = async function () {
       try {
+        let errorFlag = true
         // 검증용 정규식
         const passwordRegex =
           /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#()?&]{8,16}$/
-        // 이메일
-        if (!isAuthDone.value) {
-          emailErrorMsg.value = '이메일 인증을 완료해 주세요'
-          return
+        // 이메일 인증 로직
+        // 이메일 인증을 보낸 상태에서
+        if (isAuthOpen.value === true) {
+          const response = await axios.get(
+            api.users.verifyEmail(credentials.email)
+          )
+          if (!(response.status === 201)) {
+            emailErrorMsg.value = '이메일 인증이 완료되지 않았습니다'
+            errorFlag = false
+          }
         }
         // 비밀번호
         if (!credentials.password || !credentials.passwordConfirm) {
@@ -196,26 +177,26 @@ export default {
             passwordErrorMsg.value =
               '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
           }, 3000)
-          return
+          errorFlag = false
         } else if (!passwordRegex.test(credentials.password)) {
           passwordErrorMsg.value = '비밀번호 형식이 잘못되었습니다.'
           setTimeout(() => {
             passwordErrorMsg.value =
               '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
           }, 3000)
-          return
+          errorFlag = false
         } else if (credentials.password !== credentials.passwordConfirm) {
           passwordErrorMsg.value = '두 비밀번호가 일치하지 않습니다'
           setTimeout(() => {
             passwordErrorMsg.value =
               '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
           }, 3000)
-          return
+          errorFlag = false
         }
         // 닉네임
         if (!credentials.nickname) {
           nicknameErrorMsg.value = '닉네임을 입력하세요'
-          return
+          errorFlag = false
         } else if (
           !(
             6 <=
@@ -236,6 +217,10 @@ export default {
           setTimeout(() => {
             nicknameErrorMsg.value = '한글 2~8자, 영문 6~24자(6~24 byte 이내)'
           }, 3000)
+          errorFlag = false
+        }
+        // 하나라도 false라면 여기서 걸려서 return
+        if (errorFlag === false) {
           return
         }
         const response = await axios({
@@ -264,14 +249,12 @@ export default {
     }
 
     return {
-      isAuthDone,
       isAuthOpen,
       emailErrorMsg,
       passwordErrorMsg,
       nicknameErrorMsg,
       credentials,
       sendEmail,
-      confirmEmail,
       checkEmail,
       checkSignup,
       cancelEmail,
