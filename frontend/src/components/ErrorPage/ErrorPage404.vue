@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-bottom: 10vh" class="error-box">
+  <div class="error-box">
     <h2>404</h2>
     <br />
     <h2>페이지를 찾을 수 없습니다</h2>

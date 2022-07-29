@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 10vh" class="overlay">
+  <div class="overlay error-area">
     <div id="statebox">
       <img
         style="width: 30%; height: auto"
@@ -21,6 +21,7 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import Error404 from '@/components/ErrorPage/ErrorPage404.vue'
 import Error500 from '@/components/ErrorPage/ErrorPage500.vue'
+
 const route = useRoute()
 const errorname = route.params.errorname
 let error404 = ref('')

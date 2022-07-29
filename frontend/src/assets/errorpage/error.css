@@ -3,4 +3,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-bottom: 8vh;
+}
+
+.error-area {
+  margin-top: 20vh;
 }
