@@ -71,6 +71,7 @@ import { ref, reactive } from 'vue'
 import axios from 'axios'
 import ClauseText from './ClauseText.vue'
 import api from '@/api/api'
+import { useRouter } from 'vue-router'
 
 export default {
   name: 'SignupInput',
@@ -82,6 +83,7 @@ export default {
     // 이메일 인증 관련 변수
     const isAuthOpen = ref(false)
 
+    const router = useRouter()
     // 오류 메시지
     // 오류 발생시 해당 문자열을 오류메세지로 변경
     const emailErrorMsg = ref('')
@@ -116,12 +118,13 @@ export default {
           response = sendEmail()
           // 중복확인 완료
           return
-        } else if (response.data.statusCode === 409) {
-          emailErrorMsg.value = '이미 가입한 이메일 주소입니다'
         }
       } catch (err) {
-        emailErrorMsg.value =
-          '서버 문제로 인해 인증을 완료할 수 없습니다. 나중에 다시 시도해 주세요'
+        if (err.response.data.statusCode === 409) {
+          emailErrorMsg.value = '이미 가입한 이메일 주소입니다'
+        } else if (err.response.data.statusCode === 500) {
+          router.push({ name: 'errorpage', params: { errorname: 500 } })
+        }
       }
     }
 
@@ -135,7 +138,7 @@ export default {
     // 이메일 전송 & 재전송 함수
     const sendEmail = async function () {
       try {
-        emailErrorMsg.value = '인증 이메일이 발송 중 입니다.'
+        emailErrorMsg.value = '인증 이메일이 발송 중 입니다'
         const response = await axios({
           url: api.users.sendEmail(),
           method: 'POST',
@@ -144,11 +147,14 @@ export default {
           },
         })
         if (response.data.statusCode === 200) {
-          emailErrorMsg.value = '인증 이메일이 발송되었습니다.'
+          emailErrorMsg.value = '인증 이메일이 발송되었습니다'
         }
       } catch (err) {
-        emailErrorMsg.value =
-          '서버 문제로 인해 이메일을 보낼 수 없습니다. 나중에 다시 시도해 주세요.'
+        if (err.response.data.statusCode === 400) {
+          emailErrorMsg.value = '이메일 주소에 문제가 있습니다.'
+        } else if (err.response.data.statusCode === 500) {
+          router.push({ name: 'errorpage', params: { errorname: 500 } })
+        }
       }
     }
 
@@ -165,9 +171,12 @@ export default {
           const response = await axios.get(
             api.users.verifyEmail(credentials.email)
           )
-          if (!(response.status === 201)) {
+          console.log(response)
+          if (!(response.data.statusCode === 200)) {
             emailErrorMsg.value = '이메일 인증이 완료되지 않았습니다'
             errorFlag = false
+          } else if (response.data.statusCode === 200) {
+            emailErrorMsg.value = '이메일 인증이 완료되었습니다'
           }
         }
         // 비밀번호
@@ -178,14 +187,20 @@ export default {
               '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
           }, 3000)
           errorFlag = false
-        } else if (!passwordRegex.test(credentials.password)) {
+        } else if (
+          errorFlag === true &&
+          !passwordRegex.test(credentials.password)
+        ) {
           passwordErrorMsg.value = '비밀번호 형식이 잘못되었습니다.'
           setTimeout(() => {
             passwordErrorMsg.value =
               '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
           }, 3000)
           errorFlag = false
-        } else if (credentials.password !== credentials.passwordConfirm) {
+        } else if (
+          errorFlag === true &&
+          credentials.password !== credentials.passwordConfirm
+        ) {
           passwordErrorMsg.value = '두 비밀번호가 일치하지 않습니다'
           setTimeout(() => {
             passwordErrorMsg.value =
@@ -198,20 +213,21 @@ export default {
           nicknameErrorMsg.value = '닉네임을 입력하세요'
           errorFlag = false
         } else if (
-          !(
+          errorFlag === true &&
+          (!(
             6 <=
             credentials.nickname.replace(
               /[\0-\x7f]|([0-\u07ff]|(.))/g,
               '$&$1$2'
             ).length
           ) ||
-          !(
-            credentials.nickname.replace(
-              /[\0-\x7f]|([0-\u07ff]|(.))/g,
-              '$&$1$2'
-            ).length <= 24
-          ) ||
-          !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|]+$/.test(credentials.nickname)
+            !(
+              credentials.nickname.replace(
+                /[\0-\x7f]|([0-\u07ff]|(.))/g,
+                '$&$1$2'
+              ).length <= 24
+            ) ||
+            !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|]+$/.test(credentials.nickname))
         ) {
           nicknameErrorMsg.value = '닉네임 형식이 잘못되었습니다.'
           setTimeout(() => {
@@ -239,11 +255,11 @@ export default {
           return
         }
       } catch (err) {
-        if (err.response.data.statusCode === 401) {
-          emailErrorMsg.value = '이메일 인증을 완료해 주세요'
+        if (err.response.status === 401 || err.response.status === 400) {
+          console.log()
+          alert('입력하신 정보를 다시 한 번 확인해 주세요')
         } else {
-          emailErrorMsg.value =
-            '서버 문제로 회원가입이 실패하였습니다. 나중에 다시 시도해 주세요'
+          router.push({ name: 'errorpage', params: { errorname: 500 } })
         }
       }
     }
