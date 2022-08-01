@@ -24,16 +24,13 @@
         </div>
       </div>
   </div>
-  <card-modal></card-modal>
 </template>
 
 <script>
 import { ref } from 'vue'
-import CardModal from '@/components/MainPage/CardModal'
 
 export default {
   components: {
-    CardModal,
   },
   props:{
     info: Object,

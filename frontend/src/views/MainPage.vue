@@ -28,11 +28,14 @@
             </div>
 
             <div id="sort-line">
-              <div id="private-btn">
-                <input v-model="lookupInfo.isprivate" class="tgl tgl-light" id="cb1" type="checkbox"/>
-                <label class="tgl-btn" for="cb1"></label>
+              <div class="private-box">
+                <div id="private-btn">
+                  <input v-model="lookupInfo.isprivate" class="tgl tgl-light" id="cb1" type="checkbox"/>
+                  <label class="tgl-btn" for="cb1"></label>
+                </div>
+                <span v-if="lookupInfo.isprivate">공개방 조회</span>
+                <span v-else>전체방 조회</span>
               </div>
-
               <div id="sort-method">
                 <meeting-card-sort
                   :sortinglevel="sortinglevel"
@@ -55,7 +58,7 @@
           >
             <meeting-card
               :info="info"
-              @click="getDetail"
+              @click="openDetail(info)"
             ></meeting-card>
           </div>
           <div class="col-12">
@@ -74,6 +77,10 @@
     <CreateRoomModal v-if="isCreateRoomModal" @close="isCreateRoomModal = false">
       <CreateRoomModalContent />
     </CreateRoomModal>
+    
+    <DetailModal v-if="isDetailModal" @close="isDetailModal = false">
+      <DetailModalContent :info="detailInfo" />
+    </DetailModal>
   </div>
   
 </template>
@@ -85,6 +92,8 @@ import MeetingCard from '@/components/MainPage/MeetingCard'
 import MeetingCardSort from '@/components/MainPage/MeetingCardSort'
 import CreateRoomModal from '@/components/MainPage/CreateRoomModal.vue'
 import CreateRoomModalContent from '@/components/MainPage/CreateRoomModalContent.vue' 
+import DetailModal from '@/components/MainPage/DetailModal.vue'
+import DetailModalContent from '@/components/MainPage/DetailModalContent.vue'
 import { reactive, ref, watchEffect  } from 'vue'
 import axios from 'axios'
 import api from '@/api/api'
@@ -99,7 +108,9 @@ export default {
     MeetingCard,
     MeetingCardSort,
     CreateRoomModal,
-    CreateRoomModalContent
+    CreateRoomModalContent,
+    DetailModal,
+    DetailModalContent
   },
   setup(){
     const store = useStore();
@@ -150,7 +161,8 @@ export default {
     let i
     let tmparr = ref([])
     for(i=0;i<25;i++){
-      tmparr.value.push({'title': "님만 오면 고", 'host': i, 'participate': i, 'wholenum': 12, 'private': i%2})
+      tmparr.value.push({'callStartTime': "2022.08.01" ,'descript': '방 설명', 'joinUser': ['유저1', '유저2', '유저3', '유저4', '유저5'], 'game': 0,'title': "님만 오면 고", 'host': i, 'participate': i, 'wholenum': 12, 'private': i%2,
+      })
     }
     
     //paginator용 계산
@@ -216,6 +228,13 @@ export default {
       }
     })
 
+    const isDetailModal = ref(false)
+    const detailInfo = ref({})
+    const openDetail = function(info) {
+      isDetailModal.value = true
+      detailInfo.value = info
+    }
+
 
     // console.log(meetingInfo, currentpage, maxpage)
     return{
@@ -238,8 +257,11 @@ export default {
       // 임시
       lookupInfo,
       isCreateRoomModal: ref(false),
+      isDetailModal,
       roomData,
       
+      openDetail,
+      detailInfo
     }
   }
 
