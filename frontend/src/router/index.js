@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import StartView from '../views/StartView.vue'
 import MainPage from '@/views/MainPage.vue'
 import ErrorPage from '@/views/ErrorPage.vue'
+import KakaoLoginPage from '@/views/KakaoLoginPage.vue'
 // eslint-disable-next-line
 import store from '@/store'
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/error/:errorname',
     name: 'errorpage',
     component: ErrorPage,
+  },
+  {
+    path: '/login/kakao',
+    name: 'kakaologin',
+    component: KakaoLoginPage,
   },
   {
     path: '/:pathMatch(.*)*',

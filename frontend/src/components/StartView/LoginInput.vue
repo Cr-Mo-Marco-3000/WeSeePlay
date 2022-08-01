@@ -17,7 +17,7 @@
       </div>
       <span class="error-message">{{ loginErrorMsg }}</span>
       <button class="auth-btn overlay__btn">로그인</button>
-      <span class="kakao-btn">
+      <span @click="kakaoLogin" class="kakao-btn">
         <p>카카오계정으로 접속하기</p>
         <img src="../../assets/kakao-logo.png" />
       </span>
@@ -34,15 +34,13 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useStore } from 'vuex'
 import router from '@/router'
 import axios from 'axios'
 import TheModal from './TheModal.vue'
 import ModalContent from './ModalContent.vue'
 import api from '@/api/api'
-
 export default {
   name: 'LoginInput',
   components: {
@@ -50,9 +48,34 @@ export default {
     ModalContent,
   },
   setup() {
+    const kakaoLogin = async function () {
+      window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${
+        process.env.VUE_APP_KAKAO_JAVASCRIPT_API_KEY
+      }&redirect_uri=${api.users.kakaoLogin()}`
+    }
+
+    // 카카오 로그인 => 이 로직 아닌 것 같지만 일단 냅두자
+    /*
+    const kakaoLogin = function () {
+      window.Kakao.Auth.login({
+        scope: 'profile_nickname',
+        success: getKaKaoAccount,
+      })
+    }
+
+    const getKaKaoAccount = function () {
+      console.log('성공?')
+      window.Kakao.API.request({
+        url: '/v2/user/me',
+        success: (res) => {
+          console.log(res)
+        },
+      })
+    }
+    */
+
     // 스토어 사용
     const store = useStore()
-
     // 모달
     const modal = ref(false)
     const openModal = function () {
@@ -96,7 +119,14 @@ export default {
         return
       }
     }
-    return { modal, loginErrorMsg, openModal, credentials, login }
+    return {
+      modal,
+      loginErrorMsg,
+      openModal,
+      credentials,
+      login,
+      kakaoLogin,
+    }
   },
 }
 </script>
