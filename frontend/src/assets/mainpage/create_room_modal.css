@@ -1,0 +1,100 @@
+/* modal css */
+.modal-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 30;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-window {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  max-width: 576px;
+  height: 31rem;
+  padding: 1rem 2rem;
+  border: solid 2px rgba(255, 255, 255, 0.5);
+  border-radius: 1rem ;
+  transition: transform 150ms ease;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.top{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.top button{
+  outline: none;
+  border: none;
+  position: relative;
+}
+
+/** 세부내용 **/
+.user-input {
+  font-size: .9rem;
+}
+
+.user-input span{
+  margin-top: .8rem;
+}
+
+.user-input textarea{
+  margin: 0.5rem 0;
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: .5rem .5rem;
+  border: solid 2px rgba(0, 0, 0, 0.616);
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.private-check{
+  display: flex;
+  align-items: center;
+}
+
+.private-check span {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.private-check input{
+  margin: .6rem 0 0 .3rem;
+  zoom: 1.5;
+  accent-color: #695eef
+}
+
+input[type="password"]:disabled{
+  background: rgba(136, 136, 136, 0.61);
+}
+
+.btns-box{
+  margin-top: 1.2rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.btns-box button{
+  width: 100%;
+}
+
+.btns-box button:hover{
+  background: #574dc4;
+}

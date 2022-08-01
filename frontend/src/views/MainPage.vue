@@ -11,7 +11,7 @@
           
           <div id="tool-bar" class="row col-12 flex items-center justify-center">
             <div class="search-form">
-              <button id="room-create-btn" @click="createRoomModal = true">
+              <button id="room-create-btn" @click="isCreateRoomModal = true">
                 방 생성
                 <span 
                   class="material-icons"
@@ -71,9 +71,9 @@
 
       </div>
     </div>
-    <card-modal
-      v-model="createRoomModal"
-    ></card-modal>
+    <CreateRoomModal v-if="isCreateRoomModal" @close="isCreateRoomModal = false">
+      <CreateRoomModalContent />
+    </CreateRoomModal>
   </div>
   
 </template>
@@ -83,7 +83,8 @@ import SearchEnzine from '@/components/MainPage/SearchEnzine'
 import NavBar from '@/components/MainPage/NavBar'
 import MeetingCard from '@/components/MainPage/MeetingCard'
 import MeetingCardSort from '@/components/MainPage/MeetingCardSort'
-import CardModal from '@/components/MainPage/CardModal' 
+import CreateRoomModal from '@/components/MainPage/CreateRoomModal.vue'
+import CreateRoomModalContent from '@/components/MainPage/CreateRoomModalContent.vue' 
 import { reactive, ref, watchEffect  } from 'vue'
 import axios from 'axios'
 import api from '@/api/api'
@@ -97,7 +98,8 @@ export default {
     NavBar,
     MeetingCard,
     MeetingCardSort,
-    CardModal
+    CreateRoomModal,
+    CreateRoomModalContent
   },
   setup(){
     const store = useStore();
@@ -105,6 +107,7 @@ export default {
     // meetingquery
     let meetingquery = ref('')
     let lookupErrorMsg = ref('')
+
     function getQuery(data){
       meetingquery.value = data
       lookupInfo.query = data
@@ -234,7 +237,7 @@ export default {
 
       // 임시
       lookupInfo,
-      createRoomModal: ref(false),
+      isCreateRoomModal: ref(false),
       roomData,
       
     }
