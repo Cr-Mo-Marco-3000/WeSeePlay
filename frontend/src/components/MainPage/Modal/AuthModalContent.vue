@@ -18,100 +18,103 @@
 </template>
 
 <script>
-import { ref, reactive } from "vue";
-import { useStore } from "vuex";
-import axios from "axios";
-import api from "@/api/api";
-import { useRouter } from "vue-router";
+import { ref, reactive } from 'vue'
+import { useStore } from 'vuex'
+import axios from 'axios'
+import api from '@/api/api'
+import { useRouter } from 'vue-router'
 
 export default {
-  name: "AuthModalContent",
+  name: 'AuthModalContent',
   setup() {
     const passwordErrorMsg = ref(
-      "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)"
-    );
+      '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
+    )
 
     let credentials = reactive({
-      password: "",
-      newPassword: "",
-      passwordConfirm: "",
-    });
+      password: '',
+      newPassword: '',
+      passwordConfirm: '',
+    })
 
-    const store = useStore();
-    const router = useRouter();
-    const userEmail = store.getters.me.userEmail;
+    const store = useStore()
+    const router = useRouter()
 
     const changePassword = async function () {
       try {
-        console.log(credentials);
-        let errorFlag = true;
+        // token으로 사용자 정보 다시 불러오기
+        store.dispatch('fetchMe')
+        // getters로 불러온 사용자 정보 중 userEmail을 사용
+        const userEmail = store.getters.me.userEmail
+
+        let errorFlag = true
         // 검증용 정규식
         const passwordRegex =
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#()?&]{8,16}$/;
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#()?&]{8,16}$/
 
         if (!credentials.newPassword || !credentials.passwordConfirm) {
-          passwordErrorMsg.value = "비밀번호를 입력하세요";
+          passwordErrorMsg.value = '비밀번호를 입력하세요'
           setTimeout(() => {
             passwordErrorMsg.value =
-              "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)";
-          }, 3000);
-          errorFlag = false;
+              '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
+          }, 3000)
+          errorFlag = false
         } else if (
           errorFlag === true &&
           !passwordRegex.test(credentials.newPassword)
         ) {
-          passwordErrorMsg.value = "비밀번호 형식이 잘못되었습니다.";
+          passwordErrorMsg.value = '비밀번호 형식이 잘못되었습니다.'
           setTimeout(() => {
             passwordErrorMsg.value =
-              "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)";
-          }, 3000);
-          errorFlag = false;
+              '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
+          }, 3000)
+          errorFlag = false
         } else if (
           errorFlag === true &&
           credentials.newPassword !== credentials.passwordConfirm
         ) {
-          passwordErrorMsg.value = "두 비밀번호가 일치하지 않습니다";
+          passwordErrorMsg.value = '두 비밀번호가 일치하지 않습니다'
           setTimeout(() => {
             passwordErrorMsg.value =
-              "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)";
-          }, 3000);
-          errorFlag = false;
+              '영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)'
+          }, 3000)
+          errorFlag = false
         }
 
         if (errorFlag === false) {
-          return;
+          return
         }
 
         const response = await axios({
           url: api.users.changePassword(),
-          method: "PATCH",
+          method: 'PATCH',
           headers: store.getters.authHeader,
           data: {
             userEmail: userEmail,
             userPassword: credentials.password,
             userNewPassword: credentials.newPassword,
           },
-        });
+        })
         if (response.status === 200) {
           /* 성공, 로그아웃 */
-          alert("비밀번호 변경이 완료되었습니다. 다시 한번 로그인 해주세요.");
-          store.dispatch("logout");
+          alert('비밀번호 변경이 완료되었습니다. 다시 한번 로그인 해주세요.')
+          store.dispatch('logout')
         }
       } catch (error) {
         if (error.response.status === 401) {
-          passwordErrorMsg.value = "비밀번호가 틀렸습니다.";
+          passwordErrorMsg.value = '비밀번호가 틀렸습니다.'
         } else if (error.response.status === 404) {
-          alert("존재하지 않는 계정입니다.");
-          store.dispatch("logout");
+          alert('존재하지 않는 계정입니다.')
+          store.dispatch('logout')
         } else {
-          router.push({ name: "errorpage", params: { errorname: 500 } });
+          router.push({ name: 'errorpage', params: { errorname: 500 } })
         }
       }
-    };
+    }
 
-    return { passwordErrorMsg, credentials, changePassword };
+    return { passwordErrorMsg, credentials, changePassword }
   },
-};
+}
 </script>
 
 <style></style>

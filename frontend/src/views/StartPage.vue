@@ -9,11 +9,7 @@ import StartPage from '@/components/StartView/StartPage.vue'
 
 export default {
   name: 'StartView',
-  setup() {
-    /* eslint-disable */
-    Kakao.init(process.env.VUE_APP_KAKAO_JAVASCRIPT_API_KEY)
-    console.log(Kakao.isInitialized())
-  },
+  setup() {},
   components: {
     StartPage,
   },
