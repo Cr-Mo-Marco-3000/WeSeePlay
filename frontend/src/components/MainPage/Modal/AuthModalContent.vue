@@ -43,6 +43,7 @@ export default {
 
     const changePassword = async function () {
       try {
+        console.log(credentials);
         let errorFlag = true;
         // 검증용 정규식
         const passwordRegex =
