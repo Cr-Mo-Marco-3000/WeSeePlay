@@ -2,6 +2,7 @@ package com.ssafy.api.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.transaction.Transactional;
 
@@ -91,17 +92,42 @@ public class RoomController {
 		List<UserRoom> userRoomRes=userRoomService.getUserRoomByRoomId((long)map.get("roomId"),userId);
 		if(userRoomRes.size()>0 && userRoomRes.get(0).getIsHost()==1) {
 			roomService.deleteRoom(map.get("roomId"));
-			userRoomService.deleteUserRoom(map.get("roomId"),userId);
+			// roomId기준으로 다 방에서 퇴장 처리
+			userRoomService.deleteUserRoom(map.get("roomId"));
 			return ResponseEntity.status(200).body(RoomCreatePostRes.of(200, "Success"));
 		}
 		return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, "Bad Request"));
 	}
 	
+	@PostMapping("/enter")
+	@ApiOperation(value = "방 입장", notes = "방에 입장한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공")
+    })
+	public ResponseEntity<? extends BaseResponseBody> enterRoom(
+			@ApiIgnore Authentication authentication,
+			@RequestBody HashMap<String, Integer> roomInfo) {
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String userEmail = userDetails.getUsername();
+		User user = userService.getUserByUserEmail(userEmail);
+		long roomId = (long) roomInfo.get("roomId");
+		
+		try {
+			Room room = roomService.getRoomById(roomId);
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
+		}
+		
+		if(user != null) {
+			roomService.createUserRoom(roomId, user.getId(), 0, 0);
+		} else {
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No User"));
+		}
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+	}
 	
 	
-	
-	//구현 완료
-	//////////////////////////////////////////////////////////////////////////////////////////////
 	
 	@PatchMapping()
 	@ApiOperation(value = "방 정보 수정", notes = "방 정보를 수정한다.") 
@@ -114,28 +140,6 @@ public class RoomController {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-	}
-	
-	
-	@GetMapping()
-	@ApiOperation(value = "방 목록", notes = "방 목록을 조회한다.") 
-    @ApiResponses({
-        @ApiResponse(code = 200, message = "성공")
-    })
-	public ResponseEntity<? extends BaseResponseBody> roomList() {
-		
-		return null;
-	}
-	
-	@PostMapping("/enter")
-	@ApiOperation(value = "방 입장", notes = "방에 입장한다.") 
-    @ApiResponses({
-        @ApiResponse(code = 201, message = "성공")
-    })
-	public ResponseEntity<? extends BaseResponseBody> enterRoom(
-			@RequestBody HashMap<String, Object> roomInfo) {
-
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
 	

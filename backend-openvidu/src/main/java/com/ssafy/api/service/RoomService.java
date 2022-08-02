@@ -11,5 +11,7 @@ public interface RoomService {
 	UserRoom createUserRoom(Long roomId, Long userId, int isPlayer, int isHost);
 
 	void deleteRoom(long roomId);
+	
+	Room getRoomById(long roomId);
 
 }

@@ -1,6 +1,7 @@
 package com.ssafy.api.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -53,6 +54,11 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public void deleteRoom(long roomId) {
 		roomRepository.deleteById(roomId);
+	}
+
+	@Override
+	public Room getRoomById(long roomId) {
+		return roomRepository.findRoomById(roomId).get();
 	}
 
 }

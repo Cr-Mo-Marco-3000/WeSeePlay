@@ -25,4 +25,9 @@ public class UserRoomServiceImpl implements UserRoomService{
 		userRoomRepository.deleteByRoomIdAndUserId((int)roomId,(int)userId);
 	}
 
+	@Override
+	public void deleteUserRoom(long roomId) {
+		userRoomRepository.deleteByRoomId(roomId);
+	}
+
 }
