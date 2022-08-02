@@ -19,6 +19,11 @@ const routes = [
     name: 'mainpage',
     component: MainPage,
   },
+  {
+    path: '/room',
+    name: 'roompage',
+    component: RoomPage,
+  },
   // 보내는 에러 종류에 따라서 띄우는 에러를 다양하게 함
   {
     path: '/error/:errorname',
