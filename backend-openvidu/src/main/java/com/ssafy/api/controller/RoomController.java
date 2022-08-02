@@ -127,6 +127,35 @@ public class RoomController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
 	
+	@Transactional
+	@DeleteMapping("/leave")
+	@ApiOperation(value = "방 퇴장", notes = "방을 퇴장한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공")
+    })
+	public ResponseEntity<? extends BaseResponseBody> leaveRoom(
+			@ApiIgnore Authentication authentication,
+			@RequestBody HashMap<String, Integer> roomInfo) {
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String userEmail = userDetails.getUsername();
+		User user = userService.getUserByUserEmail(userEmail);
+		long roomId = (long) roomInfo.get("roomId");
+		
+		try {
+			Room room = roomService.getRoomById(roomId);
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
+		}
+		
+		if(user != null) {
+			userRoomService.deleteUserRoom(roomId, user.getId());
+		} else {
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No User"));
+		}
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+	}
+	
 	
 	
 	@PatchMapping()
