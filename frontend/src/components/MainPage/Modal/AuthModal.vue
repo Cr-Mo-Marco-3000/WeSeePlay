@@ -14,11 +14,10 @@
 <script>
 
 export default {
-  name: "DetailModal",
-
+  name: "AuthModal",
 }
 </script>
 
-<style>
-@import url("../../assets/mainpage/room_detail_modal.css");
+<style scoped>
+@import url("../../../assets/mainpage/auth_modal.css");
 </style>

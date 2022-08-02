@@ -88,5 +88,5 @@ export default {
 </script>
 
 <style>
-@import "../../assets/mainpage/create_room_modal.css";
+@import "../../../assets/mainpage/create_room_modal.css";
 </style>

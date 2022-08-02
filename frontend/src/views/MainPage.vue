@@ -1,6 +1,6 @@
 <template>
   <div id="meeting-list-page">  
-  <nav-bar></nav-bar>
+  <nav-bar @change-pw="isChangePw = true"></nav-bar>
     <div class="flex flex-center">
       <div id="container" class="flex flex-center">
         <div class="main-text">
@@ -81,6 +81,10 @@
     <DetailModal v-if="isDetailModal" @close="isDetailModal = false">
       <DetailModalContent :info="detailInfo" />
     </DetailModal>
+
+    <AuthModal v-if="isChangePw" @close="isChangePw = false">
+     <AuthModalContent />
+    </AuthModal>   
   </div>
   
 </template>
@@ -90,10 +94,12 @@ import SearchEnzine from '@/components/MainPage/SearchEnzine'
 import NavBar from '@/components/MainPage/NavBar'
 import MeetingCard from '@/components/MainPage/MeetingCard'
 import MeetingCardSort from '@/components/MainPage/MeetingCardSort'
-import CreateRoomModal from '@/components/MainPage/CreateRoomModal.vue'
-import CreateRoomModalContent from '@/components/MainPage/CreateRoomModalContent.vue' 
-import DetailModal from '@/components/MainPage/DetailModal.vue'
-import DetailModalContent from '@/components/MainPage/DetailModalContent.vue'
+import CreateRoomModal from '@/components/MainPage/Modal/CreateRoomModal.vue'
+import CreateRoomModalContent from '@/components/MainPage/Modal/CreateRoomModalContent.vue' 
+import DetailModal from '@/components/MainPage/Modal/DetailModal.vue'
+import DetailModalContent from '@/components/MainPage/Modal/DetailModalContent.vue'
+import AuthModal from "@/components/MainPage/Modal/AuthModal.vue"
+import AuthModalContent from "@/components/MainPage/Modal/AuthModalContent.vue"
 import { reactive, ref, watchEffect  } from 'vue'
 import axios from 'axios'
 import api from '@/api/api'
@@ -110,7 +116,9 @@ export default {
     CreateRoomModal,
     CreateRoomModalContent,
     DetailModal,
-    DetailModalContent
+    DetailModalContent,
+    AuthModal,
+    AuthModalContent
   },
   setup(){
     const store = useStore();
@@ -261,7 +269,9 @@ export default {
       roomData,
       
       openDetail,
-      detailInfo
+      detailInfo,
+
+      isChangePw: ref(false)
     }
   }
 

@@ -1,0 +1,15 @@
+.modal-window {
+  height: 26.5rem;
+}
+
+.pw-change-btn {
+  width: 100%;
+  margin-top: 2.2rem;
+}
+
+.auth-error-msg {
+  position: relative;
+  height: 0px;
+  color: #695eef;
+  top: 3px;
+}

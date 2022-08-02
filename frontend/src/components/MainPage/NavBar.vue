@@ -10,10 +10,10 @@
           <li v-if="!isChangeNickname" @click="onChangeNickname">닉네임 변경</li>
           <li v-else class="nickname-input">
             <input type="text" :placeholder="username">
-            <span @click="onChangeNickname">X</span>
+            <span @click="ChangeNickname">X</span>
             <button>변경</button>
           </li>
-          <li>비밀번호 변경</li>
+          <li @click="$emit('change-pw')">비밀번호 변경</li>
           <li>회원 삭제</li>
         </ul>
       </li>
@@ -23,6 +23,7 @@
       </li>
     </ul>
    </nav>
+
 </template>
 
 
@@ -39,7 +40,11 @@ export default {
       isChangeNickname.value = !isChangeNickname.value
     }
 
-    return { username, isChangeNickname, onChangeNickname }
+    return { 
+      username, 
+      isChangeNickname, 
+      onChangeNickname,
+      }
   }
 }
 </script>
