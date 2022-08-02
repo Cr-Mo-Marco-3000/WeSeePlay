@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.api.request.ForcedOutReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomUpdatePatchReq;
 import com.ssafy.api.response.RoomCreatePostRes;
@@ -89,8 +90,8 @@ public class RoomController {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		Long userId=userService.getUserByUserEmail(userEmail).getId();
-		List<UserRoom> userRoomRes=userRoomService.getUserRoomByRoomId((long)map.get("roomId"),userId);
-		if(userRoomRes.size()>0 && userRoomRes.get(0).getIsHost()==1) {
+		UserRoom userRoomRes=userRoomService.getUserRoomByRoomId((long)map.get("roomId"),userId);
+		if(userRoomRes != null && userRoomRes.getIsHost() == 1) {
 			roomService.deleteRoom(map.get("roomId"));
 			// roomId기준으로 다 방에서 퇴장 처리
 			userRoomService.deleteUserRoom(map.get("roomId"));
@@ -151,6 +152,38 @@ public class RoomController {
 			userRoomService.deleteUserRoom(roomId, user.getId());
 		} else {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No User"));
+		}
+
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+	}
+	
+	@Transactional
+	@DeleteMapping("/forcedout")
+	@ApiOperation(value = "방 강제퇴장", notes = "강제 퇴장한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공")
+    })
+	public ResponseEntity<? extends BaseResponseBody> forcedOutRoom(
+			@ApiIgnore Authentication authentication,
+			@RequestBody ForcedOutReq info) {
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String userEmail = userDetails.getUsername();
+		User user = userService.getUserByUserEmail(userEmail);
+		
+		long roomId = info.getRoomId();
+		User outUser = userService.getUserByUserEmail(info.getUserEmail());
+		UserRoom userRoom = userRoomService.getUserRoomByRoomId(roomId, user.getId());
+		
+		try {
+			Room room = roomService.getRoomById(roomId);
+		} catch (NoSuchElementException e) {
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
+		}
+		
+		if(userRoom != null && userRoom.getIsHost() == 1) {
+			userRoomService.deleteUserRoom(roomId, outUser.getId());
+		} else {
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No UserRoom"));
 		}
 
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));

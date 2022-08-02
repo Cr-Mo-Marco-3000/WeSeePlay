@@ -16,8 +16,8 @@ public class UserRoomServiceImpl implements UserRoomService{
 	UserRoomRepository userRoomRepository;
 	
 	@Override
-	public List<UserRoom> getUserRoomByRoomId(Long roomId, Long userId) {
-		return userRoomRepository.findByRoomIdAndUserId(roomId, userId);
+	public UserRoom getUserRoomByRoomId(Long roomId, Long userId) {
+		return userRoomRepository.findByRoomIdAndUserId(roomId, userId).get();
 	}
 
 	@Override
