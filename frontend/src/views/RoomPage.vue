@@ -8,10 +8,8 @@ import VideoArea from '@/components/RoomPage/VideoArea.vue'
 export default {
   components: {
     VideoArea,
-  }
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
