@@ -8,7 +8,9 @@
       <li class="user-text nav-item">
         <span class="welcome-text"
           >반가워요,
-          <span> {{ username }}</span>
+          <p style="margin-left: 0.5rem; margin-right: 0.1rem">
+            {{ username }}
+          </p>
           님 +</span
         >
         <ul class="dropdown-box">
@@ -76,13 +78,18 @@ export default {
       try {
         /* 닉네임 형식 검사 */
         let errorFlag = true
-        console.log(credentials.nicknameInput)
         if (!credentials.nicknameInput) {
           Swal.fire({
             icon: 'error',
             text: '닉네임을 입력하세요',
           })
 
+          errorFlag = false
+        } else if (credentials.nicknameInput === username.value) {
+          Swal.fire({
+            icon: 'error',
+            text: '현재 사용하고 계신 닉네임과 다른 닉네임을 입력해 주세요',
+          })
           errorFlag = false
         } else if (
           errorFlag === true &&
@@ -112,20 +119,19 @@ export default {
         if (errorFlag === false) {
           return
         }
-
         const response = await axios({
-          url: api.users.changeNickname,
+          url: api.users.changeNickname(),
           method: 'PATCH',
           headers: store.getters.authHeader,
           data: {
-            userEmail: userEmail,
+            userEmail: userEmail.value,
             userNewNickname: credentials.nicknameInput,
           },
         })
 
         if (response.status === 200) {
-          username.value = credentials.nicknameInput
           credentials.nicknameInput = ''
+          store.dispatch('fetchMe')
         }
       } catch (error) {
         if (error.response.status === 404) {
