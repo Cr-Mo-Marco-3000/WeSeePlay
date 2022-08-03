@@ -13,13 +13,13 @@
 
 <script>
 export default {
-  name: "AuthModal",
+  name: "LiarModal",
 }
 </script>
 
 <style scoped>
-@import url("../../../assets/mainpage/auth_modal.css");
 .modal-window {
-  height: 26.5rem;
+  top: 10vh;
+  height: 38rem;
 }
 </style>

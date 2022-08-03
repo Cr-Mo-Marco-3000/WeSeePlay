@@ -13,13 +13,14 @@
 
 <script>
 export default {
-  name: "AuthModal",
+  name: "EditModal",
 }
 </script>
 
 <style scoped>
-@import url("../../../assets/mainpage/auth_modal.css");
+@import url("@/assets/roompage/EditModal.css");
 .modal-window {
-  height: 26.5rem;
+  top: 10vh;
+  height: 38rem;
 }
 </style>
