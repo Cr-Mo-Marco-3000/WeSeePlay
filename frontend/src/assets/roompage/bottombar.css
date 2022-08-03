@@ -1,0 +1,118 @@
+.bottombar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  width: auto;
+  height: 5rem;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(#695eef, #5d52df, #695eef);
+}
+
+.bottombar .triColumn {
+  width: 33%;
+  display: flex;
+}
+
+.bottombar .triColumn:nth-child(2) {
+  justify-content: center;
+  align-items: center;
+}
+
+.triColumn .middleIconDiv {
+  /* background-color: red; */
+  min-width: 4rem;
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottombar .triColumn:nth-child(3) {
+  justify-content: flex-end;
+  align-items: center;
+  display: relative;
+  z-index: -1;
+}
+
+.triColumn div {
+  min-width: 3rem;
+  margin-right: 1.5rem;
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 53rem) {
+  /* @media (min-width: 53rem) { */
+  .triColumn .rightIconDiv {
+    display: none;
+  }
+}
+
+@media (min-width: 53rem) {
+  /* @media (max-width: 53rem) { */
+  .triColumn .rightIconBundle {
+    display: none;
+  }
+}
+
+/* input은 안보이게하고 label로만 동작하게 해놨음 */
+.input {
+  display: none;
+}
+
+/* 버튼 있는 쪽 라벨 */
+/* 아이콘에 사이즈를 맞 */
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: auto;
+  width: auto;
+  color: #0b0087;
+  cursor: pointer;
+}
+
+.btn:active {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.btn:hover {
+  transform: scale(1.2);
+}
+
+/* 각각 아이콘들 */
+.slash {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.sideAreaBundleList {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  list-style: none;
+  background-color: #8d84f0e3;
+  height: 9rem;
+  width: 5rem;
+  position: absolute;
+  bottom: 5rem;
+  right: 0.7rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.sideAreaBundleItem {
+  width: 100%;
+  color: white;
+  text-align: center;
+}
+
+.sideAreaBundleItem:hover {
+  cursor: pointer;
+}

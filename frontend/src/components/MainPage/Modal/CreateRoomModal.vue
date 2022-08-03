@@ -13,13 +13,13 @@
 
 <script>
 export default {
-  name: "TheModal",
+  name: "CreateRoomModal",
 };
 </script>
 
-<style scoped>
-@import "../../assets/startpage/modal.css";
+<style>
+@import "../../../assets/mainpage/create_room_modal.css";
 .modal-window {
-  height: 13rem;
+  height: 31rem;
 }
 </style>

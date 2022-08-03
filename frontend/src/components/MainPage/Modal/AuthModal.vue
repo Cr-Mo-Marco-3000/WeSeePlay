@@ -13,13 +13,13 @@
 
 <script>
 export default {
-  name: "TheModal",
+  name: "AuthModal",
 };
 </script>
 
 <style scoped>
-@import "../../assets/startpage/modal.css";
+@import url("../../../assets/mainpage/auth_modal.css");
 .modal-window {
-  height: 13rem;
+  height: 26.5rem;
 }
 </style>
