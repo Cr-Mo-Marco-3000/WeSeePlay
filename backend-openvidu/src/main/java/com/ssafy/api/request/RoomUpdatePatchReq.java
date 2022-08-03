@@ -20,7 +20,7 @@ public class RoomUpdatePatchReq {
 	String roomPassword;
 	@ApiModelProperty(name="호스트 ID", example="1")
 	int hostId;
-	@ApiModelProperty(name="방 상태", example="0, 1")
+	@ApiModelProperty(name="방 상태", example="1, 2")
 	int game;
 	@ApiModelProperty(name="비공개 여부", example="0")
 	int isPrivate;

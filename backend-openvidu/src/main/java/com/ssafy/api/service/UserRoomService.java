@@ -10,4 +10,8 @@ public interface UserRoomService {
 
 	void deleteUserRoom(long roomId, long userId);
 	void deleteUserRoom(long roomId);
+
+	UserRoom setIsHost(int hostId,int roomId);
+
+	int checkIsHost(Long userId, Long roomId);
 }

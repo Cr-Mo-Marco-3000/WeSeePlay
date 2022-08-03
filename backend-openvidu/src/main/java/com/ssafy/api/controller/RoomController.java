@@ -1,5 +1,6 @@
 package com.ssafy.api.controller;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -12,12 +13,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonObject;
 import com.ssafy.api.request.ForcedOutReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomUpdatePatchReq;
@@ -121,6 +124,7 @@ public class RoomController {
 		
 		if(user != null) {
 			roomService.createUserRoom(roomId, user.getId(), 0, 0);
+			roomService.plus(roomId);
 		} else {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No User"));
 		}
@@ -150,6 +154,7 @@ public class RoomController {
 		
 		if(user != null) {
 			userRoomService.deleteUserRoom(roomId, user.getId());
+			roomService.minus(roomId);
 		} else {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No User"));
 		}
@@ -182,6 +187,7 @@ public class RoomController {
 		
 		if(userRoom != null && userRoom.getIsHost() == 1) {
 			userRoomService.deleteUserRoom(roomId, outUser.getId());
+			roomService.minus(roomId);
 		} else {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No UserRoom"));
 		}
@@ -189,21 +195,61 @@ public class RoomController {
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
 	
-	
-	
-	@PatchMapping()
+	@PatchMapping("{roomId}")
 	@ApiOperation(value = "방 정보 수정", notes = "방 정보를 수정한다.") 
     @ApiResponses({
-        @ApiResponse(code = 200, message = "성공")
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 401, message = "권한 없음")
     })
 	public ResponseEntity<? extends BaseResponseBody> updateRoom(
 			@ApiIgnore Authentication authentication,
-			@RequestParam int roomId, @RequestBody RoomUpdatePatchReq roomUpdatePatchReq) {
+			@PathVariable int roomId, @RequestBody RoomUpdatePatchReq roomUpdatePatchReq) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		System.out.println(user.getId());
+		int check=userRoomService.checkIsHost(user.getId(),(long)roomId);
+		if (check==1) {
+			roomService.updateRoom(roomId,roomUpdatePatchReq);
+			if(roomUpdatePatchReq.getHostId()!=0) {
+				userRoomService.setIsHost(roomUpdatePatchReq.getHostId(),roomId);
+			}
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		}else {
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+		}
 	}
 	
-	
+	@GetMapping()
+	@ApiOperation(value = "방 리스트", notes = "방 리스트를 반환한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공")
+    })
+	public ResponseEntity<? extends BaseResponseBody> getRoomList(
+			@ApiIgnore Authentication authentication, @RequestParam HashMap<String, Object>map ) {
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String userEmail = userDetails.getUsername();
+		User user = userService.getUserByUserEmail(userEmail);
+		List<Room> totalRoom=roomService.findAll();
+		JsonObject jo=new JsonObject();
+		jo.addProperty("totalData",totalRoom.size());
+		List<Room> roomList=roomService.getRoomList(map);
+		for (Room room : roomList) {
+			JsonObject temp=new JsonObject();
+			temp.addProperty("roomId", room.getId());
+			
+			temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+			temp.addProperty("title", room.getTitle());
+			temp.addProperty("descript", room.getDescript());
+			temp.addProperty("isPrivate", room.getIsPrivate());
+			temp.addProperty("game", room.getGame());
+			
+			
+			System.out.println(room.getId());
+			System.out.println(room.getTitle());
+			System.out.println("========");
+		}
+		
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+	}
 }

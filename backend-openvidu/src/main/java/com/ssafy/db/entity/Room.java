@@ -2,11 +2,10 @@ package com.ssafy.db.entity;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import org.hibernate.annotations.DynamicUpdate;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +19,9 @@ public class Room extends BaseEntity{
 	String descript;
 	String roomPassword;
 	int game;
+	@Column(updatable = false)
 	LocalDateTime callStartTime;
 	int isPrivate;
+	@Column(name="join_count")
+	int joinCount;
 }
