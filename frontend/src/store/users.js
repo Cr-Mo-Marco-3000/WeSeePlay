@@ -34,7 +34,6 @@ export default {
     logout: ({ commit }) => {
       commit("REMOVE_TOKEN");
       commit("REMOVE_ME");
-      alert("로그아웃 되었습니다");
       router.push({ name: "startpage" });
     },
     // 본인 정보 불러오기

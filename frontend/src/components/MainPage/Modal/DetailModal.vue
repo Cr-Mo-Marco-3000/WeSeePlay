@@ -12,13 +12,14 @@
 </template>
 
 <script>
-
 export default {
   name: "DetailModal",
-
-}
+};
 </script>
 
 <style>
 @import url("../../../assets/mainpage/room_detail_modal.css");
+.modal-window {
+  height: 31rem;
+}
 </style>

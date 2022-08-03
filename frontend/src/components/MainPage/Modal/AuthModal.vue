@@ -12,12 +12,14 @@
 </template>
 
 <script>
-
 export default {
   name: "AuthModal",
-}
+};
 </script>
 
 <style scoped>
 @import url("../../../assets/mainpage/auth_modal.css");
+.modal-window {
+  height: 26.5rem;
+}
 </style>

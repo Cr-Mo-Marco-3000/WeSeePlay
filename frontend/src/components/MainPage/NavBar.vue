@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import Swal from "sweetalert2";
 import { ref, reactive } from "vue";
 import { useStore } from "vuex";
 import axios from "axios";
@@ -70,11 +71,11 @@ export default {
         let errorFlag = true;
         console.log(credentials.nicknameInput);
         if (!credentials.nicknameInput) {
-          // Swal.fire({
-          //   icon: "error",
-          //   text: "닉네임을 입력하세요",
-          // });
-          alert("닉네임을 입력하세요.");
+          Swal.fire({
+            icon: "error",
+            text: "닉네임을 입력하세요",
+          });
+
           errorFlag = false;
         } else if (
           errorFlag === true &&
@@ -93,9 +94,11 @@ export default {
             ) ||
             !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|]+$/.test(credentials.nicknameInput))
         ) {
-          alert(
-            "닉네임 형식이 잘못되었습니다. 한글 2~8자, 영문 6~24자(6~24 byte 이내)"
-          );
+          Swal.fire({
+            icon: "error",
+            title: "닉네임 형식이 잘못되었습니다.",
+            text: "한글 2~8자, 영문 6~24자(6~24 byte 이내)",
+          });
           errorFlag = false;
         }
         // 하나라도 false라면 여기서 걸려서 return
@@ -119,7 +122,10 @@ export default {
         }
       } catch (error) {
         if (error.response.status === 404) {
-          alert("존재하지 않는 계정입니다.");
+          Swal.fire({
+            icon: "error",
+            text: "존재하지 않는 계정입니다. 다시 시도해 주세요.",
+          });
           store.dispatch("logout");
         } else {
           router.push({ name: "errorpage", params: { errorname: 500 } });
