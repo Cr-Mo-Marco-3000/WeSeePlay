@@ -5,7 +5,7 @@
   </div>
   <div class="host-info">
     <span>호스트 </span>
-    <p>{{ info.host }}</p>
+    <p>{{ info.hostNickname }}</p>
   </div>
   <div class="time-info">
     <span>방 개설 시간</span>
@@ -18,7 +18,7 @@
   <div v-if="!info.private" class="detail-text">
     <span>참여자 목록</span>
     <div class="user-list">
-      <div v-for="user, idx in info.joinUser" :key="idx">{{ user }}</div>
+      <div v-for="user, idx in info.joinUsers" :key="idx">{{ user }}</div>
     </div>
   </div>
   <div v-else class="user-input room-pw-input">

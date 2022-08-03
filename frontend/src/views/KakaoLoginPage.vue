@@ -11,7 +11,7 @@ console.log(router.query.code)
 const sendQuery = async function () {
   try {
     /* eslint-disable */
-    const code = router.query.code
+    const code = router.query.codez
     // 파라미터(!)로 다음 정보들을 담아서 POST로(!) 전송하면 토큰이 옴
     const params = {
       grant_type: 'authorization_code',
