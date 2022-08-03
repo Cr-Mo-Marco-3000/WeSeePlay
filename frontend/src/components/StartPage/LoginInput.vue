@@ -104,7 +104,8 @@ export default {
             },
           })
           if (response.status === 200) {
-            store.dispatch('saveToken', response.data.accessToken)
+            const token = response.data.accessToken
+            store.dispatch('saveToken', token)
             store.dispatch('fetchMe')
             // 로그인이 끝나면 메인페이지로 전송
             router.push({ name: 'mainpage' })
@@ -119,6 +120,7 @@ export default {
         return
       }
     }
+
     return {
       modal,
       loginErrorMsg,

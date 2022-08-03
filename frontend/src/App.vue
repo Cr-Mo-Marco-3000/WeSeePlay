@@ -3,12 +3,16 @@
 </template>
 
 <script>
+import { useStore } from 'vuex'
+
 export default {
   name: 'LayoutDefault',
   setup() {
     /* eslint-disable */
     Kakao.init(process.env.VUE_APP_KAKAO_JAVASCRIPT_API_KEY)
     console.log(Kakao.isInitialized())
+    const store = useStore()
+    store.dispatch('fetchMe')
   },
 }
 </script>
