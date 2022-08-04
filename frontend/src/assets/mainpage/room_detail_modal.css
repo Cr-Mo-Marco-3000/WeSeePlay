@@ -1,0 +1,107 @@
+.detail-text {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.detail-text span {
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.detail-text p {
+  width: 100%;
+  margin: 0.2rem 0;
+  text-align: start;
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0.3rem 0.4rem;
+  border: solid 2px rgba(0, 0, 0, 0.616);
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.host-info {
+  display: flex;
+  font-size: 1rem;
+  margin: 0;
+  margin-bottom: 0rem;
+  color: #695eef;
+}
+
+.host-info span,
+.host-info p {
+  margin: 0;
+  margin-right: 0.3rem;
+}
+
+.time-info {
+  display: flex;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.time-info {
+  margin-right: 0.3rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.time-info span,
+.time-info p {
+  margin: 0;
+  margin-right: 0.3rem;
+}
+
+.discript-info p {
+  height: 6rem;
+  overflow: auto;
+}
+
+.user-list {
+  width: 100%;
+  margin: 0.2rem 0;
+  text-align: start;
+  border-radius: 0.5rem;
+  width: 100%;
+  height: 5rem;
+  padding: 0.3rem 0.4rem;
+  border: solid 2px rgba(0, 0, 0, 0.616);
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+  overflow: auto;
+  margin-bottom: 1rem;
+}
+
+.user-list::-webkit-scrollbar,
+.discript-info::-webkit-scrollbar {
+  background: transparent;
+}
+
+.user-list::-webkit-scrollbar-thumb,
+.discript-info::-webkit-scrollbar-thumb {
+  background: rgba(121, 121, 121, 0.2);
+  height: 10%;
+  border-radius: 0.5rem;
+}
+
+.join-btn {
+  width: 100%;
+}
+
+.join-btn:hover {
+  background: #574dc4;
+}
+
+.room-pw-input p {
+  font-size: 0.8rem;
+  color: #695eef;
+  margin: 0;
+  margin-top: 0.2rem;
+}
+
+.room-pw-input {
+  margin-bottom: 1rem;
+}

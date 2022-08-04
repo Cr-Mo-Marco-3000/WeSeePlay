@@ -158,7 +158,7 @@
 .tgl + .tgl-btn:after {
   left: 0;
   font-family: FontAwesome;
-  content: "\f023";
+  content: "\f3c1";
   line-height: 27px;
 }
 
@@ -168,12 +168,12 @@
 .tgl:checked + .tgl-btn:after {
   left: 50%;
   font-family: FontAwesome;
-  content: "\f3c1";
+  content: "\f023";
   line-height: 27px;
 }
 
 .tgl-light + .tgl-btn {
-  background: #f0f0f0;
+  background: #c0bcec;
   border-radius: 2rem;
   padding: 2px;
   transition: all 0.4s ease;
@@ -185,6 +185,15 @@
 }
 .tgl-light:checked + .tgl-btn {
   background: #695EEF;
+}
+
+.private-box{
+  display: flex;
+  align-items: center;
+}
+
+.private-box span{
+  margin-left: .3rem;
 }
 
 /* absolute로 포지션 잡은 헤더들 반응성 처럼 쓰려고,, */

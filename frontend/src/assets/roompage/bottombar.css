@@ -1,0 +1,177 @@
+.bottombar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  width: auto;
+  height: 4rem;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(#695eef, #5d52df, #695eef);
+  z-index: 10;
+}
+
+.bottombar .triColumn {
+  width: 33%;
+  display: flex;
+}
+
+.bottombar .triColumn:nth-child(2) {
+  justify-content: center;
+  align-items: center;
+}
+
+.triColumn .middleIconDiv {
+  /* background-color: red; */
+  min-width: 4rem;
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottombar .triColumn:nth-child(3) {
+  justify-content: flex-end;
+  align-items: center;
+  display: relative;
+  z-index: -1;
+}
+
+.triColumn div {
+  min-width: 3rem;
+  margin-right: 1.5rem;
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 53rem) {
+  /* @media (min-width: 53rem) { */
+  .triColumn .rightIconDiv {
+    display: none;
+  }
+}
+
+@media (min-width: 53rem) {
+  /* @media (max-width: 53rem) { */
+  .triColumn .rightIconBundle {
+    display: none;
+  }
+}
+
+
+/* 버튼 있는 쪽 라벨 */
+/* 아이콘에 사이즈를 맞 */
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: auto;
+  width: auto;
+  color: #0b0087;
+  cursor: pointer;
+  transition: transform 150ms ease;
+}
+
+.btn:active {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.btn:hover {
+  transform: scale(1.2);
+}
+
+.exit-btn::before{
+  font-size: 2em;
+  font-family: FontAwesome;
+  content: "\f52a";
+}
+
+.exit-btn:hover::before{
+  font-family: FontAwesome;
+  content: "\f52b";
+}
+
+/* 각각 아이콘들 */
+.slash {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.sideAreaBundleItem {
+  width: 100%;
+  position: absolute;
+  bottom: -100px;
+  text-align: center;
+  color: #0b0087;
+  border-radius: 100%;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(#695eef, #5d52df, #695eef);
+  align-items: center;
+  text-align: center;
+  line-height: 73px;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-transition: -webkit-transform ease-out 200ms;
+  transition: -webkit-transform ease-out 200ms;
+  transition: transform ease-out 200ms;
+  transition: transform ease-out 200ms, -webkit-transform ease-out 200ms;
+}
+
+/* input은 안보이게하고 label로만 동작하게 해놨음 */
+.sideAreaBundleInput,
+.input{
+  display: none;
+}
+
+.sideAreaBundleItem:hover{
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.sideAreaBundleItem i{
+  transition: transform 150ms ease;
+}
+
+.sideAreaBundleItem:hover i{
+  transform: scale(1.15);
+}
+
+.sideAreaBundleItem:active{
+  color: rgba(255, 255, 255, 0.75);
+  background: #695eef;
+}
+
+.sideAreaBundleOpen {
+  z-index: 2;
+}
+
+.sideAreaBundleInput:checked ~ .sideAreaBundleItem{
+  -webkit-transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
+  transition-timing-function: cubic-bezier(0.935, 0, 0.34, 1.33);
+}
+
+.sideAreaBundleInput:checked ~ .sideAreaBundleItem:nth-child(3){
+  transition-duration: 180ms;
+  -webkit-transition-duration: 180ms;
+  -webkit-transform: translate3d(0.08361px, -170px, 0);
+  transform: translate3d(0.08361px, -170px, 0);
+}
+
+.sideAreaBundleInput:checked ~ .sideAreaBundleItem:nth-child(4){
+  transition-duration: 280ms;
+  -webkit-transition-duration: 280ms;
+  -webkit-transform: translate3d(0.08361px, -240px, 0);
+  transform: translate3d(0.08361px, -240px, 0);
+}
+
+.sideAreaBundleInput:checked ~ .sideAreaBundleItem:nth-child(5){
+  transition-duration: 380ms;
+  -webkit-transition-duration: 380ms;
+  -webkit-transform: translate3d(0.08361px, -310px, 0);
+  transform: translate3d(0.08361px, -310px, 0);
+}

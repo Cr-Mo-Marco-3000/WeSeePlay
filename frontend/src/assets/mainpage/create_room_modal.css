@@ -1,0 +1,90 @@
+/* modal css */
+.content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.top {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.top button {
+  outline: none;
+  border: none;
+  position: relative;
+}
+
+/** 세부내용 **/
+.user-input {
+  font-size: 0.9rem;
+}
+
+.user-input span {
+  margin-top: 0.8rem;
+}
+
+.user-input textarea {
+  margin: 0.5rem 0;
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.5rem;
+  border: solid 2px rgba(0, 0, 0, 0.616);
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+  resize: none;
+}
+
+.user-input textarea::-webkit-scrollbar {
+  background: transparent;
+}
+
+.user-input textarea::-webkit-scrollbar-thumb {
+  background: rgba(121, 121, 121, 0.2);
+  height: 10%;
+  border-radius: 0.5rem;
+}
+
+.private-check {
+  display: flex;
+  align-items: center;
+}
+
+.private-check span {
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.private-check input {
+  margin: 0.6rem 0 0 0.3rem;
+  zoom: 1.5;
+  accent-color: #695eef;
+}
+
+input[type="password"]:disabled {
+  background: rgba(136, 136, 136, 0.61);
+}
+
+.btns-box {
+  margin: 1.7rem 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.btns-box button {
+  width: 100%;
+}
+
+.btns-box button:hover {
+  background: #574dc4;
+}
+
+.room-create-error-msg{
+  position: relative;
+  height: 0px;
+  color: #695eef;
+}

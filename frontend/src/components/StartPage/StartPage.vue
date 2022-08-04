@@ -1,4 +1,5 @@
 <template>
+  <TheBackground />
   <div id="first-page-box">
     <canvas class="orb-canvas"></canvas>
     <div class="overlay">
@@ -26,14 +27,16 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import TheCarousel from './TheCarousel.vue'
-import LoginInput from './LoginInput.vue'
-import SignupInput from './SignupInput.vue'
+import { ref } from "vue"
+import TheBackground from "@/components/TheBackground.vue"
+import TheCarousel from "./TheCarousel.vue"
+import LoginInput from "./LoginInput.vue"
+import SignupInput from "./SignupInput.vue"
 
 export default {
-  name: 'FisrtPage',
+  name: "FisrtPage",
   components: {
+    TheBackground,
     TheCarousel,
     LoginInput,
     SignupInput,
@@ -41,35 +44,35 @@ export default {
   setup() {
     const isLoginOpen = ref(false)
     const isSignupOpen = ref(false)
-    const loginText = ref('로그인')
-    const signupText = ref('회원가입')
+    const loginText = ref("로그인")
+    const signupText = ref("회원가입")
 
     const loginOpen = function () {
       if (isLoginOpen.value === false && isSignupOpen.value === false) {
-        loginText.value = '뒤로가기'
+        loginText.value = "뒤로가기"
         isLoginOpen.value = !isLoginOpen.value
       } else if (isSignupOpen.value === true) {
-        signupText.value = '회원가입'
-        loginText.value = '뒤로가기'
+        signupText.value = "회원가입"
+        loginText.value = "뒤로가기"
         isLoginOpen.value = !isLoginOpen.value
         isSignupOpen.value = !isSignupOpen.value
-      } else if (loginText.value === '뒤로가기') {
-        loginText.value = '로그인'
+      } else if (loginText.value === "뒤로가기") {
+        loginText.value = "로그인"
         isLoginOpen.value = !isLoginOpen.value
       }
     }
 
     const signupOpen = function () {
       if (isSignupOpen.value === false && isLoginOpen.value === false) {
-        signupText.value = '뒤로가기'
+        signupText.value = "뒤로가기"
         isSignupOpen.value = !isSignupOpen.value
       } else if (isLoginOpen.value === true) {
-        loginText.value = '로그인'
-        signupText.value = '뒤로가기'
+        loginText.value = "로그인"
+        signupText.value = "뒤로가기"
         isLoginOpen.value = !isLoginOpen.value
         isSignupOpen.value = !isSignupOpen.value
-      } else if (signupText.value === '뒤로가기') {
-        signupText.value = '회원가입'
+      } else if (signupText.value === "뒤로가기") {
+        signupText.value = "회원가입"
         isSignupOpen.value = !isSignupOpen.value
       }
     }
@@ -87,5 +90,5 @@ export default {
 </script>
 
 <style>
-@import '../../assets/startpage/startpage.css';
+@import "../../assets/startpage/startpage.css";
 </style>

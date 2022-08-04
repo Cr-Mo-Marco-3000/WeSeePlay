@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import StartView from '../views/StartView.vue'
+import StartPage from '../views/StartPage.vue'
 import MainPage from '@/views/MainPage.vue'
 import ErrorPage from '@/views/ErrorPage.vue'
+import RoomPage from '@/views/RoomPage.vue'
+
+import KakaoLoginPage from '@/views/KakaoLoginPage.vue'
 // eslint-disable-next-line
 import store from '@/store'
 
@@ -9,18 +12,28 @@ const routes = [
   {
     path: '/',
     name: 'startpage',
-    component: StartView,
+    component: StartPage,
   },
   {
     path: '/lounge',
     name: 'mainpage',
     component: MainPage,
   },
+  {
+    path: '/room',
+    name: 'roompage',
+    component: RoomPage,
+  },
   // 보내는 에러 종류에 따라서 띄우는 에러를 다양하게 함
   {
     path: '/error/:errorname',
     name: 'errorpage',
     component: ErrorPage,
+  },
+  {
+    path: '/login/kakao',
+    name: 'kakaologin',
+    component: KakaoLoginPage,
   },
   {
     path: '/:pathMatch(.*)*',

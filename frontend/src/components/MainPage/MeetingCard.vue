@@ -4,50 +4,38 @@
         <div id="card-head">
    
           <span id="card-title">
-            {{cardInfo.title}}
+            {{info.title}}
           </span>
           <i
             id="isprivate-icon"
             class="fa-solid fa-lock"
-            v-show="is_private"
+            v-show="info.isPrivate"
           ></i>   
         </div>
 
         <div id="card-host" class="col-12">
-          host: {{cardInfo.host}}
+          host: {{info.hostNickname}}
         </div>
         
         <div class="col-12 flex justify-end items-center">
           <span id="people-number">
-            &nbsp; {{cardInfo.participate}}명/{{cardInfo.wholenum}}명
+            &nbsp; {{info.joinUsers.length}}명/12명
           </span>
         </div>
       </div>
   </div>
-  <card-modal></card-modal>
 </template>
 
 <script>
-import { ref } from 'vue'
-import CardModal from '@/components/MainPage/CardModal'
 
 export default {
   components: {
-    CardModal,
   },
   props:{
     info: Object,
   },
-  setup(props){
-    // console.log(props)
-    // console.log(props.info)
-    const cardInfo = ref(props.info)
-    const is_private = ref(1)
-    is_private.value =cardInfo.value['private']
-    return{
-      is_private, cardInfo,
-      icon:ref(false)
-    }
+  setup(){
+
   }
 
 }
