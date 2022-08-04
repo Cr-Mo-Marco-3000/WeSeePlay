@@ -10,7 +10,7 @@ const CERTIFICATION = '/certification'
 
 const KakaoLogin = 'http://localhost:8081/login/kakao'
 
-const kakaoSendToken = '/token'
+const kakaoSendToken = 'http://localhost:8080/api/v1/oauth/kakao'
 
 export default {
   // 회원 관련 API
@@ -52,7 +52,7 @@ export default {
     kakaoLogin: () => KakaoLogin,
 
     // 카카오 토큰 백엔드 전송 api => 수정 필요
-    kakaoSendToken: () => KakaoLogin + kakaoSendToken,
+    kakaoSendToken: () => kakaoSendToken,
   },
   // ROOM 관련 API
   room: {

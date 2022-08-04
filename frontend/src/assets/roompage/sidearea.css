@@ -1,3 +1,73 @@
 .sideArea {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  border: 0.25rem solid #625eef;
+  position: fixed;
+  width: 24rem;
+  right: 1rem;
+  top: 1rem;
+  bottom: 6rem;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.exit {
+  border: none;
+  background-color: transparent;
+  position: absolute;
+  width: 2.5rem;
+  height: 2.5rem;
+  right: 0.7rem;
+  top: 0.7rem;
+  cursor: pointer;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  position: absolute;
+  font-size: 1.3rem;
+  top: 0.7rem;
+  left: 1.5rem;
+}
+
+/* 여기부터 gameArea 관련 */
+
+.game-mainarea {
   position: relative;
+  top: 5rem;
+  width: 94%;
+  height: 70%;
+  left: 3%;
+  overflow: hidden;
+}
+
+.game-item {
+  background-color: rgba(201, 197, 241, 0.25);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.game-item:hover {
+  background-color: rgba(201, 197, 241, 0.7);
+}
+
+.game-item:hover > .game-text {
+  transform: scale(1.02);
+}
+
+.game-text {
+  font-size: 0.9rem;
+  text-align: start;
+}
+.game-title {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
 }

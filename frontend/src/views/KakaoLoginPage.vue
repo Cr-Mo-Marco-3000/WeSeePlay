@@ -6,6 +6,7 @@
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import api from '@/api/api'
+import store from '@/store/index.js'
 const router = useRoute()
 console.log(router.query.code)
 const sendQuery = async function () {
@@ -33,12 +34,18 @@ const sendQuery = async function () {
 
     // 백으로부터 받은 response를 가지고 또 일해야 한다.
     response = await axios({
-      url: api.users.kakaoSendToken,
+      url: api.users.kakaoSendToken(),
       method: 'POST',
       data: {
         accessToken: token,
       },
     })
+    if (response.status === 200) {
+      const token = response.data.accessToken
+      store.dispatch('saveToken', token)
+      store.dispatch('fetchMe')
+      router.push({ name: 'mainpage' })
+    }
   } catch (err) {
     router.push({ name: 'errorpage', params: { errorname: 500 } })
   }
