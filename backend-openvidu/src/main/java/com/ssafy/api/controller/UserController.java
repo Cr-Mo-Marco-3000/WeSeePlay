@@ -70,8 +70,8 @@ public class UserController {
 		 * 액세스 토큰이 없이 요청하는 경우, 403 에러({"error": "Forbidden", "message": "Access Denied"}) 발생.
 		 */
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
-		String userId = userDetails.getUsername();
-		User user = userService.getUserByUserId(userId);
+		String userEmail = userDetails.getUsername();
+		User user = userService.getUserByUserEmail(userEmail);
 		
 		return ResponseEntity.status(200).body(UserRes.of(user));
 	}

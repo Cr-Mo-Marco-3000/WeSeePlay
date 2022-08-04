@@ -15,7 +15,7 @@ export default {
   mutations: {
     // 아래가 예시에 적힌 방식인데, 필요 없을 것 같다.
     // SET_TOKEN: (state, token) => state.token = token,
-    SET_TOKEN: (state, token) => localStorage.setItem('token', token),
+    SET_TOKEN: (state, token) => (state.token = token),
     SET_ME: (state, me) => (state.me = me),
     REMOVE_TOKEN: () => {
       localStorage.setItem('token', '')
@@ -27,15 +27,16 @@ export default {
   actions: {
     saveToken: (context, token) => {
       context.commit('SET_TOKEN', token)
+      localStorage.setItem('token', token)
     },
     removeToken: (context) => {
       context.commit('SET_TOKEN', '')
     },
-    logout: (context) => {
-      context.dispatch('REMOVE_TOKEN')
-      context.dispatch('REMOVE_ME')
-      alert('로그아웃 되었습니다')
-      router.push({ name: 'home' })
+    logout: ({ commit }) => {
+      commit('SET_TOKEN', '')
+      commit('REMOVE_TOKEN')
+      commit('REMOVE_ME')
+      router.push({ name: 'startpage' })
     },
     // 본인 정보 불러오기
     fetchMe: ({ getters, commit, dispatch }) => {

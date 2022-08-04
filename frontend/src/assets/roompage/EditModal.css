@@ -1,0 +1,22 @@
+.user-input select {
+  width: 100%;
+  margin: 0.5rem 0;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0 1rem;
+  border: solid 2px rgba(0, 0, 0, 0.616);
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.edit-error-msg {
+  position: relative;
+  height: 0;
+  color: #695eef;
+  top: 3px;
+}
+
+.room_edit_btn {
+  margin-top: 1rem;
+}
