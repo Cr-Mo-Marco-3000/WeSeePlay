@@ -37,7 +37,6 @@ const props = defineProps({
 const currentPage = ref(0)
 const maxPages = ref(0)
 const filteredUsers = ref([])
-const vpp = ref([6, 4])
 
 maxPages.value = parseInt((props.users.length - 1) / 6)
 
