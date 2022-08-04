@@ -1,6 +1,7 @@
 package com.ssafy.api.controller;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -20,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ssafy.api.request.ForcedOutReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomUpdatePatchReq;
 import com.ssafy.api.response.RoomCreatePostRes;
+import com.ssafy.api.response.RoomListGetRes;
 import com.ssafy.api.service.RoomService;
 import com.ssafy.api.service.UserService;
 import com.ssafy.api.service.UserRoomService;
@@ -225,7 +228,7 @@ public class RoomController {
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공")
     })
-	public ResponseEntity<? extends BaseResponseBody> getRoomList(
+	public String getRoomList(
 			@ApiIgnore Authentication authentication, @RequestParam HashMap<String, Object>map ) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
@@ -234,22 +237,40 @@ public class RoomController {
 		JsonObject jo=new JsonObject();
 		jo.addProperty("totalData",totalRoom.size());
 		List<Room> roomList=roomService.getRoomList(map);
+		JsonArray jsonArray=new JsonArray();
 		for (Room room : roomList) {
 			JsonObject temp=new JsonObject();
 			temp.addProperty("roomId", room.getId());
 			
+			UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
+			User tempuser=userService.getUserById(userRoom.getUserId());
+			temp.addProperty("hostId",userRoom.getUserId());
+			temp.addProperty("hostNickname",tempuser.getUserEmail());
 			temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 			temp.addProperty("title", room.getTitle());
 			temp.addProperty("descript", room.getDescript());
 			temp.addProperty("isPrivate", room.getIsPrivate());
 			temp.addProperty("game", room.getGame());
 			
-			
-			System.out.println(room.getId());
-			System.out.println(room.getTitle());
-			System.out.println("========");
+			List<UserRoom>tempUserRoom=userRoomService.getMemberIdByRoomId(room.getId());
+			JsonArray userInfos=new JsonArray();
+			for (UserRoom data : tempUserRoom) {
+				JsonObject info=new JsonObject();
+				User tempUser=userService.getUserById(data.getUserId());
+				info.addProperty("userId", tempUser.getId());
+				info.addProperty("userEmail", tempUser.getUserEmail());
+				info.addProperty("userNickname", tempUser.getUserNickname());
+				userInfos.add(info);
+			}
+			temp.add("joinUsers", userInfos);
+			jsonArray.add(temp);
 		}
 		
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		jo.add("content", jsonArray);
+		System.out.println(jo.toString());
+//		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		
+		return jo.toString();
+//		return ResponseEntity.status(200).body(RoomListGetRes.of(200, "Success",totalRoom.size(),jsonArray));
 	}
 }

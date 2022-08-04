@@ -46,4 +46,14 @@ public class UserRoomServiceImpl implements UserRoomService{
 		return userRoom.getIsHost();
 	}
 
+	@Override
+	public UserRoom getHostIdByRoomId(Long roomId) {
+		return userRoomRepository.findByRoomIdAndIsHost(roomId,1);
+	}
+
+	@Override
+	public List<UserRoom> getMemberIdByRoomId(Long roomId) {
+		return userRoomRepository.findAllByRoomIdAndIsHost(roomId,0);
+	}
+
 }

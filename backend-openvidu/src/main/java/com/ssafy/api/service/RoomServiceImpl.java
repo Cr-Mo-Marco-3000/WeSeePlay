@@ -138,7 +138,6 @@ public class RoomServiceImpl implements RoomService {
 				System.out.println(room.getSize());
 			}else {
 				room=roomRepository.findAllByIsPrivateAndTitleContains(0,(String)map.get("query"),pageable);
-				System.out.println("333333333333333333333");
 			}
 			
 //			//제목으로 검색

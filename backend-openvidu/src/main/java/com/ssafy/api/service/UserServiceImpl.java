@@ -1,5 +1,7 @@
 package com.ssafy.api.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,5 +38,10 @@ public class UserServiceImpl implements UserService {
 	public User getUserByUserEmail(String userEmail) {
 		User user = userRepository.findUserByUserEmail(userEmail).get();
 		return user;
+	}
+
+	@Override
+	public User getUserById(long userId) {
+		return userRepository.findUserById(userId);
 	}
 }

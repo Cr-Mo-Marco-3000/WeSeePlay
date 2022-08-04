@@ -14,4 +14,8 @@ public interface UserRoomService {
 	UserRoom setIsHost(int hostId,int roomId);
 
 	int checkIsHost(Long userId, Long roomId);
+
+	UserRoom getHostIdByRoomId(Long roomId);
+
+	List<UserRoom> getMemberIdByRoomId(Long roomId);
 }
