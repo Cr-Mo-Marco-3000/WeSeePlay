@@ -1,6 +1,6 @@
 <template>
   <div class="bottombar">
-    <div class="triColumn">.</div>
+    <div class="triColumn"></div>
     <div class="triColumn">
       <div class="middleIconDiv">
         <input
@@ -50,8 +50,7 @@
           id="exitInput"
           type="checkbox"
         />
-        <label class="btn" for="exitInput">
-          <i class="fa-solid fa-circle-xmark fa-2x"></i>
+        <label class="btn exit-btn" for="exitInput">
         </label>
       </div>
     </div>
@@ -91,20 +90,26 @@
       </div>
       <!-- right icon bundle -->
       <div class="rightIconBundle">
-        <ul class="sideAreaBundleList" v-if="sideAreaBundle">
-          <li class="sideAreaBundleItem">참여자</li>
-          <li class="sideAreaBundleItem">채팅</li>
-          <li class="sideAreaBundleItem">게임</li>
-        </ul>
         <input
           v-model="sideAreaBundle"
-          class="input"
+          class="sideAreaBundleInput"
           id="sideAreaBundleInput"
           type="checkbox"
         />
-        <label class="btn" for="sideAreaBundleInput">
+        <label class="btn sideAreaBundleOpen" for="sideAreaBundleInput">
           <i class="fa-solid fa-angles-up fa-2x"></i>
         </label>
+
+        <label class="sideAreaBundleItem" for="participantAreaInput">
+          <i class="fa-solid fa-users fa-2x"></i>
+        </label>
+        <label class="sideAreaBundleItem" for="chattingAreaInput">
+          <i class="fa-solid fa-comments fa-2x"></i>
+        </label>
+        <label class="sideAreaBundleItem" for="gameAreaInput">
+          <i class="fa-solid fa-gamepad fa-2x"></i>
+        </label>
+        
       </div>
     </div>
   </div>
