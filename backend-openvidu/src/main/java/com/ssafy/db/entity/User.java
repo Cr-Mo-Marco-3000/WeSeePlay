@@ -6,21 +6,45 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.PrePersist;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 
 /**
  * 유저 모델 정의.
  */
-@Entity
+@Entity(name = "user")
 @Getter
 @Setter
+@DynamicUpdate
 public class User extends BaseEntity{
-    String position;
-    String department;
-    String name;
-    String userId;
-
+	@Column(name="user_email")
+    String userEmail;
+	
     @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    String password;
+    @Column(name="user_password")
+    String userPassword;
+    	
+    @Column(name="user_nickname")
+    String userNickname;
+
+    @CreationTimestamp
+    @Column(name="register_time", updatable = false)
+    private LocalDateTime registerTime;
+    
+    @Column(name="last_login")
+    private LocalDateTime lastLogin;
+    
+    @PrePersist
+    public void beforeCreate() {
+    	registerTime=LocalDateTime.now();
+    	lastLogin=LocalDateTime.now();
+    }
+    
 }
