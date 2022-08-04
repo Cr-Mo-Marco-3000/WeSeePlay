@@ -159,12 +159,14 @@ public class RoomServiceImpl implements RoomService {
 	public void plus(Long roomId) {
 		Optional<Room> room = roomRepository.findById(roomId);
 		room.get().setJoinCount(room.get().getJoinCount()+1);
+		roomRepository.save(room.get());
 	}
 
 	@Override
 	public void minus(Long roomId) {
 		Optional<Room> room = roomRepository.findById(roomId);
 		room.get().setJoinCount(room.get().getJoinCount()-1);
+		roomRepository.save(room.get());
 	}
 
 }
