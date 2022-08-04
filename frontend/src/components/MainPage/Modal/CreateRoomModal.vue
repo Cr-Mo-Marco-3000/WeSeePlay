@@ -17,9 +17,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 @import "../../../assets/mainpage/create_room_modal.css";
 .modal-window {
-  height: 31rem;
+  height: 31.5rem;
 }
 </style>

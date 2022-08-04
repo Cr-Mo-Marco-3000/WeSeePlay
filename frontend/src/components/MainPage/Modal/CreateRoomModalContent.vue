@@ -29,9 +29,7 @@
       :disabled="roomInfo.isPrivate == false"
     />
   </div>
-  <div>
-    <p>{{roomCreateInputError}}</p>
-  </div>
+  <span class="room-create-error-msg">{{roomCreateInputError}}</span>
   <div class="btns-box">
     <button class="overlay__btn" @click="createRoom">생성</button>
   </div>
@@ -59,7 +57,6 @@ export default {
     })
 
     // 오류 메시지
-    const roomCreateError = ref('') 
     const roomCreateInputError = ref('')
     const createRoom = async function () {
       try {
@@ -84,10 +81,8 @@ export default {
         })
         if (response.data.statusCode === 201) {
           console.log("방 생성 성공");
-          roomCreateError.value = "방이 생성 되었습니다.";
         }
       } catch (err) {
-        roomCreateError.value = '방 생성에 실패하였습니다.'
         console.log("실패")
       }
     };

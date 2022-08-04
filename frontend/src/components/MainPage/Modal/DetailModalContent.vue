@@ -15,7 +15,7 @@
     <span>내용</span>
     <p>{{ info.descript }}</p>
   </div>
-  <div v-if="!info.private" class="detail-text">
+  <div v-if="!info.isPrivate" class="detail-text">
     <span>참여자 목록</span>
     <div class="user-list">
       <div v-for="user, idx in info.joinUsers" :key="idx">{{ user }}</div>
