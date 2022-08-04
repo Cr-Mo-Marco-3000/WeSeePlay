@@ -21,7 +21,6 @@ svg {
 
 .overlay {
   margin: auto;
-  margin-top: 5vh;
   width: 100%;
   max-width: 1140px;
   max-height: 740px;
@@ -91,6 +90,10 @@ svg {
   border: 2px solid black;
   border-width: 2px;
   margin-right: 0.75rem;
+}
+
+.signup-btn {
+  margin-bottom: 1rem;
 }
 
 #logo-box {

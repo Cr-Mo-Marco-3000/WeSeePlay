@@ -1,0 +1,18 @@
+.pw-change-btn {
+  width: 100%;
+  margin-top: 2.2rem;
+}
+
+.auth-error-msg {
+  position: relative;
+  height: 0px;
+  color: #695eef;
+  top: 3px;
+}
+
+@media only screen and (max-width: 600px) {
+  .auth-error-msg {
+    font-size: 0.7rem;
+    top: 5px;
+  }
+}
