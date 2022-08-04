@@ -5,11 +5,10 @@
     </button>
     <div class="row col justify-center video-list-case">
       <VideoItem
-        class="video"
+        class="video col-6"
         v-for="user in filteredUsers"
         :key="user.id"
         :user="user"
-        :class="filteredUsers.length < 5 ? 'col-5' : 'col-4'"
       />
     </div>
     <button
@@ -37,7 +36,6 @@ const props = defineProps({
 const currentPage = ref(0)
 const maxPages = ref(0)
 const filteredUsers = ref([])
-const vpp = ref([6, 4])
 
 maxPages.value = parseInt((props.users.length - 1) / 6)
 
