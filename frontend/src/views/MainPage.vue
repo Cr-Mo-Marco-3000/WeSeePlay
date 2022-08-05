@@ -212,12 +212,7 @@ export default {
           roomsInfo.value = response.data.content
           // paginator의 총 페이지 수
           console.log("페이지네이터 내와")
-          maxpage.value = parseInt(roomsInfo.value.length / 6) + 1
-          console.log(maxpage.value)
-          if (roomsInfo.value.length % 6) {
-            maxpage.value += 1
-          }
-          console.log(maxpage.value)
+          maxpage.value = response.data.totalPage
         }
       } catch (err) {
         lookupErrorMsg.value = "조회 실패."
