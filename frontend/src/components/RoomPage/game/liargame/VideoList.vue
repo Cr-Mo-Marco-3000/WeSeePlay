@@ -1,53 +1,45 @@
 <template>
-  <div class="row all-box">
-    <SpeakerArea
-      class="col-6 self-center"
-      @next-player="nextPlayer"
-      :speaker="users[speaker]"
+  <div class="row">
+    <MainVideo
+      class="self-center"
+      :class="isSide ? 'col-7' : 'col-5'"
+      :user="users[speaker]"
+      @next="nextPlayer"
     />
-    <AllUsers class="col-6" :users="users" />
-    <!-- <div class="col-6 temp">All Users</div> -->
+    <AllVideo
+      class="self-center"
+      :class="isSide ? 'col-5' : 'col-7'"
+      :users="users"
+      :isSide="isSide"
+    />
   </div>
 </template>
 
 <script setup>
-import SpeakerArea from "./SpeakerArea.vue"
-import AllUsers from "./AllUsers.vue"
 import { ref, defineProps } from "vue"
+import MainVideo from "./MainVideo.vue"
+import AllVideo from "./AllVideo.vue"
 
-const prop = defineProps({
+const props = defineProps({
+  isSide: {
+    type: Boolean,
+    required: true,
+  },
   users: {
     type: Array,
     required: true,
   },
 })
 
-// 다음 플레이어에게 턴 넘기기
 const speaker = ref(0)
 
 const nextPlayer = function () {
-  const now = speaker.value
-
-  if (now + 1 === prop.users.length) {
+  if (speaker.value + 1 === props.users.length) {
     speaker.value = 0
-  } else {
-    speaker.value = now + 1
+    return
   }
+  speaker.value += 1
 }
 </script>
 
-<style>
-.temp {
-  border: solid 2px black;
-}
-
-#speaker {
-  padding: 2rem;
-  height: 300px;
-}
-
-.all-box {
-  height: 100%;
-  border-radius: 10px;
-}
-</style>
+<style></style>

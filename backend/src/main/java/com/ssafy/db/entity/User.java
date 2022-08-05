@@ -46,7 +46,6 @@ public class User extends BaseEntity{
     @PrePersist
     public void beforeCreate() {
     	registerTime=LocalDateTime.now();
-    	lastLogin=LocalDateTime.now();
     }
     
 }

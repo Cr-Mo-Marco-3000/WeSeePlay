@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 		user.setUserPassword(passwordEncoder.encode(userRegisterInfo.getUserPassword()));
 		user.setUserNickname(userRegisterInfo.getUserNickname());
 		user.setRegisterTime(LocalDateTime.now());
-		user.setLastLogin(LocalDateTime.now());
+		user.setLastLogin(null);
 		return userRepository.save(user);
 	}
 

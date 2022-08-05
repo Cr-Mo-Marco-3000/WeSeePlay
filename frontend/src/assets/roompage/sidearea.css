@@ -19,6 +19,9 @@
   height: 2.5rem;
   right: 0.7rem;
   top: 0.7rem;
+}
+
+.exit-label {
   cursor: pointer;
 }
 
@@ -34,7 +37,7 @@
 
 /* 여기부터 gameArea 관련 */
 
-.game-mainarea {
+.game-list-area {
   position: relative;
   top: 5rem;
   width: 94%;
@@ -70,4 +73,49 @@
 .game-title {
   font-size: 1.3rem;
   margin-bottom: 10px;
+}
+
+/* 여기부터 ParticipantArea 관련 */
+
+.participant-chat-list-area {
+  position: absolute;
+  width: 94%;
+  top: 5rem;
+  bottom: 2rem;
+  left: 3%;
+  overflow: auto;
+}
+
+.participant-item {
+  position: relative;
+  width: 100%;
+  height: 4rem;
+  background-color: rgb(201, 197, 241, 0.25);
+  margin-bottom: 1rem;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+}
+/* 참가자들 item의 항목들 */
+/* 순서대로 이름, 권한, 마이크, 화면 => 마이크와 화면은 조작 기능이 아니라 표시만 */
+.participant-item div:nth-child(1) {
+  margin-left: 1.5rem;
+  width: auto;
+  font-size: large;
+  margin-right: 1px;
+}
+
+.participant-item div:nth-child(2) {
+  margin-left: 0.7rem;
+  color: rgb(0, 0, 0, 0.5);
+}
+
+.participant-item div:nth-child(3) {
+  position: absolute;
+  right: 1.7rem;
+}
+
+.participant-item div:nth-child(4) {
+  position: absolute;
+  right: 3.7rem;
 }

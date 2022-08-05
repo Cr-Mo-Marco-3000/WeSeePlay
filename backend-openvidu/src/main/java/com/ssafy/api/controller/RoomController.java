@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -233,11 +234,12 @@ public class RoomController {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
-		List<Room> totalRoom=roomService.findAll();
 		JsonObject jo=new JsonObject();
-		jo.addProperty("totalData",totalRoom.size());
-		List<Room> roomList=roomService.getRoomList(map);
+		Page<Room> totalRoomList=roomService.getRoomList(map);
+		List<Room> roomList=totalRoomList.getContent();
 		JsonArray jsonArray=new JsonArray();
+		jo.addProperty("totalPage",totalRoomList.getTotalPages());
+		jo.addProperty("totalData",totalRoomList.getTotalElements());
 		for (Room room : roomList) {
 			JsonObject temp=new JsonObject();
 			temp.addProperty("roomId", room.getId());
@@ -265,12 +267,49 @@ public class RoomController {
 			temp.add("joinUsers", userInfos);
 			jsonArray.add(temp);
 		}
-		
 		jo.add("content", jsonArray);
-		System.out.println(jo.toString());
-//		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
-		
+		jo.addProperty("statusCode", 200);
+		jo.addProperty("message", "Success");
 		return jo.toString();
-//		return ResponseEntity.status(200).body(RoomListGetRes.of(200, "Success",totalRoom.size(),jsonArray));
+	}
+	
+	@GetMapping("/info/{roomId}")
+	@ApiOperation(value = "단일 방 정보", notes = "단일 방 정보를 반환한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 401, message = "권한 없음")
+    })
+	public String getRoomInfo(
+			@ApiIgnore Authentication authentication,
+			@PathVariable int roomId) {
+		Room room=roomService.getRoomById(roomId);
+		JsonObject temp=new JsonObject();
+		temp.addProperty("roomId", room.getId());
+		
+		UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
+		User tempuser=userService.getUserById(userRoom.getUserId());
+		temp.addProperty("hostId",userRoom.getUserId());
+		temp.addProperty("hostNickname",tempuser.getUserEmail());
+		temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+		temp.addProperty("title", room.getTitle());
+		temp.addProperty("descript", room.getDescript());
+		temp.addProperty("isPrivate", room.getIsPrivate());
+		temp.addProperty("game", room.getGame());
+		
+		List<UserRoom>tempUserRoom=userRoomService.getMemberIdByRoomId(room.getId());
+		JsonArray userInfos=new JsonArray();
+		for (UserRoom data : tempUserRoom) {
+			JsonObject info=new JsonObject();
+			User tempUser=userService.getUserById(data.getUserId());
+			info.addProperty("userId", tempUser.getId());
+			info.addProperty("userEmail", tempUser.getUserEmail());
+			info.addProperty("userNickname", tempUser.getUserNickname());
+			userInfos.add(info);
+		}
+		temp.add("joinUsers", userInfos);
+		temp.addProperty("statusCode", 200);
+		temp.addProperty("message", "Success");
+		return temp.toString();
+
 	}
 }

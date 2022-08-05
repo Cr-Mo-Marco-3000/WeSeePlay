@@ -51,7 +51,7 @@ export default {
         let errorFlag = true;
         // 검증용 정규식
         const passwordRegex =
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#()?&]{8,16}$/;
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!#$%&'*+-/=?^_`{|}~."(),:;<>@[\]\\])[A-Za-z\d!#$%&'*+-/=?^_`{|}~."(),:;<>@[\]\\]{8,16}$/
 
         if (!credentials.newPassword || !credentials.passwordConfirm) {
           passwordErrorMsg.value = "비밀번호를 입력하세요";

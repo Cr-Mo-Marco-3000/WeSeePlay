@@ -1,77 +1,79 @@
 <template>
-  <div class="row items-center" style="height: 100%">
-    <button class="moveBtn" @click="move(-1)" :disabled="currentPage === 0">
-      --
-    </button>
-    <div class="row col justify-center video-list-case">
-      <VideoItem
-        class="video"
-        v-for="user in filteredUsers"
+  <div class="row full-height justify-center items-center">
+    <a class="col-1" @click.stop="getPageUser(currentPage - 1)">
+      <img src="@/assets/leftArrow.png" />
+    </a>
+    <div class="row col-10">
+      <video-item
+        v-for="user in pageUsers"
         :key="user.id"
         :user="user"
-        :class="filteredUsers.length < 5 ? 'col-5' : 'col-4'"
+        :class="grid"
+        class="self-center"
       />
     </div>
-    <button
-      class="moveBtn"
-      @click="move(1)"
-      :disabled="currentPage === maxPages"
-    >
-      ++
-    </button>
+    <a class="col-1" @click.stop="getPageUser(currentPage + 1)">
+      <img src="@/assets/rightArrow.png" />
+    </a>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue"
 import VideoItem from "./VideoItem.vue"
+import { ref, defineProps, watchEffect } from "vue"
 
 const props = defineProps({
   users: {
     type: Array,
     required: true,
   },
+  isSide: {
+    type: Boolean,
+    required: true,
+  },
 })
 
-// user video pagination용
+// pagination 관련
+const pageUsers = ref([])
 const currentPage = ref(0)
 const maxPages = ref(0)
-const filteredUsers = ref([])
+const pageLimit = ref(6)
 
-maxPages.value = parseInt((props.users.length - 1) / 6)
-
-const getUserList = function () {
-  const cp = currentPage.value
-  const mp = maxPages.value
-  if (cp === mp && mp !== 0) {
-    filteredUsers.value = props.users.slice(
-      props.users.length - 6,
+const getPageUser = function (page) {
+  if (page > maxPages.value || page < 0) {
+    return
+  } else if (page === maxPages.value) {
+    pageUsers.value = props.users.slice(
+      props.users.length - pageLimit.value,
       props.users.length
     )
   } else {
-    filteredUsers.value = props.users.slice(cp * 6, cp * 6 + 6)
+    pageUsers.value = props.users.slice(
+      page * pageLimit.value,
+      (page + 1) * pageLimit.value
+    )
   }
+  currentPage.value = page
 }
 
-getUserList()
+getPageUser(0)
 
-const move = function (cal) {
-  currentPage.value = currentPage.value + cal
-  getUserList()
-}
+// grid 나누는 거 관련
+const grid = ref("col-6")
+
+watchEffect(() => {
+  if (props.isSide === true || props.users.length < 5) {
+    grid.value = "col-6"
+    pageLimit.value = 4
+  } else {
+    grid.value = "col-4"
+    pageLimit.value = 6
+  }
+  maxPages.value = parseInt((props.users.length - 1) / pageLimit.value)
+  getPageUser(0)
+})
+
+console.log("videoList", props.isSide)
 </script>
 
-<style>
-.video {
-  max-width: 350px;
-}
-
-.video-list-case {
-  height: 100%;
-  padding-bottom: 20px;
-}
-
-.moveBtn {
-  height: 30px;
-}
-</style>
+<style></style>
