@@ -103,7 +103,7 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public List<Room> getRoomList(HashMap<String, Object> map) {
+	public Page<Room> getRoomList(HashMap<String, Object> map) {
 		Pageable pageable=null;
 		if(map.get("sortingMethod").equals("byTime")) {
 			if(map.get("sortingOrder").equals("toUp")) {
@@ -152,7 +152,7 @@ public class RoomServiceImpl implements RoomService {
 //				}
 //			}
 		}
-		return room.getContent();
+		return room;
 	}
 
 	@Override
