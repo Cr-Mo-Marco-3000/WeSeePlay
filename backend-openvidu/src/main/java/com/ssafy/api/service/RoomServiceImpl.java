@@ -103,7 +103,7 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public List<Room> getRoomList(HashMap<String, Object> map) {
+	public Page<Room> getRoomList(HashMap<String, Object> map) {
 		Pageable pageable=null;
 		if(map.get("sortingMethod").equals("byTime")) {
 			if(map.get("sortingOrder").equals("toUp")) {
@@ -152,19 +152,21 @@ public class RoomServiceImpl implements RoomService {
 //				}
 //			}
 		}
-		return room.getContent();
+		return room;
 	}
 
 	@Override
 	public void plus(Long roomId) {
 		Optional<Room> room = roomRepository.findById(roomId);
 		room.get().setJoinCount(room.get().getJoinCount()+1);
+		roomRepository.save(room.get());
 	}
 
 	@Override
 	public void minus(Long roomId) {
 		Optional<Room> room = roomRepository.findById(roomId);
 		room.get().setJoinCount(room.get().getJoinCount()-1);
+		roomRepository.save(room.get());
 	}
 
 }

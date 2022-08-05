@@ -1,8 +1,10 @@
 package com.ssafy.api.controller;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Random;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -30,11 +32,13 @@ import com.ssafy.api.request.ChangeNicknameReq;
 import com.ssafy.api.request.ChangeUserPasswordReq;
 import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.api.response.UserLoginPostRes;
+import com.ssafy.api.response.UserPwGetRes;
 import com.ssafy.api.response.UserRes;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.common.util.JwtTokenUtil;
+import com.ssafy.common.util.RandomStringUtil;
 import com.ssafy.common.util.SendEmailUtil;
 import com.ssafy.db.entity.Email;
 import com.ssafy.db.entity.EmailPw;
@@ -62,6 +66,9 @@ public class UserController {
 	
 	@Autowired
 	PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	RandomStringUtil randomStringUtil;
 	
 	@GetMapping("/email/duplicate/check")
 	@ApiOperation(value = "중복 이메일 확인", notes = "<strong>중복 체크를 실행한다.") 
@@ -179,7 +186,7 @@ public class UserController {
 		}
 	}
 	
-	@GetMapping("/email/certification/pw/check")
+	@PutMapping("/email/certification/pw/check")
 	@ApiOperation(value = "이메일 인증 확인", notes = "<strong>이메일 인증을 실행한다.") 
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공"),
@@ -187,21 +194,18 @@ public class UserController {
         @ApiResponse(code = 500, message = "서버 오류")
     })
 	public ResponseEntity<? extends BaseResponseBody> certificationPwCheck(
-			@RequestParam (value="userEmail", required = true) String userEmail) {
-	
-		Optional<EmailPw> emailPw = userService.certificationPwCheck(userEmail);
+			@RequestBody HashMap<String, String> map) {
+		Optional<EmailPw> emailPw = userService.certificationPwCheck(map.get("userEmail"));
 		if(emailPw.isPresent() && emailPw.get().getCertificationCheck().equals("1")) {
-			try {
-				String tempPw=sendEmailUtil.SendPwEmail(userEmail);
-				userService.updatePassword(userEmail,tempPw);
-				userService.delCertificationPw(userEmail);
-			}catch (MessagingException e) {
-				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
-			}
+			Random rand = new Random();
+			int pwLen=rand.nextInt(5)+8;
+			String tempPw=randomStringUtil.getRandomPw(pwLen);
+			userService.updatePassword(map.get("userEmail"),tempPw);
+			userService.delCertificationPw(map.get("userEmail"));
 			
-			return ResponseEntity.status(201).body(BaseResponseBody.of(200, "Success"));
+			return ResponseEntity.status(201).body(UserPwGetRes.of(200, "Success",tempPw));
 		}else {
-			return ResponseEntity.status(500).body(BaseResponseBody.of(401, "Unauthorized"));
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
 		}
 	}
 	
@@ -217,19 +221,19 @@ public class UserController {
 
 		Optional<Email> email = userService.certificationCheck(registerInfo.getUserEmail());
 		//인증된 이메일일 때
-		if(email.isPresent() && email.get().getCertificationCheck().equals("1")) {
+//		if(email.isPresent() && email.get().getCertificationCheck().equals("1")) {
 			//지우고 user테이블에 data추가
-			userService.delCertification(email.get());
+//			userService.delCertification(email.get());
 			User user = userService.createUser(registerInfo);
 			if(user != null) {
 				return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Created"));
 			}else {
 				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
 			}
-		}
+//		}
 		
 		//인증되지 않은 이메일일 때
-		return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+//		return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
 	}
 	
 	//본인 정보 조회
