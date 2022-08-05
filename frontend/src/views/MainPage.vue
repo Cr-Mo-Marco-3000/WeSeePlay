@@ -30,20 +30,20 @@
               <div class="private-box">
                 <div id="private-btn">
                   <input
-                    v-model="lookupInfo.isPrivate"
+                    v-model="isPrivatebtn"
                     class="tgl tgl-light"
                     id="cb1"
                     type="checkbox"
                   />
                   <label class="tgl-btn" for="cb1"></label>
                 </div>
-                <span v-if="lookupInfo.isPrivate">공개방 조회</span>
+                <span v-if="isPrivatebtn">공개방 조회</span>
                 <span v-else>전체방 조회</span>
               </div>
               <div id="sort-method">
                 <meeting-card-sort
-                  :sortinglevel="lookupInfo.sort.sortingLevel"
-                  :sortingmethod="lookupInfo.sort.sortingMethod"
+                  :sortinglevel="lookupInfo.sortingOrder"
+                  :sortingmethod="lookupInfo.sortingMethod"
                   @changeSortLevel="changeSortLevel"
                   @changeSortMethod="changeSortMethod"
                 ></meeting-card-sort>
@@ -137,30 +137,30 @@ export default {
 
     // sorting level
     function changeSortLevel() {
-      if (lookupInfo.sort.sortingLevel == "toUp") {
-        lookupInfo.sort.sortingLevel = "toDown"
+      if (lookupInfo.sortingOrder == "toUp") {
+        lookupInfo.sortingOrder = "toDown"
       } else {
-        lookupInfo.sort.sortingLevel = "toUp"
+        lookupInfo.sortingOrder = "toUp"
       }
     }
     function changeSortMethod() {
-      if (lookupInfo.sort.sortingMethod == "byTime") {
-        lookupInfo.sort.sortingMethod = "byNumber"
+      if (lookupInfo.sortingMethod == "byTime") {
+        lookupInfo.sortingMethod = "byNumber"
       } else {
-        lookupInfo.sort.sortingMethod = "byTime"
+        lookupInfo.sortingMethod = "byTime"
       }
     }
 
     // request용
+    let isPrivatebtn = ref(true)
     let lookupInfo = reactive({
       pageNumber: 1,
-      pageSize: 6,
-      sort: {
-        sortingLevel: "toDown",
-        sortingMethod: "byTime",
-      },
+      contentsCount: 6,
+      sortingOrder: "toDown",
+      sortingMethod: "byTime",
       query: meetingquery.value,
-      isPrivate: true,
+      queryType: 1,
+      isPrivate: false,
     })
 
     //  적당한 input 생성용
@@ -186,9 +186,14 @@ export default {
     let roomsInfo = ref(Array)
 
     watchEffect(async () => {
-      console.log(lookupInfo.sort.sortingLevel, lookupInfo.sort.sortingMethod)
+      console.log(lookupInfo.sortingOrder, lookupInfo.sortingMethod)
       try {
         // query String 생성
+        if (isPrivatebtn.value) {
+          lookupInfo.isPrivate = 1
+        } else {
+          lookupInfo.isPrivate = 0
+        }
         let querystring = "/?"
         for (let key in lookupInfo) {
           let value = lookupInfo[key]
@@ -201,15 +206,18 @@ export default {
           method: "GET",
           headers: { authorization: "Bearer " + token },
         })
-        if (response.data.statusCode === 200) {
+        console.log(response.data)
+        if (response.status === 200) {
           console.log("조회 성공!")
-          roomsInfo.value = response.content
-          console.log(roomsInfo.value)
+          roomsInfo.value = response.data.content
           // paginator의 총 페이지 수
-          maxpage.value = parseInt(response.totalData / 6)
-          if (response.totalData % 6) {
+          console.log("페이지네이터 내와")
+          maxpage.value = parseInt(roomsInfo.value.length / 6) + 1
+          console.log(maxpage.value)
+          if (roomsInfo.value.length % 6) {
             maxpage.value += 1
           }
+          console.log(maxpage.value)
         }
       } catch (err) {
         lookupErrorMsg.value = "조회 실패."
@@ -221,7 +229,7 @@ export default {
           ),
         ]
         if (tmparr.value.length % 6) {
-          maxpage.value = parseInt(tmparr.value.length / 6) + 1
+          maxpage.value = parseInt(tmparr.value.length / 6)
         } else {
           maxpage.value = parseInt(tmparr.value.length / 6)
         }
@@ -243,6 +251,7 @@ export default {
       // 정렬 방법
       changeSortMethod,
       changeSortLevel,
+      isPrivatebtn,
 
       // 회의방 정보 배열(객체)
       // 페이지네이터

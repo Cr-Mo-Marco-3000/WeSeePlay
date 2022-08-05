@@ -2,9 +2,10 @@
   <!-- 타이틀 -->
   <div class="title">게임</div>
   <!-- 본문 -->
-  <div class="game-mainarea">
+  <div class="game-list-area">
     <div class="game-item">
       <div class="game-title game-text">라이어게임</div>
+      <!-- 아래 부분의 game-text가 게임 하나 부분입니다. -->
       <div class="game-text">
         당신은 제시어에 대해 사람들에게 설명해야 합니다.<br />
         하지만 걱정하지 마세요. <br />
