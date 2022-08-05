@@ -50,8 +50,7 @@
           id="exitInput"
           type="checkbox"
         />
-        <label class="btn exit-btn" for="exitInput">
-        </label>
+        <label class="btn exit-btn" for="exitInput"> </label>
       </div>
     </div>
     <div class="triColumn">
@@ -109,14 +108,13 @@
         <label class="sideAreaBundleItem" for="gameAreaInput">
           <i class="fa-solid fa-gamepad fa-2x"></i>
         </label>
-        
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue"
+import { ref } from 'vue'
 // 마이크가 오픈되어 있지 않음 => 기본값
 const isMicOpen = ref(false)
 
@@ -128,7 +126,7 @@ const isSettingOpen = ref(false)
 
 // 빠져나가는 버튼
 const backToLounge = function () {
-  console.log("라운지로 숑숑숑")
+  console.log('라운지로 숑숑숑')
 }
 
 // 아래 세 개는 sideArea
@@ -144,5 +142,5 @@ const sideAreaBundle = ref(false)
 </script>
 
 <style scoped>
-@import url("../../../src/assets/roompage/bottombar.css");
+@import url('../../../src/assets/roompage/bottombar.css');
 </style>

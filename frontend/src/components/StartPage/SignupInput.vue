@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2'
 import { ref, reactive } from 'vue'
 import axios from 'axios'
 import ClauseText from './ClauseText.vue'
@@ -151,7 +152,7 @@ export default {
         }
       } catch (err) {
         if (err.response.data.statusCode === 400) {
-          emailErrorMsg.value = '이메일 주소에 문제가 있습니다.'
+          emailErrorMsg.value = '인증 이메일을 보내는 데 실패했습니다'
         } else if (err.response.data.statusCode === 500) {
           router.push({ name: 'errorpage', params: { errorname: 500 } })
         }
@@ -164,20 +165,14 @@ export default {
         let errorFlag = true
         // 검증용 정규식
         const passwordRegex =
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#()?&]{8,16}$/
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!<>{}|\\*[\]/%*#()?&]{8,16}$/
         // 이메일 인증 로직
         // 이메일 인증을 보낸 상태에서
         if (isAuthOpen.value === true) {
+          // eslint-disable-next-line
           const response = await axios.get(
             api.users.verifyEmail(credentials.email)
           )
-          console.log(response)
-          if (!(response.data.statusCode === 200)) {
-            emailErrorMsg.value = '이메일 인증이 완료되지 않았습니다'
-            errorFlag = false
-          } else if (response.data.statusCode === 200) {
-            emailErrorMsg.value = '이메일 인증이 완료되었습니다'
-          }
         }
         // 비밀번호
         if (!credentials.password || !credentials.passwordConfirm) {
@@ -235,6 +230,7 @@ export default {
           }, 3000)
           errorFlag = false
         }
+        console.log('asdf')
         // 하나라도 false라면 여기서 걸려서 return
         if (errorFlag === false) {
           return
@@ -249,15 +245,22 @@ export default {
           },
         })
         if (response.status === 201) {
-          alert('회원가입이 완료되었습니다')
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: '회원가입이 완료되었습니다',
+            showConfirmButton: false,
+            timer: 1500,
+          })
           // 페이지 로그인 페이지로 전환
           context.emit('signup-done')
           return
         }
       } catch (err) {
-        if (err.response.status === 401 || err.response.status === 400) {
-          console.log()
-          alert('입력하신 정보를 다시 한 번 확인해 주세요')
+        if (err.response.status === 401) {
+          emailErrorMsg.value = '이메일 인증을 완료해 주세요'
+        } else if (err.response.staus === 400) {
+          emailErrorMsg.value = '이메일 주소를 확인해주세요'
         } else {
           router.push({ name: 'errorpage', params: { errorname: 500 } })
         }
