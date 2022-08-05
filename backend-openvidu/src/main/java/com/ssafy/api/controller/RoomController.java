@@ -238,7 +238,8 @@ public class RoomController {
 		Page<Room> totalRoomList=roomService.getRoomList(map);
 		List<Room> roomList=totalRoomList.getContent();
 		JsonArray jsonArray=new JsonArray();
-		jo.addProperty("totalData",totalRoomList.getTotalPages());
+		jo.addProperty("totalPage",totalRoomList.getTotalPages());
+		jo.addProperty("totalData",totalRoomList.getTotalElements());
 		for (Room room : roomList) {
 			JsonObject temp=new JsonObject();
 			temp.addProperty("roomId", room.getId());
