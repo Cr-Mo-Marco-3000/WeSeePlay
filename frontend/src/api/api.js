@@ -52,8 +52,13 @@ export default {
     // 비밀번호 수정
     changePassword: () => AUTHHOST + USERS + '/password',
 
-    // 임시 비밀번호 발송
-    requireTempPassword: () => AUTHHOST + USERS + EMAIL + CERTIFICATION + '/pw',
+    // 이메일 체크(비밀번호 찾기)
+    sendEmailForPW: () =>
+      AUTHHOST + USERS + EMAIL + CERTIFICATION + '/pw',
+
+    verifyEmailForPW: () =>
+      AUTHHOST + USERS + EMAIL +CERTIFICATION + '/pw/check',
+
 
     // 이메일 인증 확인
     getTempPassword: (email) =>
