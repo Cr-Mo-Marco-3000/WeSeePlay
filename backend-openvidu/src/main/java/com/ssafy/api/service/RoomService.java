@@ -3,6 +3,8 @@ package com.ssafy.api.service;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomUpdatePatchReq;
 import com.ssafy.db.entity.Room;
@@ -22,7 +24,7 @@ public interface RoomService {
 
 	List<Room> findAll();
 
-	List<Room> getRoomList(HashMap<String, Object> map);
+	Page<Room> getRoomList(HashMap<String, Object> map);
 
 	void plus(Long roomId);
 	
