@@ -67,6 +67,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2'
 import { ref, reactive } from 'vue'
 import axios from 'axios'
 import ClauseText from './ClauseText.vue'
@@ -164,7 +165,7 @@ export default {
         let errorFlag = true
         // 검증용 정규식
         const passwordRegex =
-          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#()?&]{8,16}$/
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!#$%&'*+-/=?^_`{|}~."(),:;<>@[\]\\])[A-Za-z\d!#$%&'*+-/=?^_`{|}~."(),:;<>@[\]\\]{8,16}$/
         // 이메일 인증 로직
         // 이메일 인증을 보낸 상태에서
         if (isAuthOpen.value === true) {
@@ -249,7 +250,13 @@ export default {
           },
         })
         if (response.status === 201) {
-          alert('회원가입이 완료되었습니다')
+          Swal.fire({
+            position: 'top-end',
+            icon: 'success',
+            title: '회원가입이 완료되었습니다',
+            showConfirmButton: false,
+            timer: 1500
+          })
           // 페이지 로그인 페이지로 전환
           context.emit('signup-done')
           return
@@ -257,7 +264,10 @@ export default {
       } catch (err) {
         if (err.response.status === 401 || err.response.status === 400) {
           console.log()
-          alert('입력하신 정보를 다시 한 번 확인해 주세요')
+          Swal.fire({
+            icon: 'error',
+            text: '입력하신 정보를 다시 한 번 확인해 주세요',
+          })
         } else {
           router.push({ name: 'errorpage', params: { errorname: 500 } })
         }
