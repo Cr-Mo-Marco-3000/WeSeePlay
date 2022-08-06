@@ -53,37 +53,20 @@
         <label class="btn exit-btn" for="exitInput"> </label>
       </div>
     </div>
+    <!-- 오른쪽 div 공간 -->
     <div class="triColumn">
       <div class="rightIconDiv">
-        <input
-          v-model="participantArea"
-          class="input"
-          id="participantAreaInput"
-          type="checkbox"
-        />
-        <label class="btn" for="participantAreaInput">
+        <label @click="clickParticipant" class="btn">
           <i class="fa-solid fa-users fa-2x"></i>
         </label>
       </div>
       <div class="rightIconDiv">
-        <input
-          v-model="chattingArea"
-          class="input"
-          id="chattingAreaInput"
-          type="checkbox"
-        />
-        <label class="btn" for="chattingAreaInput">
+        <label @click="clickChatting" class="btn">
           <i class="fa-solid fa-comments fa-2x"></i>
         </label>
       </div>
       <div class="rightIconDiv">
-        <input
-          v-model="gameArea"
-          class="input"
-          id="gameAreaInput"
-          type="checkbox"
-        />
-        <label class="btn" for="gameAreaInput">
+        <label @click="clickGame" class="btn">
           <i class="fa-solid fa-gamepad fa-2x"></i>
         </label>
       </div>
@@ -99,13 +82,13 @@
           <i class="fa-solid fa-angles-up fa-2x"></i>
         </label>
 
-        <label class="sideAreaBundleItem" for="participantAreaInput">
+        <label @click="clickParticipant" class="sideAreaBundleItem">
           <i class="fa-solid fa-users fa-2x"></i>
         </label>
-        <label class="sideAreaBundleItem" for="chattingAreaInput">
+        <label @click="clickChatting" class="sideAreaBundleItem">
           <i class="fa-solid fa-comments fa-2x"></i>
         </label>
-        <label class="sideAreaBundleItem" for="gameAreaInput">
+        <label @click="clickGame" class="sideAreaBundleItem">
           <i class="fa-solid fa-gamepad fa-2x"></i>
         </label>
       </div>
@@ -114,7 +97,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive, defineEmits } from 'vue'
+
+const emit = defineEmits(['signal-side-area-status'])
+
 // 마이크가 오픈되어 있지 않음 => 기본값
 const isMicOpen = ref(false)
 
@@ -129,16 +115,31 @@ const backToLounge = function () {
   console.log('라운지로 숑숑숑')
 }
 
-// 아래 세 개는 sideArea
-const participantArea = ref(false)
+// sideArea 버튼 3개
+const areaStatus = reactive({
+  participantArea: false,
+  chattingArea: false,
+  gameArea: false,
+})
 
-const chattingArea = ref(false)
-
-const gameArea = ref(false)
-
-// sideArea 묶음
-
+// sideArea 묶음 버튼
 const sideAreaBundle = ref(false)
+
+// 창을 여는 함수 3개 => String 형태로 전달
+const clickParticipant = function () {
+  areaStatus.participantArea = !areaStatus.participantArea
+  emit('signal-side-area-status', areaStatus)
+}
+
+const clickChatting = function () {
+  areaStatus.chattingArea = !areaStatus.chattingArea
+  emit('signal-side-area-status', areaStatus)
+}
+
+const clickGame = function () {
+  areaStatus.gameArea = !areaStatus.gameArea
+  emit('signal-side-area-status', areaStatus)
+}
 </script>
 
 <style scoped>

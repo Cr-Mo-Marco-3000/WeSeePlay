@@ -1,34 +1,46 @@
 <template>
-  <div v-if="isSideAreaOpen" class="sideArea">
+  <div>{{ signalSideArea }}</div>
+  <div v-if="!(signalSideArea === 'close')" class="sideArea">
     <button class="exit">
-      <i @click="closeSideArea" class="fa-solid fa-x fa-lg exit-label"></i>
+      <i
+        @click="emit('click-close', 'close')"
+        class="fa-solid fa-x fa-lg exit-label"
+      ></i>
     </button>
-    <GameArea v-if="sideAreas.isGameAreaOpen" />
-    <ChattingArea v-if="sideAreas.isChattingAreaOpen" />
-    <ParticipantArea v-if="sideAreas.isParticipantAreaOpen" />
+    <!-- <ParticipantArea /> -->
+    <ChattingArea />
+    <!-- <GameArea /> -->
   </div>
 </template>
 
 <script setup>
-import GameArea from './sidearea/GameArea.vue'
+// import GameArea from './sidearea/GameArea.vue'
 import ChattingArea from './sidearea/ChattingArea.vue'
-import ParticipantArea from './sidearea/ParticipantArea.vue'
-import { ref, reactive } from 'vue'
-
-// sideArea 자체를 띄워주는 변수 => 상위 요소에서 그리드와 같이 사용 필요
-const isSideAreaOpen = ref(true)
-
-// 각각 컴포넌트들을 띄워주는 변수들
-const sideAreas = reactive({
-  isGameAreaOpen: false,
-  isChattingAreaOpen: false,
-  isParticipantAreaOpen: true,
+// import ParticipantArea from './sidearea/ParticipantArea.vue'
+// eslint-disable-next-line
+const props = defineProps({
+  signalSideArea: Object,
 })
 
-// X 누르면 창이 꺼진다.
-const closeSideArea = function () {
-  isSideAreaOpen.value = false
+/* eslint-disable */
+const emit = defineEmits(['click-close'])
+
+const tempList = []
+
+for (let i = 0; i < 5; i++) {
+  const user_id = i
+  const user_nickname = `참여자${i}`
+  const is_player = 2 % i
+  const is_host = 0
+  const user = {
+    userId: user_id,
+    userNickname: user_nickname,
+    isPlayer: is_player,
+    isHost: is_host,
+  }
+  tempList.push(user)
 }
+console.log(tempList)
 </script>
 
 <style scoped>
