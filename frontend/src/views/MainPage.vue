@@ -82,7 +82,7 @@
     </CreateRoomModal>
 
     <DetailModal v-if="isDetailModal" @close="isDetailModal = false">
-      <DetailModalContent :info="detailInfo" />
+      <DetailModalContent :roomID="detailRoomID" />
     </DetailModal>
 
     <AuthModal v-if="isChangePw" @close="isChangePw = false">
@@ -168,7 +168,7 @@ export default {
     let tmparr = ref([])
     for (i = 0; i < 25; i++) {
       tmparr.value.push({
-        roomsId: i,
+        roomId: i,
         hostNickname: i,
         callStartTime: "2022.08.01",
         title: "님만 오면 고" + i,
@@ -232,10 +232,10 @@ export default {
     })
 
     const isDetailModal = ref(false)
-    const detailInfo = ref({})
+    const detailRoomID = ref({})
     const openDetail = function (info) {
       isDetailModal.value = true
-      detailInfo.value = info
+      detailRoomID.value = info.roomId
     }
 
     return {
@@ -260,7 +260,7 @@ export default {
       // roomsData,
 
       openDetail,
-      detailInfo,
+      detailRoomID,
 
       isChangePw: ref(false),
     }

@@ -1,6 +1,6 @@
 // 회원 서버 URL
-const AUTHHOST = "http://localhost:8080/api/v1"
-// const AUTHHOST = "http://i7a501.p.ssafy.io:8010/api/v1"
+// const AUTHHOST = "http://localhost:8080/api/v1"
+const AUTHHOST = "http://i7a501.p.ssafy.io:8010/api/v1"
 
 // 방 서버 URL
 // Room Server가 배포되면 아래 주소로 바꾸어 끼자
@@ -73,5 +73,7 @@ export default {
   room: {
     // ROOM 생성, 삭제, 조회를 한번에!
     createRoom: () => ROOMHOST + ROOMS,
+
+    roomInfo: (roomID) => ROOMHOST + ROOMS + `/info/${roomID}`,
   },
 }
