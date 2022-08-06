@@ -247,7 +247,8 @@ public class RoomController {
 			UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
 			User tempuser=userService.getUserById(userRoom.getUserId());
 			temp.addProperty("hostId",userRoom.getUserId());
-			temp.addProperty("hostNickname",tempuser.getUserEmail());
+			temp.addProperty("hostEmail",tempuser.getUserEmail());
+			temp.addProperty("hostNickname",tempuser.getUserNickname());
 			temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 			temp.addProperty("title", room.getTitle());
 			temp.addProperty("descript", room.getDescript());
@@ -289,7 +290,8 @@ public class RoomController {
 		UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
 		User tempuser=userService.getUserById(userRoom.getUserId());
 		temp.addProperty("hostId",userRoom.getUserId());
-		temp.addProperty("hostNickname",tempuser.getUserEmail());
+		temp.addProperty("hostEmail",tempuser.getUserEmail());
+		temp.addProperty("hostNickname",tempuser.getUserNickname());
 		temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 		temp.addProperty("title", room.getTitle());
 		temp.addProperty("descript", room.getDescript());
