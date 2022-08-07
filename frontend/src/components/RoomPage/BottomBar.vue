@@ -56,18 +56,18 @@
     <!-- 오른쪽 div 공간 -->
     <div class="triColumn">
       <div class="rightIconDiv">
-        <label @click="clickParticipant" class="btn">
-          <i class="fa-solid fa-users fa-2x"></i>
+        <label id="1" @click="clickSidebarIcon" class="btn">
+          <i id="1" class="fa-solid fa-users fa-2x"></i>
         </label>
       </div>
       <div class="rightIconDiv">
-        <label @click="clickChatting" class="btn">
-          <i class="fa-solid fa-comments fa-2x"></i>
+        <label id="2" @click="clickSidebarIcon" class="btn">
+          <i id="2" class="fa-solid fa-comments fa-2x"></i>
         </label>
       </div>
       <div class="rightIconDiv">
-        <label @click="clickGame" class="btn">
-          <i class="fa-solid fa-gamepad fa-2x"></i>
+        <label id="3" @click="clickSidebarIcon" class="btn">
+          <i id="3" class="fa-solid fa-gamepad fa-2x"></i>
         </label>
       </div>
       <!-- right icon bundle -->
@@ -82,14 +82,14 @@
           <i class="fa-solid fa-angles-up fa-2x"></i>
         </label>
 
-        <label @click="clickParticipant" class="sideAreaBundleItem">
-          <i class="fa-solid fa-users fa-2x"></i>
+        <label id="3" @click="clickSidebarIcon" class="sideAreaBundleItem">
+          <i id="3" class="fa-solid fa-gamepad fa-2x"></i>
         </label>
-        <label @click="clickChatting" class="sideAreaBundleItem">
-          <i class="fa-solid fa-comments fa-2x"></i>
+        <label id="2" @click="clickSidebarIcon" class="sideAreaBundleItem">
+          <i id="2" class="fa-solid fa-comments fa-2x"></i>
         </label>
-        <label @click="clickGame" class="sideAreaBundleItem">
-          <i class="fa-solid fa-gamepad fa-2x"></i>
+        <label id="1" @click="clickSidebarIcon" class="sideAreaBundleItem">
+          <i id="1" class="fa-solid fa-users fa-2x"></i>
         </label>
       </div>
     </div>
@@ -97,9 +97,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, defineEmits } from 'vue'
-
-const emit = defineEmits(['signal-side-area-status'])
+import store from '@/store'
+import { ref } from 'vue'
 
 // 마이크가 오픈되어 있지 않음 => 기본값
 const isMicOpen = ref(false)
@@ -115,30 +114,11 @@ const backToLounge = function () {
   console.log('라운지로 숑숑숑')
 }
 
-// sideArea 버튼 3개
-const areaStatus = reactive({
-  participantArea: false,
-  chattingArea: false,
-  gameArea: false,
-})
-
 // sideArea 묶음 버튼
 const sideAreaBundle = ref(false)
 
-// 창을 여는 함수 3개 => String 형태로 전달
-const clickParticipant = function () {
-  areaStatus.participantArea = !areaStatus.participantArea
-  emit('signal-side-area-status', areaStatus)
-}
-
-const clickChatting = function () {
-  areaStatus.chattingArea = !areaStatus.chattingArea
-  emit('signal-side-area-status', areaStatus)
-}
-
-const clickGame = function () {
-  areaStatus.gameArea = !areaStatus.gameArea
-  emit('signal-side-area-status', areaStatus)
+const clickSidebarIcon = function (event) {
+  store.dispatch('openSidebar', event.target.id)
 }
 </script>
 

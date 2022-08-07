@@ -7,6 +7,7 @@
   right: 1rem;
   top: 1rem;
   bottom: 6rem;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   z-index: 1;
   overflow: hidden;
 }
@@ -160,8 +161,35 @@
   border-radius: 10px;
 }
 
+/* 개별 메시지 */
 .message {
   position: relative;
+  width: 100%;
+}
+
+.message-user-info {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.message-send-user {
+  padding-left: 0.5rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
+
+.message-send-time {
+  padding-left: 0.5rem;
+  height: 2rem;
+  font-size: 0.8rem;
+  line-height: 2rem;
+}
+
+.message-send-content {
+  text-align: start;
+  font-size: 0.9rem;
+  padding-left: 0.5rem;
 }
 
 /* 메시지 보낼 사용자들을 정하는 구간 */
