@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
-@RequestMapping("/api/v1/oauth")
+@RequestMapping("/api/v1/users/oauth")
 public class OAuthController {
 	
 	@Autowired
