@@ -23,8 +23,8 @@
   </div>
   <div v-else class="user-input room-pw-input">
     <span>비밀번호</span>
-    <p>비공개 방입니다.</p>
-    <input type="password" />
+    <span> 비공개 방입니다.</span>
+    <input v-model="passwordInput" type="password" />
   </div>
 
   <button @click="joinRoom" class="overlay__btn join-btn">방 입장</button>
@@ -45,11 +45,11 @@ export default {
     let info = ref({})
     const store = useStore()
     const router = useRouter()
+    const token = store.state.users.token
+    const passwordInput = ref("")
 
     watchEffect(async () => {
       try {
-        const token = store.state.users.token
-
         const response = await axios({
           url: api.room.roomInfo(props.roomID),
           method: "GET",
@@ -57,7 +57,6 @@ export default {
         })
         if (response.status === 200) {
           info.value = response.data
-          console.log(info.value)
         }
       } catch (error) {
         Swal.fire({
@@ -67,11 +66,57 @@ export default {
       }
     })
 
-    const joinRoom = function () {
-      router.push({ name: "roompage", params: { roomID: props.roomID } })
-    }
+    const joinRoom = async function () {
+      try {
+        const data = ref({})
+        if (info.value.isPrivate) {
+          data.value = {
+            roomID: props.roomID,
+            inputPassword: passwordInput.value,
+          }
+        } else {
+          data.value = {
+            roomID: props.roomID,
+          }
+        }
 
-    return { info, joinRoom }
+        const response = await axios({
+          url: api.room.enterRoom(),
+          method: "POST",
+          headers: { authorization: "Bearer " + token },
+          data: data.value,
+        })
+
+        if (response.status === 200) {
+          router.push({ name: "roompage", params: { roomID: props.roomID } })
+        }
+      } catch (error) {
+        if (error.response.status === 400) {
+          if (error.response.data.message === "Bad Request - Bad Password") {
+            Swal.fire({
+              icon: "error",
+              text: "비밀번호가 틀렸습니다",
+            })
+          } else if (
+            error.response.data.message === "Bad Request - Too Many People"
+          ) {
+            Swal.fire({
+              icon: "error",
+              text: "수용 인원을 초과하였습니다!",
+            })
+          } else {
+            Swal.fire({
+              icon: "error",
+              text: "존재하지 않는 계정입니다. 다시 시도해 주세요.",
+            })
+            store.dispatch("logout")
+          }
+        } else {
+          router.push({ name: "errorpage", params: { errorname: 500 } })
+        }
+      }
+    }
+    return { info, joinRoom, passwordInput }
   },
 }
 </script>

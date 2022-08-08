@@ -24,20 +24,24 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
-import VideoArea from "@/components/RoomPage/VideoArea.vue"
-import SideArea from "@/components/RoomPage/SideArea.vue"
-import BottomBar from "@/components/RoomPage/BottomBar.vue"
-import EditModal from "@/components/RoomPage/meeting/EditModal.vue"
-import EditModalContent from "@/components/RoomPage/meeting/EditModalContent.vue"
-import LiarModal from "@/components/RoomPage/game/liargame/modal/LiarModal.vue"
-import LiarModalContent from "@/components/RoomPage/game/liargame/modal/LiarModalContent.vue"
-import { useRoute } from "vue-router"
+import { ref } from 'vue'
+import VideoArea from '@/components/RoomPage/VideoArea.vue'
+import SideArea from '@/components/RoomPage/SideArea.vue'
+import BottomBar from '@/components/RoomPage/BottomBar.vue'
+import EditModal from '@/components/RoomPage/meeting/EditModal.vue'
+import EditModalContent from '@/components/RoomPage/meeting/EditModalContent.vue'
+import LiarModal from '@/components/RoomPage/game/liargame/modal/LiarModal.vue'
+import LiarModalContent from '@/components/RoomPage/game/liargame/modal/LiarModalContent.vue'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 
 //  props 정보
 const router = useRoute()
-const roomID = router.params.roomID
+const roomID = router.params.roomId
 console.log(roomID)
+const store = useStore()
+
+store.dispatch('getRoomInfo', roomID)
 
 // SideArea Open 정보
 const isSide = ref(false)
