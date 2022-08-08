@@ -46,7 +46,11 @@ public class RoomServiceImpl implements RoomService {
 		Room room = new Room();
 		room.setTitle(roomCreatePostReq.getTitle());
 		room.setDescript(roomCreatePostReq.getDescript());
-		room.setRoomPassword(passwordEncoder.encode(roomCreatePostReq.getRoomPassword()));
+		if(roomCreatePostReq.getRoomPassword()==null) {
+			room.setRoomPassword(null);
+		}else {
+			room.setRoomPassword(passwordEncoder.encode(roomCreatePostReq.getRoomPassword()));
+		}
 		room.setGame(roomCreatePostReq.getGame());
 		room.setCallStartTime(LocalDateTime.now());
 		room.setIsPrivate(roomCreatePostReq.getIsPrivate());
@@ -84,8 +88,8 @@ public class RoomServiceImpl implements RoomService {
 			room.get().setDescript(roomUpdatePatchReq.getDescript());
 		}
 		//공개방으로 전환
-		if(roomUpdatePatchReq.getRoomPassword()=="") {
-			room.get().setRoomPassword("");
+		if(roomUpdatePatchReq.getRoomPassword()==null || roomUpdatePatchReq.getRoomPassword()=="") {
+			room.get().setRoomPassword(null);
 			room.get().setIsPrivate(0);
 		}else if(roomUpdatePatchReq.getRoomPassword()!=null) {
 			room.get().setRoomPassword(passwordEncoder.encode(roomUpdatePatchReq.getRoomPassword()));
@@ -167,6 +171,20 @@ public class RoomServiceImpl implements RoomService {
 		Optional<Room> room = roomRepository.findById(roomId);
 		room.get().setJoinCount(room.get().getJoinCount()-1);
 		roomRepository.save(room.get());
+	}
+
+	@Override
+	public void setMode(int roomId, int gameMode) {
+		Optional<Room> room = roomRepository.findById((long) roomId);
+		room.get().setGame(gameMode);
+		roomRepository.save(room.get());
+	}
+
+	@Override
+	public int getGameMode(int roomId) {
+		Room room=roomRepository.findGameById((long)roomId);
+		return room.getGame();
+		
 	}
 
 }

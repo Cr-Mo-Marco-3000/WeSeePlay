@@ -23,4 +23,6 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	Page<Room> findAllByIsPrivate(int i, Pageable pageable);
 
 	Page<Room> findAllByIsPrivateAndTitleContains(int i, String string, Pageable pageable);
+
+	Room findGameById(long roomId);
 }

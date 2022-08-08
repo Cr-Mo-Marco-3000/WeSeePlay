@@ -16,7 +16,7 @@ public class RoomCreatePostReq {
 	String title;
 	@ApiModelProperty(name="방 설명", example="어서오세요.")
 	String descript;
-	@ApiModelProperty(name="방 비밀번호", example="password")
+	@ApiModelProperty(name="방 비밀번호", example="password", required = false)
 	String roomPassword;
 	@ApiModelProperty(name="방 상태", example="0, 1")
 	int game;

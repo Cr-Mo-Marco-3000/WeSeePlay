@@ -29,4 +29,8 @@ public interface RoomService {
 	void plus(Long roomId);
 	
 	void minus(Long roomId);
+
+	void setMode(int roomId, int gameMode);
+
+	int getGameMode(int roomId);
 }
