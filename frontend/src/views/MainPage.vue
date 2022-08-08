@@ -6,7 +6,7 @@
       <div id="container" class="flex flex-center">
         <div class="main-text">
           <img src="../assets/logo_nontext.png" />
-          <h6>We See! Wee Play!</h6>
+          <h6>We See! We Play!</h6>
         </div>
         <div id="body-content" class="row">
           <div

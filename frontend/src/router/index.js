@@ -49,9 +49,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // 실제 서비스용 navguard
-  // const { isLoggedin } = store.getters
+  const { isLoggedin } = store.getters
   // 디버깅용 변수 선언
-  const isLoggedin = true
+  // const isLoggedin = true
 
   // 스타트페이지가 아닌 곳으로 접근하고, 로그인이 되어 있지 않을 때,
   if (to.name !== "startpage" && !isLoggedin) {
@@ -60,12 +60,10 @@ router.beforeEach((to, from, next) => {
       text: "로그인이 필요한 페이지입니다!",
     })
     next({ name: "startpage" })
+  } else if (to.name === "startpage" && isLoggedin) {
+    next({ name: "mainpage" })
   } else {
     next()
-  }
-  // 로그인이 되어 있는데 스타트페이지로 접근할 때
-  if (to.name === "startpage" && isLoggedin) {
-    next({ name: "mainpage" })
   }
 })
 
