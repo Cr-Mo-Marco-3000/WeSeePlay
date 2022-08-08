@@ -283,33 +283,39 @@ public class RoomController {
 			@ApiIgnore Authentication authentication,
 			@PathVariable int roomId) {
 		Room room=roomService.getRoomById(roomId);
-		JsonObject temp=new JsonObject();
-		temp.addProperty("roomId", room.getId());
-		
-		UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
-		User tempuser=userService.getUserById(userRoom.getUserId());
-		temp.addProperty("hostId",userRoom.getUserId());
-		temp.addProperty("hostNickname",tempuser.getUserEmail());
-		temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-		temp.addProperty("title", room.getTitle());
-		temp.addProperty("descript", room.getDescript());
-		temp.addProperty("isPrivate", room.getIsPrivate());
-		temp.addProperty("game", room.getGame());
-		
-		List<UserRoom>tempUserRoom=userRoomService.getMemberIdByRoomId(room.getId());
-		JsonArray userInfos=new JsonArray();
-		for (UserRoom data : tempUserRoom) {
-			JsonObject info=new JsonObject();
-			User tempUser=userService.getUserById(data.getUserId());
-			info.addProperty("userId", tempUser.getId());
-			info.addProperty("userEmail", tempUser.getUserEmail());
-			info.addProperty("userNickname", tempUser.getUserNickname());
-			userInfos.add(info);
+		if(room!=null) {
+			JsonObject temp=new JsonObject();
+			temp.addProperty("roomId", room.getId());
+			
+			UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
+			User tempuser=userService.getUserById(userRoom.getUserId());
+			temp.addProperty("hostId",userRoom.getUserId());
+			temp.addProperty("hostNickname",tempuser.getUserEmail());
+			temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+			temp.addProperty("title", room.getTitle());
+			temp.addProperty("descript", room.getDescript());
+			temp.addProperty("isPrivate", room.getIsPrivate());
+			temp.addProperty("game", room.getGame());
+			
+			List<UserRoom>tempUserRoom=userRoomService.getMemberIdByRoomId(room.getId());
+			JsonArray userInfos=new JsonArray();
+			for (UserRoom data : tempUserRoom) {
+				JsonObject info=new JsonObject();
+				User tempUser=userService.getUserById(data.getUserId());
+				info.addProperty("userId", tempUser.getId());
+				info.addProperty("userEmail", tempUser.getUserEmail());
+				info.addProperty("userNickname", tempUser.getUserNickname());
+				userInfos.add(info);
+			}
+			temp.add("joinUsers", userInfos);
+			temp.addProperty("statusCode", 200);
+			temp.addProperty("message", "Success");
+			return temp.toString();
+		}else {
+			JsonObject error=new JsonObject();
+			error.addProperty("statusCode",404);
+			error.addProperty("message","Deleted Room");
+			return error.toString();
 		}
-		temp.add("joinUsers", userInfos);
-		temp.addProperty("statusCode", 200);
-		temp.addProperty("message", "Success");
-		return temp.toString();
-
 	}
 }
