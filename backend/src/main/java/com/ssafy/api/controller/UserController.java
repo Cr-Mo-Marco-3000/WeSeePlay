@@ -221,19 +221,19 @@ public class UserController {
 
 		Optional<Email> email = userService.certificationCheck(registerInfo.getUserEmail());
 		//인증된 이메일일 때
-//		if(email.isPresent() && email.get().getCertificationCheck().equals("1")) {
-			//지우고 user테이블에 data추가
-//			userService.delCertification(email.get());
+		if(email.isPresent() && email.get().getCertificationCheck().equals("1")) {
+//			지우고 user테이블에 data추가
+			userService.delCertification(email.get());
 			User user = userService.createUser(registerInfo);
 			if(user != null) {
 				return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Created"));
 			}else {
 				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
 			}
-//		}
+		}
 		
 		//인증되지 않은 이메일일 때
-//		return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+		return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
 	}
 	
 	//본인 정보 조회
