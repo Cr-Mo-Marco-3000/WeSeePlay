@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,4 +26,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 	Page<Room> findAllByIsPrivateAndTitleContains(int i, String string, Pageable pageable);
 
 	Room findGameById(long roomId);
+
+	Page<Room> findAllByIdIn(List<Long> id, Pageable pageable);
+
+	Page<Room> findAllByIsPrivateAndIdIn(int i, List<Long> id, Pageable pageable);
 }

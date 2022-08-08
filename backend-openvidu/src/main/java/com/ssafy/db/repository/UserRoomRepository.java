@@ -28,4 +28,6 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 	long countByRoomId(long roomId);
 
 	int countByRoomIdAndUserId(Long roomId, Long hostId);
+
+	List<UserRoom> findAllByIsHostAndUserIdIn(int i, List<Long> userIds);
 }

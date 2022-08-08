@@ -123,7 +123,7 @@ public class RoomServiceImpl implements RoomService {
 						Integer.valueOf((String) map.get("contentsCount")),Sort.by("joinCount").and(Sort.by("callStartTime").descending()));
 			}else {
 				pageable=PageRequest.of(Integer.valueOf((String) map.get("pageNumber"))-1, 
-						Integer.valueOf((String) map.get("contentsCount")),Sort.by("callStartTime").descending().and(Sort.by("callStartTime").descending()));
+						Integer.valueOf((String) map.get("contentsCount")),Sort.by("joinCount").descending().and(Sort.by("callStartTime").descending()));
 			}
 		}
 //		Pageable pageable=PageRequest.of(Integer.valueOf((String) map.get("pageNumber"))-1, 
@@ -137,24 +137,32 @@ public class RoomServiceImpl implements RoomService {
 				room=roomRepository.findAllByIsPrivate(0,pageable);
 			}
 		}else {
-			if(map.get("isPrivate").equals("0")) {
-				room=roomRepository.findAllByTitleContains((String)map.get("query"),pageable);
-				System.out.println(room.getSize());
+			//방제로 검색
+			if(map.get("queryType").equals("1")) {
+				if(map.get("isPrivate").equals("0")) {
+					room=roomRepository.findAllByTitleContains((String)map.get("query"),pageable);
+				}else {
+					room=roomRepository.findAllByIsPrivateAndTitleContains(0,(String)map.get("query"),pageable);
+				}
+			//호스트 명으로 검색
 			}else {
-				room=roomRepository.findAllByIsPrivateAndTitleContains(0,(String)map.get("query"),pageable);
+				List<User> users=userRepository.findAllByUserNicknameContains((String)map.get("query"));
+				List<Long> userIds=new ArrayList<Long>();
+				for (User user : users) {
+					userIds.add(user.getId());
+				}
+				List<UserRoom>userRooms=userRoomRepository.findAllByIsHostAndUserIdIn(1,userIds);
+				System.out.println(userRooms.toString());
+				List<Long> roomIds=new ArrayList<Long>();
+				for (UserRoom userRoom : userRooms) {
+					roomIds.add(userRoom.getRoomId());
+				}
+				if(map.get("isPrivate").equals("0")) {
+					room=roomRepository.findAllByIdIn(roomIds,pageable);
+				}else {
+					room=roomRepository.findAllByIsPrivateAndIdIn(0,roomIds,pageable);
+				}
 			}
-			
-//			//제목으로 검색
-//			if(map.get("queryType").equals("1")) {
-//				room=roomRepository.findAllByTitleContains((String)map.get("query"),pageable);
-//			}else {
-//				List<User> users=userRepository.findIdByUserNicknameContains((String)map.get("query"));
-//				System.out.println(users.size());
-//				List<Long> ids=new ArrayList<Long>();
-//				for (User user : users) {
-//					ids.add(user.getId());
-//				}
-//			}
 		}
 		return room;
 	}

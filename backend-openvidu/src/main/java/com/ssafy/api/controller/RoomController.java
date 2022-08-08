@@ -125,23 +125,25 @@ public class RoomController {
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
 		long roomId = Long.parseLong(roomInfo.get("roomId"));
-		
 		try {
 			room = roomService.getRoomById(roomId);
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
 		}
-		
 		if(user != null) {
 			int count = userRoomService.getJoinCount(roomId);
 			if(count<12) {
-				if(roomInfo.get("inputPassword")==null &&room.getRoomPassword()==null) {
+				if(roomInfo.get("inputPassword")==null&&room.getRoomPassword()==null) {
 					roomService.createUserRoom(roomId, user.getId(), 0, 0);
 					roomService.plus(roomId);
-				}else if(passwordEncoder.matches(roomInfo.get("inputPassword"),room.getRoomPassword())){
+				}else if(roomInfo.get("inputPassword")==null||room.getRoomPassword()==null ) {
+					return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Bad Password"));
+				}
+				else if(passwordEncoder.matches(roomInfo.get("inputPassword"),room.getRoomPassword())){
 					roomService.createUserRoom(roomId, user.getId(), 0, 0);
 					roomService.plus(roomId);
-				}else {
+				}
+				else {
 					return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Bad Password"));
 				}
 			}else {
@@ -269,7 +271,8 @@ public class RoomController {
 			UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
 			User tempuser=userService.getUserById(userRoom.getUserId());
 			temp.addProperty("hostId",userRoom.getUserId());
-			temp.addProperty("hostNickname",tempuser.getUserEmail());
+			temp.addProperty("hostEmail",tempuser.getUserEmail());
+			temp.addProperty("hostNickname",tempuser.getUserNickname());
 			temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 			temp.addProperty("title", room.getTitle());
 			temp.addProperty("descript", room.getDescript());
@@ -312,7 +315,8 @@ public class RoomController {
 			UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
 			User tempuser=userService.getUserById(userRoom.getUserId());
 			temp.addProperty("hostId",userRoom.getUserId());
-			temp.addProperty("hostNickname",tempuser.getUserEmail());
+			temp.addProperty("hostEmail",tempuser.getUserEmail());
+			temp.addProperty("hostNickname",tempuser.getUserNickname());
 			temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 			temp.addProperty("title", room.getTitle());
 			temp.addProperty("descript", room.getDescript());
