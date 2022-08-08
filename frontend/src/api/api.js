@@ -75,5 +75,7 @@ export default {
     createRoom: () => ROOMHOST + ROOMS,
 
     roomInfo: (roomID) => ROOMHOST + ROOMS + `/info/${roomID}`,
+
+    enterRoom: () => ROOMHOST + ROOMS + "/enter",
   },
 }
