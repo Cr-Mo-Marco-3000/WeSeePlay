@@ -24,4 +24,8 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
 	UserRoom findByRoomId(long roomId);
 
 	List<UserRoom> findAllByRoomIdAndIsHost(Long roomId, int i);
+
+	long countByRoomId(long roomId);
+
+	int countByRoomIdAndUserId(Long roomId, Long hostId);
 }
