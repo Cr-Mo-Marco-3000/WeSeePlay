@@ -44,7 +44,7 @@ public class SendEmailUtil {
 
         //인증 링크 클릭
         String mailContent="<h1>We See Play!!</h1><h2>[이메일 인증 확인]</h2><p>아래의 이메일 인증 확인을 눌러주세요.</p><br/>"+
-        "<a href='http://localhost:8080/api/v1/users/email/certification?userEmail="+userEmail+"'target='_blank'>[이메일 인증 확인]</a>";
+        "<a href='https://i7a501.p.ssafy.io/api/v1/users/email/certification?userEmail="+userEmail+"'target='_blank'>[이메일 인증 확인]</a>";
         
         message.setFrom(new InternetAddress(email));
  
@@ -123,7 +123,7 @@ public class SendEmailUtil {
 
         //인증 링크 클릭
         String mailContent="<h1>We See Play!!</h1><h2>[이메일 인증 확인]</h2><p>아래의 이메일 인증 확인을 눌러주세요.</p><br/>"+
-        "<a href='http://localhost:8080/api/v1/users/email/certification/pw?userEmail="+userEmail+"'target='_blank'>[이메일 인증 확인]</a>";
+        "<a href='https://i7a501.p.ssafy.io/api/v1/users/email/certification/pw?userEmail="+userEmail+"'target='_blank'>[이메일 인증 확인]</a>";
         
         message.setFrom(new InternetAddress(email));
  
