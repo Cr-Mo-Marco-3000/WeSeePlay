@@ -21,7 +21,7 @@ const routes = [
     component: MainPage,
   },
   {
-    path: "/room",
+    path: "/room/:roomID",
     name: "roompage",
     component: RoomPage,
   },
@@ -49,9 +49,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // 실제 서비스용 navguard
-  const { isLoggedin } = store.getters
+  // const { isLoggedin } = store.getters
   // 디버깅용 변수 선언
-  // const isLoggedin = true
+  const isLoggedin = true
 
   // 스타트페이지가 아닌 곳으로 접근하고, 로그인이 되어 있지 않을 때,
   if (to.name !== "startpage" && !isLoggedin) {

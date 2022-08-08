@@ -27,7 +27,7 @@
     <input type="password" />
   </div>
 
-  <button class="overlay__btn join-btn">방 입장</button>
+  <button @click="joinRoom" class="overlay__btn join-btn">방 입장</button>
 </template>
 
 <script>
@@ -36,16 +36,18 @@ import { ref, watchEffect } from "vue"
 import axios from "axios"
 import api from "@/api/api"
 import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 
 export default {
   name: "DetailModalContent",
   props: ["roomID"],
   setup(props) {
     let info = ref({})
+    const store = useStore()
+    const router = useRouter()
 
     watchEffect(async () => {
       try {
-        const store = useStore()
         const token = store.state.users.token
 
         const response = await axios({
@@ -65,7 +67,11 @@ export default {
       }
     })
 
-    return { info }
+    const joinRoom = function () {
+      router.push({ name: "roompage", params: { roomID: props.roomID } })
+    }
+
+    return { info, joinRoom }
   },
 }
 </script>
