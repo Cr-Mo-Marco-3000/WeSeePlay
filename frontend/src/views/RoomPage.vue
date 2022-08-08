@@ -15,8 +15,8 @@
     />
   </div>
   <BottomBar @room-edit="isEditModal = !isEditModal" />
-  <EditModal v-if="isEditModal" @close="isEditModal = false">
-    <EditModalContent />
+  <EditModal v-if="isEditModal" @close="editModalClose">
+    <EditModalContent @close="editModalClose" />
   </EditModal>
   <LiarModal v-if="isLiarModal" @close="isLiarModal = false">
     <LiarModalContent />
@@ -57,6 +57,10 @@ const isEditModal = ref(false)
 
 /* 라이어게임 모달 */
 const isLiarModal = ref(false)
+
+const editModalClose = function () {
+  isEditModal.value = false
+}
 </script>
 
 <style>
