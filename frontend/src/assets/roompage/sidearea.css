@@ -7,7 +7,8 @@
   right: 1rem;
   top: 1rem;
   bottom: 6rem;
-  z-index: 100;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  z-index: 1;
   overflow: hidden;
 }
 
@@ -77,18 +78,29 @@
 
 /* 여기부터 ParticipantArea 관련 */
 
-.participant-chat-list-area {
+.participant-list-area {
   position: absolute;
   width: 94%;
   top: 5rem;
   bottom: 2rem;
   left: 3%;
-  overflow: auto;
+  overflow-x: auto;
+}
+
+.participant-list-area::-webkit-scrollbar {
+  width: 13px;
+  background-color: rgb(201, 197, 241, 0.25);
+  border-radius: 10px;
+}
+
+.participant-list-area::-webkit-scrollbar-thumb {
+  background-color: rgb(201, 197, 241, 0.7);
+  border-radius: 10px;
 }
 
 .participant-item {
   position: relative;
-  width: 100%;
+  width: 97%;
   height: 4rem;
   background-color: rgb(201, 197, 241, 0.25);
   margin-bottom: 1rem;
@@ -110,12 +122,185 @@
   color: rgb(0, 0, 0, 0.5);
 }
 
-.participant-item div:nth-child(3) {
+.participant-item div:nth-child(n + 3) {
   position: absolute;
   right: 1.7rem;
 }
 
-.participant-item div:nth-child(4) {
+/* 여기부터 ChattingArea 관련 */
+
+/* 내부 영역 전체 */
+.chat-list-area {
   position: absolute;
-  right: 3.7rem;
+  width: 94%;
+  top: 4rem;
+  bottom: 0.8rem;
+  left: 3%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+/* 메시지들이 표시되는 구간 */
+.messages-area {
+  top: 0;
+  position: absolute;
+  width: 93%;
+  bottom: 6rem;
+  overflow: auto;
+}
+
+.messages-area::-webkit-scrollbar {
+  width: 13px;
+  background-color: rgb(201, 197, 241, 0.25);
+  border-radius: 10px;
+}
+
+.messages-area::-webkit-scrollbar-thumb {
+  background-color: rgb(201, 197, 241, 0.7);
+  border-radius: 10px;
+}
+
+/* 개별 메시지 */
+.message {
+  position: relative;
+  width: 100%;
+}
+
+.message-user-info {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.message-send-user {
+  padding-left: 0.5rem;
+  height: 2rem;
+  font-size: 1.2rem;
+  line-height: 2rem;
+}
+
+.message-send-time {
+  padding-left: 0.5rem;
+  height: 2rem;
+  font-size: 0.8rem;
+  line-height: 2rem;
+}
+
+.message-send-content {
+  text-align: start;
+  font-size: 0.9rem;
+  padding-left: 0.5rem;
+}
+
+/* 메시지 보낼 사용자들을 정하는 구간 */
+.recipient-area {
+  position: absolute;
+  bottom: 3.4rem;
+  width: 100%;
+  height: 2.3rem;
+  display: flex;
+  justify-content: center;
+}
+
+.recipient-area div:nth-child(1) {
+  width: 25%;
+  line-height: 2.3rem;
+  font-size: 1rem;
+}
+.recipient-area div:nth-child(2) {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  padding-left: 0.3rem;
+}
+
+.recipient-area div:nth-child(2) select {
+  height: 2rem;
+  width: 90%;
+  border-radius: 10px;
+  border-color: transparent;
+  background-color: RGB(105, 94, 239, 0.25);
+  display: flex;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.recipient-area div:nth-child(3) {
+  width: 20%;
+  padding-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.recipient-area div:nth-child(3) button {
+  width: 100%;
+  height: 2rem;
+  background-color: RGB(105, 94, 239, 0.25);
+  border: 0;
+  border-radius: 30px;
+  font-size: 0.8rem;
+}
+
+/* 메시지 적는 부분 */
+
+.typping-area {
+  bottom: 0;
+  height: 3rem;
+  width: 100%;
+  position: absolute;
+}
+
+.typping-area div {
+  height: 97%;
+  width: 100%;
+  border-radius: 17px;
+  background-color: rgb(201, 197, 241, 0.25);
+  display: flex;
+}
+
+/* 진짜 타이핑 구간 */
+.typping-area div textarea {
+  background-color: transparent;
+  border-color: transparent;
+  width: 80%;
+  margin-left: 5%;
+  height: 95%;
+  resize: none;
+  color: rgb(95, 82, 239);
+  font-size: 1rem;
+}
+
+.typping-area div textarea::placeholder {
+  position: absolute;
+  top: 27%;
+  color: rgb(160, 152, 241);
+  opacity: 70%;
+  font-size: 1rem;
+  font-weight: bolder;
+}
+
+.typping-area div textarea:focus-visible {
+  outline: transparent;
+}
+
+.typping-area div textarea::-webkit-scrollbar {
+  width: 13px;
+  background-color: rgb(201, 197, 241, 0.25);
+  border-radius: 10px;
+}
+
+.typping-area div textarea::-webkit-scrollbar-thumb {
+  background-color: rgb(201, 197, 241, 0.7);
+  border-radius: 10px;
+}
+
+/* 타이핑 구역 안의 아이콘 구역 */
+.typping-area div div {
+  width: 20%;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 3px;
+  cursor: pointer;
 }

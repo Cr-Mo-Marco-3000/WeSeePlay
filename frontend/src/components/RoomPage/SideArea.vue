@@ -1,33 +1,76 @@
 <template>
-  <div v-if="isSideAreaOpen" class="sideArea">
+  <div v-if="!(sideBarStatus === '0')" class="sideArea">
     <button class="exit">
-      <i @click="closeSideArea" class="fa-solid fa-x fa-lg exit-label"></i>
+      <i @click="closeSidebar" class="fa-solid fa-x fa-lg exit-label"></i>
     </button>
-    <GameArea v-if="sideAreas.isGameAreaOpen" />
-    <ChattingArea v-if="sideAreas.isChattingAreaOpen" />
-    <ParticipantArea v-if="sideAreas.isParticipantAreaOpen" />
+    <div>{{ sideBar }}</div>
+    <ParticipantArea v-if="sideBarStatus === '1'" :userList="userList" />
+    <ChattingArea v-if="sideBarStatus === '2'" />
+    <GameArea v-if="sideBarStatus === '3'" />
   </div>
 </template>
 
 <script setup>
+// eslint-disable-next-line
+import { ref, watchEffect } from 'vue'
+import { useStore } from 'vuex'
 import GameArea from './sidearea/GameArea.vue'
 import ChattingArea from './sidearea/ChattingArea.vue'
 import ParticipantArea from './sidearea/ParticipantArea.vue'
-import { ref, reactive } from 'vue'
 
-// sideArea 자체를 띄워주는 변수 => 상위 요소에서 그리드와 같이 사용 필요
-const isSideAreaOpen = ref(true)
+// 사이드바 열고 닫는 부분
+const store = useStore()
 
-// 각각 컴포넌트들을 띄워주는 변수들
-const sideAreas = reactive({
-  isGameAreaOpen: false,
-  isChattingAreaOpen: false,
-  isParticipantAreaOpen: true,
+const closeSidebar = () => {
+  store.dispatch('openSidebar', '0')
+}
+const sideBarStatus = ref('0')
+
+watchEffect(() => {
+  sideBarStatus.value = store.getters.get_sidebar
 })
 
-// X 누르면 창이 꺼진다.
-const closeSideArea = function () {
-  isSideAreaOpen.value = false
+// 여기부터 아래까지 임시 userList
+const userList = ref([])
+
+const nameList = ['아무무', '야스오', '유리아쥬']
+
+userList.value.push({
+  userId: 1,
+  userNickname: '에드워드 컬렌',
+  isPlayer: 1,
+  isHost: 1,
+})
+
+for (let i = 2; i < 5; i++) {
+  const user_id = i
+  const user_nickname = nameList[i - 2]
+  const is_player = 2 % i
+  const is_host = 0
+  const user = {
+    userId: user_id,
+    userNickname: user_nickname,
+    isPlayer: is_player,
+    isHost: is_host,
+  }
+  userList.value.push(user)
+}
+
+// 유저 참가, 제거를 해 보기 위한 함수 => 버튼으로 실험해봄
+// eslint-disable-next-line
+const userAdd = function () {
+  const user = {
+    userId: 1,
+    userNickname: '임시유저',
+    isPlayer: 1,
+    isHost: 0,
+  }
+  userList.value.push(user)
+}
+
+// eslint-disable-next-line
+const userDelete = function () {
+  userList.value.pop()
 }
 </script>
 

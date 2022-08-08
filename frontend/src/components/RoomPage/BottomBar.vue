@@ -53,38 +53,21 @@
         <label class="btn exit-btn" for="exitInput"> </label>
       </div>
     </div>
+    <!-- 오른쪽 div 공간 -->
     <div class="triColumn">
       <div class="rightIconDiv">
-        <input
-          v-model="participantArea"
-          class="input"
-          id="participantAreaInput"
-          type="checkbox"
-        />
-        <label class="btn" for="participantAreaInput">
-          <i class="fa-solid fa-users fa-2x"></i>
+        <label id="1" @click="clickSidebarIcon" class="btn">
+          <i id="1" class="fa-solid fa-users fa-2x"></i>
         </label>
       </div>
       <div class="rightIconDiv">
-        <input
-          v-model="chattingArea"
-          class="input"
-          id="chattingAreaInput"
-          type="checkbox"
-        />
-        <label class="btn" for="chattingAreaInput">
-          <i class="fa-solid fa-comments fa-2x"></i>
+        <label id="2" @click="clickSidebarIcon" class="btn">
+          <i id="2" class="fa-solid fa-comments fa-2x"></i>
         </label>
       </div>
       <div class="rightIconDiv">
-        <input
-          v-model="gameArea"
-          class="input"
-          id="gameAreaInput"
-          type="checkbox"
-        />
-        <label class="btn" for="gameAreaInput">
-          <i class="fa-solid fa-gamepad fa-2x"></i>
+        <label id="3" @click="clickSidebarIcon" class="btn">
+          <i id="3" class="fa-solid fa-gamepad fa-2x"></i>
         </label>
       </div>
       <!-- right icon bundle -->
@@ -99,14 +82,14 @@
           <i class="fa-solid fa-angles-up fa-2x"></i>
         </label>
 
-        <label class="sideAreaBundleItem" for="participantAreaInput">
-          <i class="fa-solid fa-users fa-2x"></i>
+        <label id="3" @click="clickSidebarIcon" class="sideAreaBundleItem">
+          <i id="3" class="fa-solid fa-gamepad fa-2x"></i>
         </label>
-        <label class="sideAreaBundleItem" for="chattingAreaInput">
-          <i class="fa-solid fa-comments fa-2x"></i>
+        <label id="2" @click="clickSidebarIcon" class="sideAreaBundleItem">
+          <i id="2" class="fa-solid fa-comments fa-2x"></i>
         </label>
-        <label class="sideAreaBundleItem" for="gameAreaInput">
-          <i class="fa-solid fa-gamepad fa-2x"></i>
+        <label id="1" @click="clickSidebarIcon" class="sideAreaBundleItem">
+          <i id="1" class="fa-solid fa-users fa-2x"></i>
         </label>
       </div>
     </div>
@@ -114,7 +97,9 @@
 </template>
 
 <script setup>
+import store from '@/store'
 import { ref } from 'vue'
+
 // 마이크가 오픈되어 있지 않음 => 기본값
 const isMicOpen = ref(false)
 
@@ -129,16 +114,12 @@ const backToLounge = function () {
   console.log('라운지로 숑숑숑')
 }
 
-// 아래 세 개는 sideArea
-const participantArea = ref(false)
-
-const chattingArea = ref(false)
-
-const gameArea = ref(false)
-
-// sideArea 묶음
-
+// sideArea 묶음 버튼
 const sideAreaBundle = ref(false)
+
+const clickSidebarIcon = function (event) {
+  store.dispatch('openSidebar', event.target.id)
+}
 </script>
 
 <style scoped>

@@ -30,7 +30,7 @@ const sendQuery = async function () {
     // 받은 토큰을 백으로 전송하는 부분에서부터는 백에서 담당
     const token = response.data.token
     console.log(response.data.token)
-    console.log(api.users.kakaoSendToken)
+    console.log(api.users.kakaoSendToken())
 
     // 백으로부터 받은 response를 가지고 또 일해야 한다.
     response = await axios({

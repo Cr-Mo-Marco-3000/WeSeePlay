@@ -1,43 +1,44 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import StartPage from '../views/StartPage.vue'
-import MainPage from '@/views/MainPage.vue'
-import ErrorPage from '@/views/ErrorPage.vue'
-import RoomPage from '@/views/RoomPage.vue'
+import Swal from "sweetalert2"
+import { createRouter, createWebHistory } from "vue-router"
+import StartPage from "../views/StartPage.vue"
+import MainPage from "@/views/MainPage.vue"
+import ErrorPage from "@/views/ErrorPage.vue"
+import RoomPage from "@/views/RoomPage.vue"
 
-import KakaoLoginPage from '@/views/KakaoLoginPage.vue'
+import KakaoLoginPage from "@/views/KakaoLoginPage.vue"
 // eslint-disable-next-line
-import store from '@/store'
+import store from "@/store"
 
 const routes = [
   {
-    path: '/',
-    name: 'startpage',
+    path: "/",
+    name: "startpage",
     component: StartPage,
   },
   {
-    path: '/lounge',
-    name: 'mainpage',
+    path: "/lounge",
+    name: "mainpage",
     component: MainPage,
   },
   {
-    path: '/room',
-    name: 'roompage',
+    path: "/room/:roomID",
+    name: "roompage",
     component: RoomPage,
   },
   // 보내는 에러 종류에 따라서 띄우는 에러를 다양하게 함
   {
-    path: '/error/:errorname',
-    name: 'errorpage',
+    path: "/error/:errorname",
+    name: "errorpage",
     component: ErrorPage,
   },
   {
-    path: '/login/kakao',
-    name: 'kakaologin',
+    path: "/login/kakao",
+    name: "kakaologin",
     component: KakaoLoginPage,
   },
   {
-    path: '/:pathMatch(.*)*',
-    redirect: '/error/404',
+    path: "/:pathMatch(.*)*",
+    redirect: "/error/404",
   },
 ]
 
@@ -53,15 +54,18 @@ router.beforeEach((to, from, next) => {
   const isLoggedin = true
 
   // 스타트페이지가 아닌 곳으로 접근하고, 로그인이 되어 있지 않을 때,
-  if (to.name !== 'startpage' && !isLoggedin) {
-    alert('로그인이 필요한 페이지입니다')
-    next({ name: 'startpage' })
+  if (to.name !== "startpage" && !isLoggedin) {
+    Swal.fire({
+      icon: "warning",
+      text: "로그인이 필요한 페이지입니다!",
+    })
+    next({ name: "startpage" })
   } else {
     next()
   }
   // 로그인이 되어 있는데 스타트페이지로 접근할 때
-  if (to.name === 'startpage' && isLoggedin) {
-    next({ name: 'mainpage' })
+  if (to.name === "startpage" && isLoggedin) {
+    next({ name: "mainpage" })
   }
 })
 
