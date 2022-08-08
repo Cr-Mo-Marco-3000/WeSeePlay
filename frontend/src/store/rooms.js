@@ -1,13 +1,13 @@
-import api from '@/api/api'
-import router from '@/router'
-import axios from 'axios'
+import api from "@/api/api"
+import axios from "axios"
+import Swal from "sweetalert2"
 
 export default {
   state: {
     // 방 정보
     roomInfo: {},
     // 사이드바 오픈용 변수
-    sidebar: '0',
+    sidebar: "0",
   },
   getters: {
     get_sidebar: (state) => state.sidebar,
@@ -19,7 +19,7 @@ export default {
   mutations: {
     SET_SIDEBAR: (state, data) => {
       if (state.sidebar === data) {
-        state.sidebar = '0'
+        state.sidebar = "0"
       } else {
         state.sidebar = data
       }
@@ -30,24 +30,26 @@ export default {
   },
   actions: {
     openSidebar: ({ commit }, data) => {
-      commit('SET_SIDEBAR', data)
+      commit("SET_SIDEBAR", data)
     },
     setRoomInfo: ({ commit }, data) => {
-      commit('SET_ROOM_INFO', data)
+      commit("SET_ROOM_INFO", data)
     },
     // 룸 정보 받는 함수
     getRoomInfo: async function ({ getters, dispatch }, roomID) {
       try {
         const response = await axios({
-          method: 'GET',
+          method: "GET",
           headers: getters.authHeader,
           url: api.room.roomInfo(roomID),
         })
-        dispatch('setRoomInfo', response.data)
+        dispatch("setRoomInfo", response.data)
       } catch (err) {
-        console.log(err)
-        dispatch('removeToken')
-        router.push({ name: 'startpage' })
+        Swal.fire({
+          icon: "error",
+          text: "뭔지는 모르겠는데 오류임",
+        })
+        dispatch("logout")
       }
     },
   },

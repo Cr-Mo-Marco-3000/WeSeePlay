@@ -82,7 +82,7 @@
     </CreateRoomModal>
 
     <DetailModal v-if="isDetailModal" @close="isDetailModal = false">
-      <DetailModalContent :roomID="detailRoomID" />
+      <DetailModalContent :roomId="detailRoomId" />
     </DetailModal>
 
     <AuthModal v-if="isChangePw" @close="isChangePw = false">
@@ -232,10 +232,10 @@ export default {
     })
 
     const isDetailModal = ref(false)
-    const detailRoomID = ref({})
+    const detailRoomId = ref({})
     const openDetail = function (info) {
       isDetailModal.value = true
-      detailRoomID.value = info.roomId
+      detailRoomId.value = info.roomId
     }
 
     return {
@@ -260,7 +260,7 @@ export default {
       // roomsData,
 
       openDetail,
-      detailRoomID,
+      detailRoomId,
 
       isChangePw: ref(false),
     }

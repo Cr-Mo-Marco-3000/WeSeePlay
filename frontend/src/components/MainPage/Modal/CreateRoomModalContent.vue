@@ -35,7 +35,7 @@
 import { ref, reactive } from "vue"
 // import { computed } from "vue"
 import { useStore } from "vuex"
-// import { useRouter } from "vue-router"
+import { useRouter } from "vue-router"
 import api from "@/api/api"
 import axios from "axios"
 
@@ -43,7 +43,7 @@ export default {
   name: "CreateRoomModalContent",
   setup() {
     const store = useStore()
-    // const router = useRouter()
+    const router = useRouter()
     const token = store.state.users.token
     // 방 생성 정보
     let roomInfo = reactive({
@@ -89,9 +89,8 @@ export default {
           data: roomInfo,
         })
         if (response.data.statusCode === 201) {
-          const roomID = response.data.roomId
-          console.log(roomID)
-          // router.push({ name: "roompage", params: { roomID: roomID } })
+          const roomId = response.data.roomId
+          router.push({ name: "roompage", params: { roomId: roomId } })
         }
       } catch (err) {
         console.log("실패")

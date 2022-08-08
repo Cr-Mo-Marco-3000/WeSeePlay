@@ -40,7 +40,7 @@ import { useRouter } from "vue-router"
 
 export default {
   name: "DetailModalContent",
-  props: ["roomID"],
+  props: ["roomId"],
   setup(props) {
     let info = ref({})
     const store = useStore()
@@ -51,7 +51,7 @@ export default {
     watchEffect(async () => {
       try {
         const response = await axios({
-          url: api.room.roomInfo(props.roomID),
+          url: api.room.roomInfo(props.roomId),
           method: "GET",
           headers: { authorization: "Bearer " + token },
         })
@@ -71,12 +71,12 @@ export default {
         const data = ref({})
         if (info.value.isPrivate) {
           data.value = {
-            roomID: props.roomID,
+            roomId: props.roomId,
             inputPassword: passwordInput.value,
           }
         } else {
           data.value = {
-            roomID: props.roomID,
+            roomId: props.roomId,
           }
         }
 
@@ -88,7 +88,7 @@ export default {
         })
 
         if (response.status === 200) {
-          router.push({ name: "roompage", params: { roomID: props.roomID } })
+          router.push({ name: "roompage", params: { roomId: props.roomId } })
         }
       } catch (error) {
         if (error.response.status === 400) {
