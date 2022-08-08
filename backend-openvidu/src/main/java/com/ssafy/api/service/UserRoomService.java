@@ -18,4 +18,8 @@ public interface UserRoomService {
 	UserRoom getHostIdByRoomId(Long roomId);
 
 	List<UserRoom> getMemberIdByRoomId(Long roomId);
+
+	int getJoinCount(long roomId);
+
+	int isExistUser(int hostId, int roomId);
 }

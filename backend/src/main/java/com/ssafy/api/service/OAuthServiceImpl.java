@@ -52,7 +52,7 @@ public class OAuthServiceImpl implements OAuthService{
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
             sb.append("&client_id="+new APIKeyUtil().getKakaoAPIKey());
-            sb.append("&redirect_uri=http://localhost:8080/api/v1/oauth/kakao");
+            sb.append("&redirect_uri=https://i7a501.p.ssafy.io/api/v1/oauth/kakao");
             sb.append("&code=" + code);
             bw.write(sb.toString());
             bw.flush();
