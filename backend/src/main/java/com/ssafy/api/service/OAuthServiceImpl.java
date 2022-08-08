@@ -142,10 +142,14 @@ public class OAuthServiceImpl implements OAuthService{
 		User user = new User();
 		user.setUserEmail(jObject.getString("id"));
 		user.setUserPassword(bCryptUtil.encodeBcrypt(randomStringUtil.getRandomString(10)));
-		user.setUserNickname(jObject.getJSONObject("kakao_account").getJSONObject("profile").getString("nickname")+randomStringUtil.getRandomNumber(5));
+		String userNickname=jObject.getJSONObject("kakao_account").getJSONObject("profile").getString("nickname");
+		if (userNickname.length()<10) {
+			user.setUserNickname(userNickname+randomStringUtil.getRandomNumber(5));
+		}else if(userNickname.length()>=20) {
+			user.setUserNickname(userNickname.substring(0, 19));
+		}
 		user.setRegisterTime(LocalDateTime.now());
 		user.setLastLogin(LocalDateTime.now());
 		return userRepository.save(user);
-//		return null;
 	}
 }
