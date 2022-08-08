@@ -82,26 +82,24 @@ export default {
           emailErrorMsg.value = "이메일 형식이 올바르지 않습니다"
           return
         }
+        emailErrorMsg.value = "유저 정보를 확인 중입니다"
         let response = await axios({
-          url: api.users.sendEmailForPW,
+          url: api.users.sendEmailForPW(),
           method: "POST",
           data: {
             userEmail: email.value,
           },
         })
-        if (response.status === 200) {
+        if (response.data.statusCode === 200) {
           isAuthOpen.value = true
-          emailErrorMsg.value = "인증 이메일이 발송 중 입니다"
-          setTimeout(() => {
-            emailErrorMsg.value =
-              "인증 이메일이 발송되었습니다. 인증 후 완료 버튼을 눌러주세요"
-          }, 3000)
+          emailErrorMsg.value =
+            "인증 이메일이 발송되었습니다. 인증 후 완료 버튼을 눌러주세요"
           return
         }
       } catch (error) {
-        if (error.response.status === 404) {
+        if (error.response.data.statusCode === 404) {
           emailErrorMsg.value = "해당 이메일로 가입된 계정이 없습니다"
-        } else if (error.response.status === 500) {
+        } else if (error.response.data.statusCode === 500) {
           router.push({ name: "errorpage", params: { errorname: 500 } })
         }
       }
@@ -110,19 +108,21 @@ export default {
     const changePw = async function () {
       try {
         let response = await axios({
-          method: "POST",
+          url: api.users.verifyEmailForPW(email.value),
+          method: "PUT",
           data: {
             userEmail: email.value,
           },
         })
-        if (response.state === 200) {
-          changePassword.value = response.password
+        if (response.data.statusCode === 200) {
+          console.log(response.data)
+          changePassword.value = response.data.password
           isAuthDone.value = true
         }
       } catch (error) {
-        if (error.response.status === 404) {
+        if (error.response.data.statusCode === 401) {
           emailErrorMsg.value = "이메일 인증이 완료되지 않았습니다"
-        } else if (error.response.status === 500) {
+        } else if (error.response.data.statusCode === 500) {
           router.push({ name: "errorpage", params: { errorname: 500 } })
         }
       }

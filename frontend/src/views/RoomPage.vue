@@ -32,6 +32,12 @@ import EditModal from "@/components/RoomPage/meeting/EditModal.vue"
 import EditModalContent from "@/components/RoomPage/meeting/EditModalContent.vue"
 import LiarModal from "@/components/RoomPage/game/liargame/modal/LiarModal.vue"
 import LiarModalContent from "@/components/RoomPage/game/liargame/modal/LiarModalContent.vue"
+import { useRoute } from "vue-router"
+
+//  props 정보
+const router = useRoute()
+const roomID = router.params.roomID
+console.log(roomID)
 
 // SideArea Open 정보
 const isSide = ref(false)
