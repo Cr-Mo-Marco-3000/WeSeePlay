@@ -17,7 +17,6 @@ export default {
 }
 </script>
 <style>
-
 #app {
   font-family: 'paybooc-Bold';
   -webkit-font-smoothing: antialiased;
