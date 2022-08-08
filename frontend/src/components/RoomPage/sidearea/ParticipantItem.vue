@@ -1,32 +1,22 @@
 <template>
   <div class="participant-item">
-    <div>{{ userInfo.userNickname }}</div>
-    <div>{{ userInfo.userStatus }}</div>
-    <div>
-      <i
-        v-if="userInfo.isMicOpen"
-        class="fa-solid fa-microphone-lines fa-xl"
-      ></i>
-      <i
-        v-if="!userInfo.isMicOpen"
-        style="color: rgba(255, 255, 255, 0.75)"
-        class="fa-solid fa-microphone-lines-slash fa-xl"
-      ></i>
-    </div>
-    <div>
-      <i v-if="userInfo.isVideoOpen" class="fa-solid fa-video fa-xl"> </i>
-      <i
-        v-if="!userInfo.isVideoOpen"
-        style="color: rgba(255, 255, 255, 0.75)"
-        class="fa-solid fa-video-slash fa-xl"
-      ></i>
+    <div>{{ user.userNickname }}</div>
+    <div v-if="user.isHost">호스트</div>
+    <div v-if="!user.isHost"></div>
+    <div v-if="user.isPlayer">
+      <q-icon
+        title="게임 중"
+        size="2rem"
+        name="sports_esports"
+        color="deep-purple-3"
+      ></q-icon>
     </div>
   </div>
 </template>
 <script setup>
 // eslint-disable-next-line
-defineProps({
-  userInfo: Object,
+const props = defineProps({
+  user: Object,
 })
 </script>
 <style>

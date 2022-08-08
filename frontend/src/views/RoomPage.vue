@@ -24,14 +24,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue"
-import VideoArea from "@/components/RoomPage/VideoArea.vue"
-import SideArea from "@/components/RoomPage/SideArea.vue"
-import BottomBar from "@/components/RoomPage/BottomBar.vue"
-import EditModal from "@/components/RoomPage/meeting/EditModal.vue"
-import EditModalContent from "@/components/RoomPage/meeting/EditModalContent.vue"
-import LiarModal from "@/components/RoomPage/game/liargame/modal/LiarModal.vue"
-import LiarModalContent from "@/components/RoomPage/game/liargame/modal/LiarModalContent.vue"
+import { ref } from 'vue'
+import VideoArea from '@/components/RoomPage/VideoArea.vue'
+import SideArea from '@/components/RoomPage/SideArea.vue'
+import BottomBar from '@/components/RoomPage/BottomBar.vue'
+import EditModal from '@/components/RoomPage/meeting/EditModal.vue'
+import EditModalContent from '@/components/RoomPage/meeting/EditModalContent.vue'
+import LiarModal from '@/components/RoomPage/game/liargame/modal/LiarModal.vue'
+import LiarModalContent from '@/components/RoomPage/game/liargame/modal/LiarModalContent.vue'
 
 // SideArea Open 정보
 const isSide = ref(false)

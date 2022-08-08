@@ -18,29 +18,56 @@
   <div v-if="!info.isPrivate" class="detail-text">
     <span>참여자 목록</span>
     <div class="user-list">
-      <div v-for="user, idx in info.joinUsers" :key="idx">{{ user }}</div>
+      <div v-for="(user, idx) in info.joinUsers" :key="idx">{{ user }}</div>
     </div>
   </div>
   <div v-else class="user-input room-pw-input">
     <span>비밀번호</span>
     <p>비공개 방입니다.</p>
-    <input type="password">
+    <input type="password" />
   </div>
-  
+
   <button class="overlay__btn join-btn">방 입장</button>
 </template>
 
 <script>
-// import { ref } from 'vue'
+import Swal from "sweetalert2"
+import { ref, watchEffect } from "vue"
+import axios from "axios"
+import api from "@/api/api"
+import { useStore } from "vuex"
 
 export default {
   name: "DetailModalContent",
-  props: { 
-    info: Object 
-    },
+  props: ["roomID"],
+  setup(props) {
+    let info = ref({})
+
+    watchEffect(async () => {
+      try {
+        const store = useStore()
+        const token = store.state.users.token
+
+        const response = await axios({
+          url: api.room.roomInfo(props.roomID),
+          method: "GET",
+          headers: { authorization: "Bearer " + token },
+        })
+        if (response.status === 200) {
+          info.value = response.data
+          console.log(info.value)
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          text: "해당 방 정보가 존재하지 않습니다!",
+        })
+      }
+    })
+
+    return { info }
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
