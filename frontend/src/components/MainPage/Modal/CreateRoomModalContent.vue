@@ -58,27 +58,18 @@ export default {
     const roomCreateInputError = ref("")
     const createRoom = async function () {
       try {
-        let errorFlag = 0
-
-        if (roomInfo.isPrivate == true) {
-          roomInfo.isPrivate = 1
-        } else {
-          roomInfo.isPrivate = 0
+        const data = { ...roomInfo }
+        if (!roomInfo.isPrivate) {
+          data.roomPassword = ""
         }
+
+        data.isPrivate = Number(data.isPrivate)
+
         if (roomInfo.title == "") {
           roomCreateInputError.value = "방 이름을 정해 주세요"
-          errorFlag = 1
-        }
-        if (roomInfo.isPrivate) {
-          if (roomInfo.roomPassword.length != 4) {
-            roomCreateInputError.value = "4자리의 비밀번호를 정해주세요"
-            errorFlag = 1
-          }
-        }
-
-        if (errorFlag) {
-          roomInfo.isPrivate = Boolean(roomInfo.isPrivate)
-          errorFlag = 0
+          return
+        } else if (roomInfo.isPrivate && roomInfo.roomPassword.length != 4) {
+          roomCreateInputError.value = "4자리의 비밀번호를 정해주세요"
           return
         }
 
@@ -86,7 +77,7 @@ export default {
           url: api.room.createRoom(),
           method: "POST",
           headers: { Authorization: "Bearer " + token },
-          data: roomInfo,
+          data,
         })
         if (response.data.statusCode === 201) {
           const roomId = response.data.roomId

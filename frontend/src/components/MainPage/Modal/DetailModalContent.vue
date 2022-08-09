@@ -88,15 +88,10 @@ export default {
         }
 
         const data = ref({})
-        if (info.value.isPrivate) {
-          data.value = {
-            roomId: props.roomId,
-            inputPassword: passwordInput.value,
-          }
-        } else {
-          data.value = {
-            roomId: props.roomId,
-          }
+
+        data.value = {
+          roomId: props.roomId,
+          inputPassword: passwordInput.value,
         }
 
         const response = await axios({
