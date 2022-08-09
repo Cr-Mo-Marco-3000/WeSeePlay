@@ -46,7 +46,7 @@ public class RoomServiceImpl implements RoomService {
 		Room room = new Room();
 		room.setTitle(roomCreatePostReq.getTitle());
 		room.setDescript(roomCreatePostReq.getDescript());
-		if(roomCreatePostReq.getRoomPassword()==null) {
+		if(roomCreatePostReq.getRoomPassword()==null ||roomCreatePostReq.getRoomPassword().equals("")) {
 			room.setRoomPassword(null);
 		}else {
 			room.setRoomPassword(passwordEncoder.encode(roomCreatePostReq.getRoomPassword()));
