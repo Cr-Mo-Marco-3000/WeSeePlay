@@ -132,7 +132,7 @@ public class RoomController {
 		}
 		if(user != null) {
 			int count = userRoomService.getJoinCount(roomId);
-			if(count<12) {
+			if(count<12 && room.getGame()==1) {
 				if(roomInfo.get("inputPassword")==null&&room.getRoomPassword()==null) {
 					roomService.createUserRoom(roomId, user.getId(), 0, 0);
 					roomService.plus(roomId);
@@ -146,7 +146,10 @@ public class RoomController {
 				else {
 					return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Bad Password"));
 				}
-			}else {
+			}else if(room.getGame()!=1) {
+				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Can't Enter Game Room"));
+			}
+			else {
 				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Too Many People"));
 			}
 		} else {
@@ -346,7 +349,7 @@ public class RoomController {
 	}
 	
 	@GetMapping("/mode/{roomId}")
-	@ApiOperation(value = "방 정보 수정", notes = "방 정보를 수정한다.") 
+	@ApiOperation(value = "방 모드 반환", notes = "방 모드를 반환한다.(1은 채팅, 2는 라이어 게임)") 
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공"),
         @ApiResponse(code = 401, message = "권한 없음")
