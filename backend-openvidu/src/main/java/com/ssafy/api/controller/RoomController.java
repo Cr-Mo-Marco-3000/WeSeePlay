@@ -1,7 +1,6 @@
 package com.ssafy.api.controller;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,7 +28,6 @@ import com.ssafy.api.request.ForcedOutReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomUpdatePatchReq;
 import com.ssafy.api.response.RoomCreatePostRes;
-import com.ssafy.api.response.RoomListGetRes;
 import com.ssafy.api.response.RoomModeGetRes;
 import com.ssafy.api.service.RoomService;
 import com.ssafy.api.service.UserService;
@@ -108,8 +106,11 @@ public class RoomController {
 			// roomId기준으로 다 방에서 퇴장 처리
 			userRoomService.deleteUserRoom(map.get("roomId"));
 			return ResponseEntity.status(200).body(RoomCreatePostRes.of(200, "Success"));
+		}else if(userRoomRes != null && userRoomRes.getIsHost() == 0) {
+			return ResponseEntity.status(401).body(RoomCreatePostRes.of(401, "Unauthorized"));
+		}else {
+			return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, "Bad Request"));
 		}
-		return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, "Bad Request"));
 	}
 	
 	@PostMapping("/enter")
@@ -125,23 +126,26 @@ public class RoomController {
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
 		long roomId = Long.parseLong(roomInfo.get("roomId"));
-		try {
-			room = roomService.getRoomById(roomId);
-		} catch (NoSuchElementException e) {
+		room = roomService.getRoomById(roomId);
+		if(room==null) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
 		}
 		if(user != null) {
 			int count = userRoomService.getJoinCount(roomId);
 			if(count<12 && room.getGame()==1) {
-				if(roomInfo.get("inputPassword")==null&&room.getRoomPassword()==null) {
-					roomService.createUserRoom(roomId, user.getId(), 0, 0);
-					roomService.plus(roomId);
-				}else if(roomInfo.get("inputPassword")==null||room.getRoomPassword()==null ) {
+				if((roomInfo.get("inputPassword")==null || roomInfo.get("inputPassword").equals("")) && room.getRoomPassword()==null) {
+					Boolean check=roomService.createUserRoom(roomId, user.getId(), 0, 0);
+					if(check) {
+						roomService.plus(roomId);
+					}
+				}else if((roomInfo.get("inputPassword")==null || roomInfo.get("inputPassword").equals(""))&& room.getRoomPassword()!=null ||roomInfo.get("inputPassword")!=null && !roomInfo.get("inputPassword").equals("") && room.getRoomPassword()==null ) {
 					return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Bad Password"));
 				}
 				else if(passwordEncoder.matches(roomInfo.get("inputPassword"),room.getRoomPassword())){
-					roomService.createUserRoom(roomId, user.getId(), 0, 0);
-					roomService.plus(roomId);
+					Boolean check=roomService.createUserRoom(roomId, user.getId(), 0, 0);
+					if(check) {
+						roomService.plus(roomId);						
+					}
 				}
 				else {
 					return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Bad Password"));
@@ -171,16 +175,18 @@ public class RoomController {
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
 		long roomId = (long) roomInfo.get("roomId");
-		
 		try {
 			Room room = roomService.getRoomById(roomId);
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
 		}
-		
 		if(user != null) {
-			userRoomService.deleteUserRoom(roomId, user.getId());
-			roomService.minus(roomId);
+			Boolean check=userRoomService.deleteUserRoom(roomId, user.getId());
+			if(check) {
+				roomService.minus(roomId);
+			}else {
+				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request"));
+			}
 		} else {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No User"));
 		}
@@ -239,12 +245,12 @@ public class RoomController {
 			if(roomUpdatePatchReq.getHostId()!=0) {
 				int temp=userRoomService.isExistUser(roomUpdatePatchReq.getHostId(),roomId);
 				if(temp!=0) {
-					roomService.updateRoom(roomId,roomUpdatePatchReq);
-					UserRoom temp_check=userRoomService.setIsHost(roomUpdatePatchReq.getHostId(),roomId);
+					userRoomService.setIsHost(roomUpdatePatchReq.getHostId(),roomId);
 				}else {
 					return ResponseEntity.status(403).body(BaseResponseBody.of(403, "Not Joined User"));
 				}
 			}
+			roomService.updateRoom(roomId,roomUpdatePatchReq);
 			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 		}else {
 			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));

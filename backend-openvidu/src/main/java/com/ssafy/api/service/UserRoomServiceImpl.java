@@ -21,8 +21,14 @@ public class UserRoomServiceImpl implements UserRoomService{
 	}
 
 	@Override
-	public void deleteUserRoom(long roomId, long userId) {
-		userRoomRepository.deleteByRoomIdAndUserId((int)roomId,(int)userId);
+	public Boolean deleteUserRoom(long roomId, long userId) {
+		UserRoom userRoom=userRoomRepository.findByRoomIdAndUserId(roomId,userId);
+		System.out.println(roomId+"         "+userId);
+		if(userRoom==null || userRoom.getIsHost()==1) {
+			return false;
+		}
+		userRoomRepository.deleteByRoomIdAndUserId(roomId,userId);
+		return true;
 	}
 
 	@Override
@@ -46,7 +52,7 @@ public class UserRoomServiceImpl implements UserRoomService{
 
 	@Override
 	public int checkIsHost(Long userId, Long roomId) {
-		UserRoom userRoom=userRoomRepository.findByRoomIdAndUserId(roomId, userId);
+		UserRoom userRoom=userRoomRepository.findByRoomIdAndUserIdAndIsHost(roomId, userId,1);
 		if (userRoom==null) {
 			return 0;
 		}

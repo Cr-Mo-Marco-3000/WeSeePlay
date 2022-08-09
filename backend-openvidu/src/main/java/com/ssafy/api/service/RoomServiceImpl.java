@@ -59,13 +59,18 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public UserRoom createUserRoom(Long roomId, Long userId, int isPlayer, int isHost) {
-		UserRoom userRoom = new UserRoom();
-		userRoom.setRoomId(roomId);
-		userRoom.setUserId(userId);
-		userRoom.setIsPlayer(isPlayer);
-		userRoom.setIsHost(isHost);
-		return userRoomRepository.save(userRoom);
+	public Boolean createUserRoom(Long roomId, Long userId, int isPlayer, int isHost) {
+		UserRoom isUserInRoom=userRoomRepository.findByRoomIdAndUserId(roomId, userId);
+		if(isUserInRoom==null) {
+			UserRoom userRoom = new UserRoom();
+			userRoom.setRoomId(roomId);
+			userRoom.setUserId(userId);
+			userRoom.setIsPlayer(isPlayer);
+			userRoom.setIsHost(isHost);
+			userRoomRepository.save(userRoom);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -88,7 +93,7 @@ public class RoomServiceImpl implements RoomService {
 			room.get().setDescript(roomUpdatePatchReq.getDescript());
 		}
 		//공개방으로 전환
-		if(roomUpdatePatchReq.getRoomPassword()==null || roomUpdatePatchReq.getRoomPassword()=="") {
+		if(roomUpdatePatchReq.getRoomPassword()=="") {
 			room.get().setRoomPassword(null);
 			room.get().setIsPrivate(0);
 		}else if(roomUpdatePatchReq.getRoomPassword()!=null) {

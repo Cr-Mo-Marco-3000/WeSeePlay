@@ -14,7 +14,7 @@ public interface RoomService {
 
 	Room createRoom(RoomCreatePostReq roomCreatePostReq);
 
-	UserRoom createUserRoom(Long roomId, Long userId, int isPlayer, int isHost);
+	Boolean createUserRoom(Long roomId, Long userId, int isPlayer, int isHost);
 
 	void deleteRoom(long roomId);
 	
