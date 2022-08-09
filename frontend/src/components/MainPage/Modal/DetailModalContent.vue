@@ -1,6 +1,12 @@
 <template>
   <div class="detail-text">
-    <span>제목</span>
+    <div class="title-game-info">
+      <span>제목</span>
+      <div v-if="info.game == 2" class="game-info">
+        <span><i class="fa-solid fa-gamepad"></i></span>
+        <span>현재 게임 진행 중!</span>
+      </div>
+    </div>
     <p>{{ info.title }}</p>
   </div>
   <div class="host-info">
@@ -16,8 +22,9 @@
     <p>{{ info.descript }}</p>
   </div>
   <div v-if="!info.isPrivate" class="detail-text">
-    <span>참여자 목록</span>
+    <span>참여자 목록 ({{ userNum }})</span>
     <div class="user-list">
+      <div>{{ info.hostNickname }}</div>
       <div v-for="(user, idx) in info.joinUsers" :key="idx">{{ user }}</div>
     </div>
   </div>
@@ -47,6 +54,7 @@ export default {
     const router = useRouter()
     const token = store.state.users.token
     const passwordInput = ref("")
+    const userNum = ref(0)
 
     watchEffect(async () => {
       try {
@@ -57,6 +65,7 @@ export default {
         })
         if (response.status === 200) {
           info.value = response.data
+          userNum.value = 1 + info.value.joinUsers.length
         }
       } catch (error) {
         Swal.fire({
@@ -68,6 +77,14 @@ export default {
 
     const joinRoom = async function () {
       try {
+        if (info.value.game === 2) {
+          Swal.fire({
+            icon: "error",
+            text: "게임 중인 방에는 입장할 수 없습니다",
+          })
+          return
+        }
+
         const data = ref({})
         if (info.value.isPrivate) {
           data.value = {
@@ -104,6 +121,14 @@ export default {
               icon: "error",
               text: "수용 인원을 초과하였습니다!",
             })
+          } else if (
+            error.response.data.message ===
+            "Bad Request - Can't Enter Game Room"
+          ) {
+            Swal.fire({
+              icon: "error",
+              text: "게임 중인 방에는 입장할 수 없습니다",
+            })
           } else {
             Swal.fire({
               icon: "error",
@@ -116,7 +141,7 @@ export default {
         }
       }
     }
-    return { info, joinRoom, passwordInput }
+    return { info, joinRoom, passwordInput, userNum }
   },
 }
 </script>

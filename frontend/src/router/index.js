@@ -4,6 +4,7 @@ import StartPage from "../views/StartPage.vue"
 import MainPage from "@/views/MainPage.vue"
 import ErrorPage from "@/views/ErrorPage.vue"
 import RoomPage from "@/views/RoomPage.vue"
+import LobbyPage from "@/views/LobbyPage.vue"
 
 import KakaoLoginPage from "@/views/KakaoLoginPage.vue"
 // eslint-disable-next-line
@@ -24,6 +25,11 @@ const routes = [
     path: "/room/:roomId",
     name: "roompage",
     component: RoomPage,
+  },
+  {
+    path: "/room/lobby",
+    name: "lobbypage",
+    component: LobbyPage,
   },
   // 보내는 에러 종류에 따라서 띄우는 에러를 다양하게 함
   {
@@ -52,7 +58,7 @@ router.beforeEach((to, from, next) => {
   const { isLoggedin } = store.getters
   // 디버깅용 변수 선언
 
-  const authRequiredPages = ["roompage", "mainpage"]
+  const authRequiredPages = ["roompage", "mainpage", "lobbypage"]
 
   // 로그인 된 경우
   if (isLoggedin) {
