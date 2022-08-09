@@ -6,9 +6,14 @@
 
   <div class="user-input">
     <span>호스트</span>
-    <select>
+    <select v-model="roomInfo.hostId">
       <option disabled value="">호스트를 위임할 사용자를 정해주세요</option>
-      <option v-for="(user, key) in userInfo" :key="key"></option>
+      <option selected :value="roomInfo.hostId">
+        {{ roomInfo.hostNickname }}(호스트)
+      </option>
+      <option v-for="(user, key) in userInfo" :key="key" :value="user.userId">
+        {{ user.userNickname }}
+      </option>
     </select>
   </div>
 
@@ -31,9 +36,9 @@
     <input
       type="password"
       name="roomPassword"
-      placeholder="비밀번호"
+      placeholder="비밀번호 변경을 원할경우 입력해주세요"
       :disabled="roomInfo.isPrivate == false"
-      v-model="roomInfo.roomPassword"
+      v-model="inputPassword"
     />
   </div>
 
@@ -46,7 +51,7 @@
 
 <script>
 import Swal from "sweetalert2"
-import { ref, watchEffect } from "vue"
+import { reactive, ref, watchEffect } from "vue"
 import { useStore } from "vuex"
 import { useRoute } from "vue-router"
 import api from "@/api/api"
@@ -63,9 +68,11 @@ export default {
     const route = useRoute()
     const token = store.state.users.token
     const roomId = route.params.roomId
+    const inputPassword = ref("")
 
     const roomInfo = ref({})
     const userInfo = ref({})
+    const originPrivate = ref(true)
     store.dispatch("getRoomInfo", roomId)
     watchEffect(() => {
       roomInfo.value = store.getters.getRoomInfo
@@ -74,32 +81,64 @@ export default {
         roomInfo.value.isPrivate = true
       } else {
         roomInfo.value.isPrivate = false
+        originPrivate.value = false
       }
     })
 
     const editRoom = async function () {
       try {
+        const data = reactive({
+          title: roomInfo.value.title,
+          descript: roomInfo.value.descript,
+          hostId: roomInfo.value.hostId,
+        })
+
         let errorFlag = 0
 
         if (roomInfo.value.isPrivate == true) {
           roomInfo.value.isPrivate = 1
         } else {
           roomInfo.value.isPrivate = 0
+          inputPassword.value = ""
         }
+
+        console.log(originPrivate.value)
+        // 공개방에서 공개, 비공개로 전환하는 경우
+        if (!originPrivate.value) {
+          if (roomInfo.value.isPrivate == 1) {
+            if (inputPassword.value.length == 4) {
+              data.roomPassword = inputPassword.value
+            } else {
+              editErrorMsg.value = "4자리의 비밀번호를 입력해주세요"
+              errorFlag = true
+            }
+          }
+        } else {
+          if (roomInfo.value.isPrivate == 0) {
+            inputPassword.value = ""
+            data.roomPassword = ""
+          } else {
+            if (inputPassword.value.length == 0) {
+              console.log("비밀번호 변경 없음")
+            } else if (inputPassword.value.length == 4) {
+              data.roomPassword = inputPassword.value
+            } else {
+              editErrorMsg.value = "4자리의 비밀번호를 입력해주세요"
+              errorFlag = true
+            }
+          }
+        }
+
+        console.log(data)
+
         if (roomInfo.value.title == "") {
           editErrorMsg.value = "방 이름을 정해 주세요"
-          errorFlag = 1
-        }
-        if (roomInfo.value.isPrivate) {
-          if (roomInfo.value.roomPassword.length != 4) {
-            editErrorMsg.value = "4자리의 비밀번호를 정해주세요"
-            errorFlag = 1
-          }
+          errorFlag = true
         }
 
         if (errorFlag) {
           roomInfo.value.isPrivate = Boolean(roomInfo.value.isPrivate)
-          errorFlag = 0
+          errorFlag = false
           return
         }
 
@@ -107,7 +146,7 @@ export default {
           url: api.room.editRoom(roomId),
           method: "PATCH",
           headers: { Authorization: "Bearer " + token },
-          data: roomInfo.value,
+          data: data,
         })
         if (response.data.statusCode === 200) {
           Swal.fire({
@@ -117,11 +156,18 @@ export default {
           context.emit("close")
         }
       } catch (err) {
-        console.log("실패")
+        console.log(err)
       }
     }
 
-    return { editErrorMsg, roomInfo, userInfo, editRoom }
+    return {
+      editErrorMsg,
+      originPrivate,
+      inputPassword,
+      roomInfo,
+      userInfo,
+      editRoom,
+    }
   },
 }
 </script>

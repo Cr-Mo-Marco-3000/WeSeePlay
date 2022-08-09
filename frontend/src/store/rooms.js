@@ -1,6 +1,7 @@
 import api from "@/api/api"
 import axios from "axios"
 import Swal from "sweetalert2"
+import router from "@/router"
 
 export default {
   state: {
@@ -43,13 +44,22 @@ export default {
           headers: getters.authHeader,
           url: api.room.roomInfo(roomID),
         })
-        dispatch("setRoomInfo", response.data)
+
+        if (response.status === 200) {
+          dispatch("setRoomInfo", response.data)
+        } else {
+          Swal.fire({
+            icon: "error",
+            text: "존재하지 않는 방입니다",
+          })
+          router.push({ name: "errorpage", params: { errorname: "404" } })
+        }
       } catch (err) {
         Swal.fire({
           icon: "error",
-          text: "뭔지는 모르겠는데 오류임",
+          text: "잘못된 접근입니다",
         })
-        dispatch("logout")
+        router.push({ name: "errorpage", params: { errorname: "500" } })
       }
     },
   },

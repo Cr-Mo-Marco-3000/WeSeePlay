@@ -94,6 +94,8 @@ export default {
           inputPassword: passwordInput.value,
         }
 
+        console.log(data.value)
+
         const response = await axios({
           url: api.room.enterRoom(),
           method: "POST",
