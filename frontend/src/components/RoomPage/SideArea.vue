@@ -3,7 +3,11 @@
     <button class="exit">
       <i @click="closeSidebar" class="fa-solid fa-x fa-lg exit-label"></i>
     </button>
-    <ParticipantArea v-if="sideBarStatus === '1'" :userList="userList" />
+    <ParticipantArea
+      v-if="sideBarStatus === '1'"
+      :roomUserInfo="roomUserInfo"
+      :roomInfo="roomInfo"
+    />
     <ChattingArea v-if="sideBarStatus === '2'" />
     <GameArea v-if="sideBarStatus === '3'" />
   </div>
@@ -29,48 +33,14 @@ watchEffect(() => {
   sideBarStatus.value = store.getters.get_sidebar
 })
 
-// 여기부터 아래까지 임시 userList
-const userList = ref([])
+// 유저 정보 출력
+const roomUserInfo = ref([])
+const roomInfo = ref({})
 
-const nameList = ['아무무', '야스오', '유리아쥬']
-
-userList.value.push({
-  userId: 1,
-  userNickname: '에드워드 컬렌',
-  isPlayer: 1,
-  isHost: 1,
+watchEffect(() => {
+  roomUserInfo.value = store.getters.getUserInfo
+  roomInfo.value = store.getters.getRoomInfo
 })
-
-for (let i = 2; i < 5; i++) {
-  const user_id = i
-  const user_nickname = nameList[i - 2]
-  const is_player = 2 % i
-  const is_host = 0
-  const user = {
-    userId: user_id,
-    userNickname: user_nickname,
-    isPlayer: is_player,
-    isHost: is_host,
-  }
-  userList.value.push(user)
-}
-
-// 유저 참가, 제거를 해 보기 위한 함수 => 버튼으로 실험해봄
-// eslint-disable-next-line
-const userAdd = function () {
-  const user = {
-    userId: 1,
-    userNickname: '임시유저',
-    isPlayer: 1,
-    isHost: 0,
-  }
-  userList.value.push(user)
-}
-
-// eslint-disable-next-line
-const userDelete = function () {
-  userList.value.pop()
-}
 </script>
 
 <style scoped>

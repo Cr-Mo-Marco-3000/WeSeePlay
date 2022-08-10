@@ -43,14 +43,13 @@ store.dispatch("getRoomInfo", roomId)
 const isSide = ref(0)
 watchEffect(() => {
   /* eslint-disable */
-  const roomInfo = store.getters.getRoomInfo
-  const userInfo = store.getters.getUserInfo
+  // 지금 방 안에 있다가 유저가 입장하면 정보를 새로 불러오는 로직이 작성되어 있나요?
+  // 그거 인식하게 해야 합니다.
+
   // SideArea Open 정보
   // 게터에 저장되어 있는 정보를 가져왔습니다.
   // 이미 문자열로 저장되어 있는 부분 처리하기 싫어서 여기서는 숫자로 처리해 주었습니다.
   isSide.value = parseInt(store.getters.get_sidebar)
-  // console.log(roomInfo)
-  // console.log(userInfo)
 })
 
 /* 방정보 수정 모달 */

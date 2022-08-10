@@ -1,5 +1,6 @@
 <template>
   <div class="bottombar">
+    <!-- <button @click="">임시버튼</button> -->
     <div class="triColumn"></div>
     <div class="triColumn">
       <div class="middleIconDiv">
@@ -32,7 +33,7 @@
           ></i>
         </label>
       </div>
-      <div class="middleIconDiv">
+      <div v-if="isGameAndSettingOpen" class="middleIconDiv">
         <input
           v-model="isSettingOpen"
           class="input"
@@ -65,7 +66,7 @@
           <i id="2" class="fa-solid fa-comments fa-2x"></i>
         </label>
       </div>
-      <div class="rightIconDiv">
+      <div v-if="isGameAndSettingOpen" class="rightIconDiv">
         <label id="3" @click="clickSidebarIcon" class="btn">
           <i id="3" class="fa-solid fa-gamepad fa-2x"></i>
         </label>
@@ -78,7 +79,11 @@
           id="sideAreaBundleInput"
           type="checkbox"
         />
-        <label class="btn sideAreaBundleOpen" for="sideAreaBundleInput">
+        <label
+          v-if="isGameAndSettingOpen"
+          class="btn sideAreaBundleOpen"
+          for="sideAreaBundleInput"
+        >
           <i class="fa-solid fa-angles-up fa-2x"></i>
         </label>
 
@@ -97,9 +102,9 @@
 </template>
 
 <script setup>
-import store from "@/store"
-import { ref } from "vue"
-
+import store from '@/store'
+import { ref } from 'vue'
+import { watchEffect } from 'vue'
 // 마이크가 오픈되어 있지 않음 => 기본값
 const isMicOpen = ref(false)
 
@@ -111,17 +116,28 @@ const isSettingOpen = ref(false)
 
 // 빠져나가는 버튼
 const backToLounge = function () {
-  console.log("라운지로 숑숑숑")
+  console.log('라운지로 숑숑숑')
 }
 
 // sideArea 묶음 버튼
 const sideAreaBundle = ref(false)
 
 const clickSidebarIcon = function (event) {
-  store.dispatch("openSidebar", event.target.id)
+  store.dispatch('openSidebar', event.target.id)
 }
+
+// 게임 & 방설정 언더바에서 보이게 하기 => 나중에 다시 활용할수도
+const isGameAndSettingOpen = ref(true)
+
+watchEffect(() => {
+  if (store.getters.getRoomInfo.hostEmail === store.getters.me.userEmail) {
+    isGameAndSettingOpen.value = true
+  } else {
+    isGameAndSettingOpen.value = false
+  }
+})
 </script>
 
 <style scoped>
-@import url("../../../src/assets/roompage/bottombar.css");
+@import url('../../../src/assets/roompage/bottombar.css');
 </style>
