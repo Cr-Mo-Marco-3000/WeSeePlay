@@ -14,7 +14,11 @@
 
       <div id="card-host" class="col-12">host: {{ info.hostNickname }}</div>
 
-      <div class="col-12 flex justify-end items-center">
+      <div class="col-12 card-bottom">
+        <div class="game-info" v-if="info.game == 2">
+          <span><i class="fa-solid fa-gamepad"></i></span>
+          <span>현재 게임 진행 중!</span>
+        </div>
         <span id="people-number"> &nbsp; {{ userNum }}명/12명 </span>
       </div>
     </div>
