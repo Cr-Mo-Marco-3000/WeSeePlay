@@ -79,7 +79,7 @@ for (let i = 1; i < customNumber.value; i++) {
 
 // --------------------------------------open vidu-----------------------------------------------
 // 여기서 부턴 openVidu
-const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443"
+const OPENVIDU_SERVER_URL = "https://" + "i7a501.p.ssafy.io"
 const OPENVIDU_SERVER_SECRET = "MY_SECRET"
 const state = reactive({
   OV: undefined,
