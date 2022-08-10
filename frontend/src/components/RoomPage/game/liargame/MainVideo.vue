@@ -1,14 +1,9 @@
 <template>
   <div class="video-item">
     <div class="user-box">
-      <h3>{{ user.nickname }}</h3>
-      <p v-if="user.onVideo">
-        <img
-          class="sample"
-          src="https://cdn3.iconfinder.com/data/icons/vector-icons-6/96/256-512.png"
-        />
-      </p>
-      <p v-else>Video가 꺼져있습니다.</p>
+      <div v-if="user">
+        <ov-video :stream-manager="user" />
+      </div>
       <button @click.stop="$emit('next')">NEXT</button>
     </div>
   </div>
@@ -16,6 +11,7 @@
 
 <script setup>
 import { defineProps } from "vue"
+import OvVideo from "./OvVideo.vue"
 
 defineProps({
   user: {

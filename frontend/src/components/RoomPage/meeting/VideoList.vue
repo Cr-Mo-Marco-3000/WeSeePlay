@@ -5,8 +5,8 @@
     </a>
     <div class="row col-10">
       <video-item
-        v-for="user in pageUsers"
-        :key="user.id"
+        v-for="(user, idx) in PageUserVideo"
+        :key="idx"
         :user="user"
         :class="grid"
         class="self-center"
@@ -31,46 +31,96 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  publisher: {
+    type: Object,
+  },
+  subscribers: {
+    type: Array,
+  },
 })
 
 // pagination 관련
-const pageUsers = ref([])
 const currentPage = ref(0)
 const maxPages = ref(0)
 const pageLimit = ref(6)
 
 const getPageUser = function (page) {
+  console.log(
+    "page number다 짜식드라",
+    currentPage.value,
+    "입력 값: ",
+    page,
+    "maxpage: ",
+    maxPages.value
+  )
   if (page > maxPages.value || page < 0) {
     return
-  } else if (page === maxPages.value) {
-    pageUsers.value = props.users.slice(
-      props.users.length - pageLimit.value,
-      props.users.length
-    )
-  } else {
-    pageUsers.value = props.users.slice(
-      page * pageLimit.value,
-      (page + 1) * pageLimit.value
-    )
   }
   currentPage.value = page
 }
 
+// 비디오 사용자들(subscribers)
+const UserVideo = ref([])
+const PageUserVideo = ref([])
+
+// const getPageUserVideo = function (page) {
+//   if (props.publisher) {
+//     if (page > maxPages.value || page < 0) {
+//       return
+//     } else if (page === maxPages.value) {
+//       PageUserVideo.value = UserVideo.value.slice(
+//         UserVideo.value.length - pageLimit.value,
+//         UserVideo.value.length
+//       )
+//     } else {
+//       PageUserVideo.value = UserVideo.value.slice(
+//         page * pageLimit.value,
+//         (page + 1) * pageLimit.value
+//       )
+//     }
+//     currentPage.value = page
+//   }
+// }
+
 getPageUser(0)
+// getPageUserVideo(0)
 
 // grid 나누는 거 관련
 const grid = ref("col-6")
 
 watchEffect(() => {
-  if (props.isSide === true || props.users.length < 5) {
+  currentPage.value
+  if (props.isSide === true || UserVideo.value.length < 5) {
     grid.value = "col-6"
     pageLimit.value = 4
   } else {
     grid.value = "col-4"
     pageLimit.value = 6
   }
-  maxPages.value = parseInt((props.users.length - 1) / pageLimit.value)
-  getPageUser(0)
+  maxPages.value = parseInt((UserVideo.value.length - 1) / pageLimit.value)
+
+  // 비디오 유저들
+  UserVideo.value = []
+  if (props.publisher) {
+    UserVideo.value.push(props.publisher)
+    UserVideo.value.push(...props.subscribers)
+    console.log(
+      "여기가 인덱스 입니다~",
+      0 + currentPage.value * pageLimit.value,
+      pageLimit.value + currentPage.value * pageLimit.value
+    )
+    PageUserVideo.value = UserVideo.value.slice(
+      0 + currentPage.value * pageLimit.value,
+      pageLimit.value + currentPage.value * pageLimit.value
+    )
+  }
+  console.log(
+    "유저 비디오 입니다",
+    UserVideo.value.length,
+    props.subscribers.length
+  )
+  // getPageUserVideo(currentPage)
+  console.log("hahahahahahah", PageUserVideo.value)
 })
 </script>
 

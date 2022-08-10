@@ -9,6 +9,7 @@
       v-if="isSide === 0"
       class="video_area video_area_off_sidebar"
       :isSide="Boolean(isSide)"
+      :roomId="roomId"
     />
     <SideArea class="self-center" v-if="isSide !== 0" />
   </div>
@@ -22,22 +23,22 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue'
-import VideoArea from '@/components/RoomPage/VideoArea.vue'
-import SideArea from '@/components/RoomPage/SideArea.vue'
-import BottomBar from '@/components/RoomPage/BottomBar.vue'
-import EditModal from '@/components/RoomPage/meeting/EditModal.vue'
-import EditModalContent from '@/components/RoomPage/meeting/EditModalContent.vue'
-import LiarModal from '@/components/RoomPage/game/liargame/modal/LiarModal.vue'
-import LiarModalContent from '@/components/RoomPage/game/liargame/modal/LiarModalContent.vue'
-import { useRoute } from 'vue-router'
-import { useStore } from 'vuex'
+import { ref, watchEffect } from "vue"
+import VideoArea from "@/components/RoomPage/VideoArea.vue"
+import SideArea from "@/components/RoomPage/SideArea.vue"
+import BottomBar from "@/components/RoomPage/BottomBar.vue"
+import EditModal from "@/components/RoomPage/meeting/EditModal.vue"
+import EditModalContent from "@/components/RoomPage/meeting/EditModalContent.vue"
+import LiarModal from "@/components/RoomPage/game/liargame/modal/LiarModal.vue"
+import LiarModalContent from "@/components/RoomPage/game/liargame/modal/LiarModalContent.vue"
+import { useRoute } from "vue-router"
+import { useStore } from "vuex"
 
 //  props 정보
 const route = useRoute()
 const roomId = route.params.roomId
 const store = useStore()
-store.dispatch('getRoomInfo', roomId)
+store.dispatch("getRoomInfo", roomId)
 
 const isSide = ref(0)
 watchEffect(() => {
