@@ -8,7 +8,11 @@
       :roomUserInfo="roomUserInfo"
       :roomInfo="roomInfo"
     />
-    <ChattingArea v-if="sideBarStatus === '2'" />
+    <ChattingArea
+      v-if="sideBarStatus === '2'"
+      :roomUserInfo="roomUserInfo"
+      :roomInfo="roomInfo"
+    />
     <GameArea v-if="sideBarStatus === '3'" />
   </div>
 </template>
