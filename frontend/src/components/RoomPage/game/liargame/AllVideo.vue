@@ -3,7 +3,8 @@
     <a class="col-1" @click.stop="getPage(currentPage - 1)">
       <img class="arrow" src="@/assets/leftArrow.png" />
     </a>
-    <div class="row col-10">
+    <!-- min width를 줘서 일정 크기 이하로 줄어들었을 때만 겹치게 함 -->
+    <div class="row col-10 row-min-width">
       <video-item
         v-for="user in showUsers"
         :key="user.id"
@@ -19,8 +20,8 @@
 </template>
 
 <script setup>
-import { ref, defineProps, watchEffect } from "vue"
-import VideoItem from "./VideoItem.vue"
+import { ref, defineProps, watchEffect } from 'vue'
+import VideoItem from './VideoItem.vue'
 const props = defineProps({
   isSide: {
     type: Boolean,
@@ -34,7 +35,7 @@ const props = defineProps({
 // pagination 관련
 const currentPage = ref(0)
 const maxPages = ref([0, 0])
-const gridNum = ref(["col-6", "col-12"])
+const gridNum = ref(['col-6', 'col-12'])
 const pageLimit = ref([6, 3])
 const showUsers = ref([])
 const side = ref(0)
@@ -78,5 +79,9 @@ console.log(currentPage.value, maxPages.value[side.value])
 
 .arrow {
   width: 100%;
+}
+
+.row-min-width {
+  min-width: 35rem;
 }
 </style>

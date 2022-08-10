@@ -3,7 +3,6 @@
     <button class="exit">
       <i @click="closeSidebar" class="fa-solid fa-x fa-lg exit-label"></i>
     </button>
-    <div>{{ sideBar }}</div>
     <ParticipantArea v-if="sideBarStatus === '1'" :userList="userList" />
     <ChattingArea v-if="sideBarStatus === '2'" />
     <GameArea v-if="sideBarStatus === '3'" />
