@@ -19,8 +19,8 @@
 </template>
 
 <script setup>
-import VideoItem from './VideoItem.vue'
-import { ref, defineProps, watchEffect } from 'vue'
+import VideoItem from "./VideoItem.vue"
+import { ref, defineProps, watchEffect } from "vue"
 
 const props = defineProps({
   users: {
@@ -59,21 +59,19 @@ const getPageUser = function (page) {
 getPageUser(0)
 
 // grid 나누는 거 관련
-const grid = ref('col-6')
+const grid = ref("col-6")
 
 watchEffect(() => {
   if (props.isSide === true || props.users.length < 5) {
-    grid.value = 'col-6'
+    grid.value = "col-6"
     pageLimit.value = 4
   } else {
-    grid.value = 'col-4'
+    grid.value = "col-4"
     pageLimit.value = 6
   }
   maxPages.value = parseInt((props.users.length - 1) / pageLimit.value)
   getPageUser(0)
 })
-
-console.log('videoList', props.isSide)
 </script>
 
 <style>

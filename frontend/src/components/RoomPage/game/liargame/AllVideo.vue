@@ -20,8 +20,8 @@
 </template>
 
 <script setup>
-import { ref, defineProps, watchEffect } from 'vue'
-import VideoItem from './VideoItem.vue'
+import { ref, defineProps, watchEffect } from "vue"
+import VideoItem from "./VideoItem.vue"
 const props = defineProps({
   isSide: {
     type: Boolean,
@@ -35,7 +35,7 @@ const props = defineProps({
 // pagination 관련
 const currentPage = ref(0)
 const maxPages = ref([0, 0])
-const gridNum = ref(['col-6', 'col-12'])
+const gridNum = ref(["col-6", "col-12"])
 const pageLimit = ref([6, 3])
 const showUsers = ref([])
 const side = ref(0)
@@ -68,8 +68,6 @@ watchEffect(() => {
   maxPages.value[0] = parseInt((props.users.length - 1) / 6)
   maxPages.value[1] = parseInt((props.users.length - 1) / 3)
 })
-
-console.log(currentPage.value, maxPages.value[side.value])
 </script>
 
 <style scoped>
