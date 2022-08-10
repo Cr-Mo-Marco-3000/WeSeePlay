@@ -1,4 +1,4 @@
-#card-box{
+#card-box {
   margin: 0;
   padding: 0;
 }
@@ -6,7 +6,7 @@
 #card-container {
   width: 100%;
   height: 100%;
-  margin-bottom:5%;
+  margin-bottom: 5%;
   height: 80%;
   padding: 5%;
   background: rgba(255, 255, 255, 0.375);
@@ -16,7 +16,7 @@
   transition: all 0.3s ease;
 }
 
-#card-container:hover{
+#card-container:hover {
   color: #fff;
   background: #6a5eefb7;
   cursor: pointer;
@@ -24,22 +24,22 @@
   transform: scale(1.03);
 }
 
-#card-container:hover #isprivate-icon{
+#card-container:hover #isprivate-icon {
   color: white;
 }
 
-#card-head{
+#card-head {
   display: flex;
   width: 100%;
   text-align: left;
   justify-content: space-between;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
-#card-title{
+#card-title {
   font-size: 1.2rem;
-  margin:0%;
-  margin-top:3%;
+  margin: 0%;
+  margin-top: 3%;
   width: 70%;
   display: block;
   white-space: nowrap;
@@ -47,7 +47,7 @@
   text-overflow: ellipsis;
 }
 
-#card-host{
+#card-host {
   width: 100%;
   text-align: start;
   min-height: 80px;
@@ -55,28 +55,47 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  opacity: .5;
+  opacity: 0.5;
 }
 
-#isprivate-icon{
+#isprivate-icon {
   position: relative;
-  display:block;
+  display: block;
   color: #695eef;
   font-size: 200%;
   transition: all 0.3s ease;
-  right: .3rem;
-  top: .1rem;
+  right: 0.3rem;
+  top: 0.1rem;
 }
 
 #people-number {
   vertical-align: 20%;
 }
 
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.2rem;
+}
 
-@media only screen and (min-width: 600px){
+.game-info {
+  color: #695eef;
+}
+
+.game-info i {
+  margin-right: 0.2rem;
+  position: relative;
+  top: 1px;
+}
+
+#card-container:hover .game-info {
+  color: white;
+}
+
+@media only screen and (min-width: 600px) {
   #card-container {
     width: 95%;
-    margin-bottom:5%;
+    margin-bottom: 5%;
     height: 80%;
     padding: 5%;
     background: rgba(255, 255, 255, 0.375);
