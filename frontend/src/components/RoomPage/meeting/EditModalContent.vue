@@ -154,7 +154,6 @@ export default {
           })
           store.dispatch("getRoomInfo", roomId)
           context.emit("close")
-        }
       } catch (err) {
         console.log(err)
       }
