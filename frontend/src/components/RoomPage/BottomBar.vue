@@ -3,7 +3,7 @@
     <!-- <button @click="">임시버튼</button> -->
     <div class="triColumn"></div>
     <div class="triColumn">
-      <div class="middleIconDiv">
+      <div class="middleIconDiv" @click="$emit('audio-toggle')">
         <label @click="onOffMic" class="btn">
           <i v-if="isMicOpen" class="fa-solid fa-microphone-lines fa-2x"></i>
           <i
@@ -12,7 +12,7 @@
           ></i>
         </label>
       </div>
-      <div class="middleIconDiv">
+      <div class="middleIconDiv" @click="$emit('video-toggle')">
         <label @click="onOffVideo" class="btn">
           <i v-if="isVideoOpen" class="fa-solid fa-video fa-2x"></i>
           <i
@@ -90,11 +90,11 @@
 </template>
 
 <script setup>
-import store from '@/store'
-import api from '@/api/api'
-import { useRouter } from 'vue-router'
-import { ref, watchEffect } from 'vue'
-import Swal from 'sweetalert2'
+import store from "@/store"
+import api from "@/api/api"
+import { useRouter } from "vue-router"
+import { ref, watchEffect } from "vue"
+import Swal from "sweetalert2"
 const router = useRouter()
 
 // 마이크가 오픈되어 있지 않음 => 기본값
@@ -107,23 +107,23 @@ const onOffMic = function () {
   isMicOpen.value = !isMicOpen.value
   if (isMicOpen.value === true) {
     Swal.fire({
-      position: 'top',
-      title: '마이크가 켜졌습니다.',
-      color: '#695eef',
+      position: "top",
+      title: "마이크가 켜졌습니다.",
+      color: "#695eef",
       backdrop: false,
       showConfirmButton: false,
       timer: 700,
-      width: '25rem',
+      width: "25rem",
     })
   } else {
     Swal.fire({
-      position: 'top',
-      title: '마이크가 꺼졌습니다.',
-      color: 'rgba(246, 30, 30, 0.75)',
+      position: "top",
+      title: "마이크가 꺼졌습니다.",
+      color: "rgba(246, 30, 30, 0.75)",
       backdrop: false,
       showConfirmButton: false,
       timer: 700,
-      width: '25rem',
+      width: "25rem",
     })
   }
 }
@@ -132,23 +132,23 @@ const onOffVideo = function () {
   isVideoOpen.value = !isVideoOpen.value
   if (isVideoOpen.value === true) {
     Swal.fire({
-      position: 'top',
-      title: '화면이 켜졌습니다.',
-      color: '#695eef',
+      position: "top",
+      title: "화면이 켜졌습니다.",
+      color: "#695eef",
       backdrop: false,
       showConfirmButton: false,
       timer: 700,
-      width: '25rem',
+      width: "25rem",
     })
   } else {
     Swal.fire({
-      position: 'top',
-      title: '화면이 꺼졌습니다.',
-      color: 'rgba(246, 30, 30, 0.75)',
+      position: "top",
+      title: "화면이 꺼졌습니다.",
+      color: "rgba(246, 30, 30, 0.75)",
       backdrop: false,
       showConfirmButton: false,
       timer: 700,
-      width: '25rem',
+      width: "25rem",
     })
   }
 }
@@ -160,13 +160,13 @@ const isSettingOpen = ref(false)
 
 const leaveConfirm = async function () {
   let a = await Swal.fire({
-    title: '방을 나가시겠습니까?',
-    icon: 'question',
+    title: "방을 나가시겠습니까?",
+    icon: "question",
     showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Room 나가기',
-    cancelButtonText: '취소',
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Room 나가기",
+    cancelButtonText: "취소",
   }).then((result) => {
     if (result.isConfirmed) {
       return true
@@ -181,26 +181,26 @@ const leaveRoom = async function () {
   const rst = await leaveConfirm()
 
   if (rst === true) {
-    Swal.fire('방 나가기 완료!', '', 'success')
+    Swal.fire("방 나가기 완료!", "", "success")
     const data = { roomId: store.getters.getRoomInfo.roomId }
     const res = await api.room.leaveRoom(data)
     console.log(res)
     if (res.status === 200) {
-      router.push({ name: 'mainpage' })
+      router.push({ name: "mainpage" })
     }
   }
 }
 
 const killConfirm = async function () {
   const rst = await Swal.fire({
-    title: '당신은 호스트라서 나갈 수 없어요',
-    text: '하지만 Room 삭제는 가능합니다',
-    icon: 'question',
+    title: "당신은 호스트라서 나갈 수 없어요",
+    text: "하지만 Room 삭제는 가능합니다",
+    icon: "question",
     showCancelButton: true,
-    confirmButtonColor: 'red',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Room 삭제하기',
-    cancelButtonText: '취소',
+    confirmButtonColor: "red",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Room 삭제하기",
+    cancelButtonText: "취소",
   }).then((result) => {
     if (result.isConfirmed) {
       return true
@@ -214,13 +214,13 @@ const killRoom = async function () {
   if (rst === true) {
     const data = { roomId: store.getters.getRoomInfo.roomId }
     const res = await api.room.killRoom(data)
-    console.log('kill-room', res)
+    console.log("kill-room", res)
     if (res.status === 200) {
-      Swal.fire('방 삭제 완료!', '', 'success')
-      router.push({ name: 'mainpage' })
+      Swal.fire("방 삭제 완료!", "", "success")
+      router.push({ name: "mainpage" })
     } else {
       Swal.fire({
-        title: '방 삭제 실패',
+        title: "방 삭제 실패",
         html: `ErrorCode(${res.status})<br><br>지속 발생 시 관리자에게 문의해주세요`,
       })
     }
@@ -241,7 +241,7 @@ const leaveOrKill = async function () {
 const sideAreaBundle = ref(false)
 
 const clickSidebarIcon = function (event) {
-  store.dispatch('openSidebar', event.target.id)
+  store.dispatch("openSidebar", event.target.id)
 }
 
 // 게임 & 방설정 언더바에서 보이게 하기 => 나중에 다시 활용할수도
@@ -257,5 +257,5 @@ watchEffect(() => {
 </script>
 
 <style scoped>
-@import url('../../../src/assets/roompage/bottombar.css');
+@import url("../../../src/assets/roompage/bottombar.css");
 </style>
