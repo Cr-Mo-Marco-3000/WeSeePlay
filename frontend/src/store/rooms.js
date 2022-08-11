@@ -72,5 +72,18 @@ export default {
     addMessage: function ({ commit }, message) {
       commit('ADD_MESSAGE', message)
     },
+    // 방 폭파시는 name에 빈칸을 넣으면 되고, 아니면 userName을 넣으면 됩니다.
+    forceExit: function (context, name) {
+      router.push({ name: 'mainpage' })
+      let alertTitle = '방이 폭파되었습니다!'
+      if (!name) {
+        alertTitle = `${name}님은 방에서 강퇴당하셨습니다!`
+      }
+      Swal.fire({
+        title: alertTitle,
+        text: '라운지로 이동했습니다',
+        icon: 'warning',
+      })
+    },
   },
 }
