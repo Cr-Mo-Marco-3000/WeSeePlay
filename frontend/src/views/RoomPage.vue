@@ -1,6 +1,6 @@
 <template>
   <div class="main-area">
-    <VideoArea
+    <!-- <VideoArea
       v-if="isSide !== 0"
       class="video_area video_area_on_sidebar"
       :isSide="Boolean(isSide)"
@@ -10,7 +10,7 @@
       class="video_area video_area_off_sidebar"
       :isSide="Boolean(isSide)"
       :roomId="roomId"
-    />
+    /> -->
     <SideArea class="self-center" v-if="isSide !== 0" />
   </div>
   <BottomBar @room-edit="isEditModal = !isEditModal" />
@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref, watchEffect } from "vue"
-import VideoArea from "@/components/RoomPage/VideoArea.vue"
+// import VideoArea from "@/components/RoomPage/VideoArea.vue"
 import SideArea from "@/components/RoomPage/SideArea.vue"
 import BottomBar from "@/components/RoomPage/BottomBar.vue"
 import EditModal from "@/components/RoomPage/meeting/EditModal.vue"

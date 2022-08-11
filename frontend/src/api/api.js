@@ -1,23 +1,22 @@
 // 회원 서버 URL
 import store from "@/store"
-
-// const HOST = "http://localhost:8010/api/v1"
+import axios from "axios"
 const HOST = "https://i7a501.p.ssafy.io/api/v1"
 
-const USERS = '/users'
+const USERS = "/users"
 
-const EMAIL = '/email'
+const EMAIL = "/email"
 
-const ROOMS = '/rooms'
+const ROOMS = "/rooms"
 
-const CERTIFICATION = '/certification'
+const CERTIFICATION = "/certification"
 
 // 아래 카카오 로그인을 할 때는, 프론트엔드쪽으로 포트 번호를 맞추어야 한다
 // 즉 로컬 서버로 연결할 때는 8080, 배포 서버로 날릴 때는 본 주소로 날리자
 // const KakaoLogin = 'http://localhost:8080/login/kakao'
-const KakaoLogin = 'https://i7a501.p.ssafy.io/login/kakao'
+const KakaoLogin = "https://i7a501.p.ssafy.io/login/kakao"
 
-const kakaoSendToken = 'https://i7a501.p.ssafy.io/api/v1/users/oauth/kakao'
+const kakaoSendToken = "https://i7a501.p.ssafy.io/api/v1/users/oauth/kakao"
 // const kakaoSendToken = 'http://localhost:8010/api/v1/oauth/kakao'
 
 const setRequest = function (method, url, data) {
@@ -32,15 +31,16 @@ const setRequest = function (method, url, data) {
   return req
 }
 
-// const sendAxios = async function (req) {
-//   let res = ""
-//   try {
-//     res = axios(req)
-//   } catch (error) {
-//     res = error
-//   }
-//   return res
-// }
+const sendAxios = async function (req) {
+  let res = ""
+  try {
+    res = await axios(req)
+  } catch (error) {
+    res = error.response
+  }
+  return res
+}
+
 export default {
   // 회원 관련 API
   users: {
@@ -57,21 +57,21 @@ export default {
       HOST + USERS + EMAIL + CERTIFICATION + `/check?userEmail=${email}`,
 
     // 내 계정 정보(토큰인증)
-    checkToken: () => HOST + USERS + '/me',
+    checkToken: () => HOST + USERS + "/me",
 
     // 로그인
-    login: () => HOST + USERS + '/auth' + '/login',
+    login: () => HOST + USERS + "/auth" + "/login",
 
     // 닉네임 정보 수정
-    changeNickname: () => HOST + USERS + '/nickname',
+    changeNickname: () => HOST + USERS + "/nickname",
 
     // 비밀번호 수정
-    changePassword: () => HOST + USERS + '/password',
+    changePassword: () => HOST + USERS + "/password",
 
     // 이메일 체크(비밀번호 찾기)
-    sendEmailForPW: () => HOST + USERS + EMAIL + CERTIFICATION + '/pw',
+    sendEmailForPW: () => HOST + USERS + EMAIL + CERTIFICATION + "/pw",
 
-    verifyEmailForPW: () => HOST + USERS + EMAIL + CERTIFICATION + '/pw/check',
+    verifyEmailForPW: () => HOST + USERS + EMAIL + CERTIFICATION + "/pw/check",
 
     // verifyEmailForPW: (email) =>
     //   HOST + USERS + EMAIL + CERTIFICATION + `/pw/check?userEmail=${email}`,
@@ -91,13 +91,22 @@ export default {
 
     roomInfo: (roomId) => HOST + ROOMS + `/info/${roomId}`,
 
-    enterRoom: () => HOST + ROOMS + '/enter',
+    enterRoom: () => HOST + ROOMS + "/enter",
 
     editRoom: (roomId) => HOST + ROOMS + `/${roomId}`,
 
-    killRoom: (data) => {
-      const res = setRequest("DELETE", "", data)
-      console.log(res)
+    leaveRoom: async (data) => {
+      const req = setRequest("DELETE", "/leave", data)
+      const res = await sendAxios(req)
+      await store.dispatch("getRoomInfo", data.roomId)
+      return res
+    },
+
+    killRoom: async (data) => {
+      const req = setRequest("DELETE", "", data)
+      const res = await sendAxios(req)
+      await store.dispatch("getRoomInfo", data.roomId)
+      return res
     },
   },
 }

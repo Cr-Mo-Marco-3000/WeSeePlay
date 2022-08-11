@@ -123,6 +123,7 @@ export default {
     AuthModal,
     AuthModalContent,
   },
+
   setup() {
     const store = useStore()
     const token = store.state.users.token

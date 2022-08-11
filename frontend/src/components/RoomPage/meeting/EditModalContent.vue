@@ -50,30 +50,30 @@
 </template>
 
 <script>
-import Swal from 'sweetalert2'
-import { reactive, ref, watchEffect } from 'vue'
-import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
-import api from '@/api/api'
-import axios from 'axios'
+import Swal from "sweetalert2"
+import { reactive, ref, watchEffect } from "vue"
+import { useStore } from "vuex"
+import { useRoute } from "vue-router"
+import api from "@/api/api"
+import axios from "axios"
 
 export default {
-  name: 'EditModalContent',
-  emits: ['close'],
+  name: "EditModalContent",
+  emits: ["close"],
   props: [],
   setup(props, context) {
-    const editErrorMsg = ref('')
+    const editErrorMsg = ref("")
     const store = useStore()
     // const router = useRouter()
     const route = useRoute()
     const token = store.state.users.token
     const roomId = route.params.roomId
-    const inputPassword = ref('')
+    const inputPassword = ref("")
 
     const roomInfo = ref({})
     const userInfo = ref({})
     const originPrivate = ref(true)
-    store.dispatch('getRoomInfo', roomId)
+    store.dispatch("getRoomInfo", roomId)
     watchEffect(() => {
       roomInfo.value = store.getters.getRoomInfo
       userInfo.value = store.getters.getUserInfo
@@ -99,7 +99,7 @@ export default {
           roomInfo.value.isPrivate = 1
         } else {
           roomInfo.value.isPrivate = 0
-          inputPassword.value = ''
+          inputPassword.value = ""
         }
 
         // 공개방에서 공개, 비공개로 전환하는 경우
@@ -108,21 +108,21 @@ export default {
             if (inputPassword.value.length == 4) {
               data.roomPassword = inputPassword.value
             } else {
-              editErrorMsg.value = '4자리의 비밀번호를 입력해주세요'
+              editErrorMsg.value = "4자리의 비밀번호를 입력해주세요"
               errorFlag = true
             }
           }
         } else {
           if (roomInfo.value.isPrivate == 0) {
-            inputPassword.value = ''
-            data.roomPassword = ''
+            inputPassword.value = ""
+            data.roomPassword = ""
           } else {
             if (inputPassword.value.length == 0) {
-              console.log('비밀번호 변경 없음')
+              console.log("비밀번호 변경 없음")
             } else if (inputPassword.value.length == 4) {
               data.roomPassword = inputPassword.value
             } else {
-              editErrorMsg.value = '4자리의 비밀번호를 입력해주세요'
+              editErrorMsg.value = "4자리의 비밀번호를 입력해주세요"
               errorFlag = true
             }
           }
@@ -130,8 +130,8 @@ export default {
 
         console.log(data)
 
-        if (roomInfo.value.title == '') {
-          editErrorMsg.value = '방 이름을 정해 주세요'
+        if (roomInfo.value.title == "") {
+          editErrorMsg.value = "방 이름을 정해 주세요"
           errorFlag = true
         }
 
@@ -143,17 +143,18 @@ export default {
 
         const response = await axios({
           url: api.room.editRoom(roomId),
-          method: 'PATCH',
-          headers: { Authorization: 'Bearer ' + token },
+          method: "PATCH",
+          headers: { Authorization: "Bearer " + token },
           data: data,
         })
         if (response.data.statusCode === 200) {
           Swal.fire({
-            icon: 'success',
-            text: '방 정보 수정이 완료되었습니다',
+            icon: "success",
+            text: "방 정보 수정이 완료되었습니다",
           })
           store.dispatch("getRoomInfo", roomId)
           context.emit("close")
+        }
       } catch (err) {
         console.log(err)
       }
