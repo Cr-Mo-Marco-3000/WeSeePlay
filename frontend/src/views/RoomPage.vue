@@ -1,6 +1,6 @@
 <template>
   <div class="main-area">
-    <VideoArea
+    <!-- <VideoArea
       v-if="isSide !== 0"
       class="video_area video_area_on_sidebar"
       :isSide="Boolean(isSide)"
@@ -10,7 +10,7 @@
       class="video_area video_area_off_sidebar"
       :isSide="Boolean(isSide)"
       :roomId="roomId"
-    />
+    /> -->
     <SideArea class="self-center" v-if="isSide !== 0" />
   </div>
   <BottomBar @room-edit="isEditModal = !isEditModal" />
@@ -23,8 +23,8 @@
 </template>
 
 <script setup>
-import { ref, watchEffect } from "vue"
-import VideoArea from "@/components/RoomPage/VideoArea.vue"
+import { ref, watchEffect, onBeforeUnmount } from "vue"
+// import VideoArea from "@/components/RoomPage/VideoArea.vue"
 import SideArea from "@/components/RoomPage/SideArea.vue"
 import BottomBar from "@/components/RoomPage/BottomBar.vue"
 import EditModal from "@/components/RoomPage/meeting/EditModal.vue"
@@ -33,6 +33,8 @@ import LiarModal from "@/components/RoomPage/game/liargame/modal/LiarModal.vue"
 import LiarModalContent from "@/components/RoomPage/game/liargame/modal/LiarModalContent.vue"
 import { useRoute } from "vue-router"
 import { useStore } from "vuex"
+import api from "@/api/api"
+import Swal from "sweetalert2"
 
 //  props 정보
 const route = useRoute()
@@ -61,6 +63,30 @@ const isLiarModal = ref(false)
 const editModalClose = function () {
   isEditModal.value = false
 }
+
+// 해당 페이지에서 나갈 때
+
+onBeforeUnmount(async () => {
+  const roomInfo = store.getters.getRoomInfo
+  const userInfo = store.getters.me
+  const isHost = roomInfo.hostNickname === userInfo.userNickname
+
+  const data = { roomId }
+  console.log(`isHost: ${isHost}`, `roomInfo: ${roomInfo.roomId}`)
+  if (isHost) {
+    await api.room.killRoom(data)
+    Swal.fire({
+      title: "당신은 Host 군요",
+      text: "방을 삭제했습니다.",
+    })
+  } else {
+    await api.room.leaveRoom(data)
+    Swal.fire({
+      title: "당신은 User 군요",
+      text: "방에서 나갔습니다.",
+    })
+  }
+})
 </script>
 
 <style scoped>

@@ -106,12 +106,12 @@ export default {
         } else if (userInList(store.getters.me.userNickname) === true) {
           Swal.fire({
             icon: "error",
-            html: "이미 참가 중인 방 입니다! <br><br> 2초 후, Room으로 이동합니다.",
-            timer: 2000,
+            html: "이미 참가 중인 방 입니다! <br><br> 1초 후, Room으로 이동합니다.",
+            timer: 1000,
           })
           await setTimeout(() => {
             router.push({ name: "roompage", params: { roomId: props.roomId } })
-          }, 2000)
+          }, 1000)
           return
         }
         const data = ref({})

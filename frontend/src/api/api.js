@@ -93,7 +93,11 @@ export default {
 
     enterRoom: () => HOST + ROOMS + "/enter",
 
-    editRoom: (roomId) => HOST + ROOMS + `/${roomId}`,
+    editRoom: async (data) => {
+      const req = setRequest("PATCH", `/${data.roomId}`, data)
+      const res = await sendAxios(req)
+      console.log(res)
+    },
 
     leaveRoom: async (data) => {
       const req = setRequest("DELETE", "/leave", data)
