@@ -21,7 +21,7 @@
       type="password"
       name="roomPassword"
       v-model="roomInfo.roomPassword"
-      placeholder="비밀번호"
+      placeholder="4자리의 비밀번호를 정해주세요"
       :disabled="roomInfo.isPrivate == false"
     />
   </div>
@@ -35,6 +35,7 @@
 import { ref, reactive } from "vue"
 // import { computed } from "vue"
 import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 import api from "@/api/api"
 import axios from "axios"
 
@@ -42,44 +43,45 @@ export default {
   name: "CreateRoomModalContent",
   setup() {
     const store = useStore()
+    const router = useRouter()
     const token = store.state.users.token
     // 방 생성 정보
     let roomInfo = reactive({
       title: "",
       descript: "어서와요",
       roomPassword: "",
-      game: 0,
-      isPrivate: 0,
+      game: 1,
+      isPrivate: false,
     })
 
     // 오류 메시지
     const roomCreateInputError = ref("")
     const createRoom = async function () {
       try {
-        console.log("header: ", "authorization : Bearer " + token)
-        console.log("body: ", roomInfo)
-        if (roomInfo.isPrivate == true) {
-          roomInfo.isPrivate = 1
+        const data = { ...roomInfo }
+        if (!roomInfo.isPrivate) {
+          data.roomPassword = ""
         }
+
+        data.isPrivate = Number(data.isPrivate)
+
         if (roomInfo.title == "") {
           roomCreateInputError.value = "방 이름을 정해 주세요"
+          return
+        } else if (roomInfo.isPrivate && roomInfo.roomPassword.length != 4) {
+          roomCreateInputError.value = "4자리의 비밀번호를 정해주세요"
+          return
         }
-        if (roomInfo.isPrivate) {
-          if (roomInfo.roomPassword.length != 4) {
-            roomCreateInputError.value = "4자리의 비밀번호를 정해주세요"
-          }
-        }
-        if (roomCreateInputError.value) {
-          return 0
-        }
+
         const response = await axios({
           url: api.room.createRoom(),
           method: "POST",
-          headers: { authorization: "Bearer " + token },
-          data: roomInfo,
+          headers: { Authorization: "Bearer " + token },
+          data,
         })
         if (response.data.statusCode === 201) {
-          console.log("방 생성 성공")
+          const roomId = response.data.roomId
+          router.push({ name: "roompage", params: { roomId: roomId } })
         }
       } catch (err) {
         console.log("실패")

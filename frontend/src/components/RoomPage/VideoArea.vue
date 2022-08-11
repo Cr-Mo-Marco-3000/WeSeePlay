@@ -1,18 +1,38 @@
 <template>
-  <div class="video-area-case" :class="true ? 'non-side' : 'on-side'">
-    <button @click="isGameMode = !isGameMode">Game On/Off</button>
+  <div>
+    <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
+    <button style="position: absolute; top: 1rem" @click="changeGame">
+      Game On/Off
+    </button>
     <!-- isGameMode가 참이면 GameVideo가 나오게 하고, false라면 MeetingVideo가 나오게 짰어-->
-    <LiarGameVideo v-if="isGameMode" :users="userList" :isSide="isSide" />
-    <MeetingVideo v-else :users="userList" :isSide="isSide" />
+    <LiarGameVideo v-if="isGameMode === 2" :users="userList" :isSide="isSide" />
+    <MeetingVideo v-if="isGameMode === 1" :users="userList" :isSide="isSide" />
   </div>
 </template>
 
 <script setup>
 import LiarGameVideo from "./game/liargame/VideoList.vue"
 import MeetingVideo from "./meeting/VideoList.vue"
-import { ref, defineProps } from "vue"
+import { ref, defineProps, watchEffect } from "vue"
+import store from "@/store"
 
-const isGameMode = ref(true)
+const isGameMode = ref(store.getters.getRoomInfo.game)
+
+watchEffect(() => {
+  isGameMode.value = store.getters.getRoomInfo.game
+})
+const changeGame = function () {
+  if (isGameMode.value === 1) {
+    isGameMode.value = 2
+    console.log("gamemode: ", isGameMode.value)
+    return
+  } else {
+    isGameMode.value = 1
+    console.log("gamemode: ", isGameMode.value)
+    return
+  }
+}
+
 const userList = ref([]) // Component에 넘겨줄 user list
 defineProps({
   isSide: {
@@ -31,8 +51,4 @@ for (let i = 1; i < customNumber.value; i++) {
 }
 </script>
 
-<style>
-.non-side {
-  height: 100%;
-}
-</style>
+<style scoped></style>
