@@ -79,6 +79,9 @@ public class RoomController {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
+		if(roomCreatePostReq.getTitle()==null || roomCreatePostReq.getTitle().equals("")) {
+			return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, "Bad Request"));
+		}
 		if(user!=null) {
 			Room room=roomService.createRoom(roomCreatePostReq);
 			roomService.createUserRoom(room.getId(),user.getId(),0,1);

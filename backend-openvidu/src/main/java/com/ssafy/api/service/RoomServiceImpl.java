@@ -86,7 +86,7 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public Room updateRoom(int roomId,RoomUpdatePatchReq roomUpdatePatchReq) {
 		Optional<Room> room = roomRepository.findById((long)roomId);
-		if(roomUpdatePatchReq.getTitle()!=null) {
+		if(roomUpdatePatchReq.getTitle()!=null &&!roomUpdatePatchReq.getTitle().equals("")) {
 			room.get().setTitle(roomUpdatePatchReq.getTitle());
 		}
 		if(roomUpdatePatchReq.getDescript()!=null) {
