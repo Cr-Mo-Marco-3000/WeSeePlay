@@ -48,31 +48,11 @@ export default {
     ModalContent,
   },
   setup() {
-    const kakaoLogin = async function () {
+    const kakaoLogin = function () {
       window.location.href = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${
         process.env.VUE_APP_KAKAO_JAVASCRIPT_API_KEY
       }&redirect_uri=${api.users.kakaoLogin()}`
     }
-
-    // 카카오 로그인 => 이 로직 아닌 것 같지만 일단 냅두자
-    /*
-    const kakaoLogin = function () {
-      window.Kakao.Auth.login({
-        scope: 'profile_nickname',
-        success: getKaKaoAccount,
-      })
-    }
-
-    const getKaKaoAccount = function () {
-      console.log('성공?')
-      window.Kakao.API.request({
-        url: '/v2/user/me',
-        success: (res) => {
-          console.log(res)
-        },
-      })
-    }
-    */
 
     // 스토어 사용
     const store = useStore()
@@ -115,7 +95,6 @@ export default {
           return
         }
       } catch (err) {
-        console.log(err.response.staus)
         loginErrorMsg.value = '입력한 정보를 다시 확인해 주세요'
         return
       }

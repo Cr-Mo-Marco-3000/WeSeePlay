@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row video-list-area">
     <MainVideo
       class="self-center"
       :class="isSide ? 'col-7' : 'col-5'"
@@ -16,9 +16,9 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue"
-import MainVideo from "./MainVideo.vue"
-import AllVideo from "./AllVideo.vue"
+import { ref, defineProps } from 'vue'
+import MainVideo from './MainVideo.vue'
+import AllVideo from './AllVideo.vue'
 
 const props = defineProps({
   isSide: {
@@ -42,4 +42,9 @@ const nextPlayer = function () {
 }
 </script>
 
-<style></style>
+<style scoped>
+.video-list-area {
+  width: 100%;
+  min-width: 35rem;
+}
+</style>

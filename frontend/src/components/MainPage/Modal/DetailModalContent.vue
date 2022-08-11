@@ -1,6 +1,12 @@
 <template>
   <div class="detail-text">
-    <span>제목</span>
+    <div class="title-game-info">
+      <span>제목</span>
+      <div v-if="info.game == 2" class="game-info">
+        <span><i class="fa-solid fa-gamepad"></i></span>
+        <span>현재 게임 진행 중!</span>
+      </div>
+    </div>
     <p>{{ info.title }}</p>
   </div>
   <div class="host-info">
@@ -16,9 +22,12 @@
     <p>{{ info.descript }}</p>
   </div>
   <div v-if="!info.isPrivate" class="detail-text">
-    <span>참여자 목록</span>
+    <span>참여자 목록 ({{ userNum }})</span>
     <div class="user-list">
-      <div v-for="(user, idx) in info.joinUsers" :key="idx">{{ user }}</div>
+      <div>{{ info.hostNickname }}</div>
+      <div v-for="(user, idx) in info.joinUsers" :key="idx">
+        {{ user.userNickname }}
+      </div>
     </div>
   </div>
   <div v-else class="user-input room-pw-input">
@@ -40,23 +49,25 @@ import { useRouter } from "vue-router"
 
 export default {
   name: "DetailModalContent",
-  props: ["roomID"],
+  props: ["roomId"],
   setup(props) {
     let info = ref({})
     const store = useStore()
     const router = useRouter()
     const token = store.state.users.token
     const passwordInput = ref("")
+    const userNum = ref(0)
 
     watchEffect(async () => {
       try {
         const response = await axios({
-          url: api.room.roomInfo(props.roomID),
+          url: api.room.roomInfo(props.roomId),
           method: "GET",
           headers: { authorization: "Bearer " + token },
         })
         if (response.status === 200) {
           info.value = response.data
+          userNum.value = 1 + info.value.joinUsers.length
         }
       } catch (error) {
         Swal.fire({
@@ -66,18 +77,47 @@ export default {
       }
     })
 
+    const userInList = function (nickname) {
+      const userList = info.value.joinUsers
+      const rst = ref(false)
+      if (info.value.hostNickname === nickname) {
+        return true
+      }
+      userList.forEach((user) => {
+        if (user.userNickname === nickname) {
+          rst.value = true
+        }
+      })
+      return rst.value
+    }
+
     const joinRoom = async function () {
       try {
+        if (info.value.game === 2) {
+          Swal.fire({
+            icon: "error",
+            text: "게임 중인 방에는 입장할 수 없습니다",
+          })
+          return
+        } else if (userInList(store.getters.me.userNickname) === true) {
+          Swal.fire({
+            icon: "error",
+            html: "이미 참가 중인 방 입니다! <br><br> 2초 후, Room으로 이동합니다.",
+            timer: 2000,
+          })
+          await setTimeout(() => {
+            router.push({ name: "roompage", params: { roomId: props.roomId } })
+          }, 2000)
+          return
+        }
         const data = ref({})
-        if (info.value.isPrivate) {
-          data.value = {
-            roomID: props.roomID,
-            inputPassword: passwordInput.value,
-          }
-        } else {
-          data.value = {
-            roomID: props.roomID,
-          }
+
+        data.value = {
+          roomId: props.roomId,
+        }
+
+        if (info.value.isPrivate === 1) {
+          data.value.inputPassword = passwordInput.value
         }
 
         const response = await axios({
@@ -88,7 +128,7 @@ export default {
         })
 
         if (response.status === 200) {
-          router.push({ name: "roompage", params: { roomID: props.roomID } })
+          router.push({ name: "roompage", params: { roomId: props.roomId } })
         }
       } catch (error) {
         if (error.response.status === 400) {
@@ -104,6 +144,14 @@ export default {
               icon: "error",
               text: "수용 인원을 초과하였습니다!",
             })
+          } else if (
+            error.response.data.message ===
+            "Bad Request - Can't Enter Game Room"
+          ) {
+            Swal.fire({
+              icon: "error",
+              text: "게임 중인 방에는 입장할 수 없습니다",
+            })
           } else {
             Swal.fire({
               icon: "error",
@@ -116,7 +164,7 @@ export default {
         }
       }
     }
-    return { info, joinRoom, passwordInput }
+    return { info, joinRoom, passwordInput, userNum }
   },
 }
 </script>

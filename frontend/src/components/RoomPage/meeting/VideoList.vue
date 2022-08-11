@@ -1,5 +1,5 @@
 <template>
-  <div class="row full-height justify-center items-center">
+  <div class="row full-height justify-center items-center video-list-area">
     <a class="col-1" @click.stop="getPageUser(currentPage - 1)">
       <img src="@/assets/leftArrow.png" />
     </a>
@@ -72,8 +72,10 @@ watchEffect(() => {
   maxPages.value = parseInt((props.users.length - 1) / pageLimit.value)
   getPageUser(0)
 })
-
-console.log("videoList", props.isSide)
 </script>
 
-<style></style>
+<style>
+.video-list-area {
+  width: 100%;
+}
+</style>

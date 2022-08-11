@@ -3,7 +3,8 @@
     <a class="col-1" @click.stop="getPage(currentPage - 1)">
       <img class="arrow" src="@/assets/leftArrow.png" />
     </a>
-    <div class="row col-10">
+    <!-- min width를 줘서 일정 크기 이하로 줄어들었을 때만 겹치게 함 -->
+    <div class="row col-10 row-min-width">
       <video-item
         v-for="user in showUsers"
         :key="user.id"
@@ -67,8 +68,6 @@ watchEffect(() => {
   maxPages.value[0] = parseInt((props.users.length - 1) / 6)
   maxPages.value[1] = parseInt((props.users.length - 1) / 3)
 })
-
-console.log(currentPage.value, maxPages.value[side.value])
 </script>
 
 <style scoped>
@@ -78,5 +77,9 @@ console.log(currentPage.value, maxPages.value[side.value])
 
 .arrow {
   width: 100%;
+}
+
+.row-min-width {
+  min-width: 35rem;
 }
 </style>
