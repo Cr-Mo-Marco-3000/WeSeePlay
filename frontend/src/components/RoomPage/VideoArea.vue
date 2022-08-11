@@ -66,6 +66,14 @@ const props = defineProps({
   roomId: {
     type: Number,
   },
+  isVideoOpen: {
+    type: Boolean,
+    required: true,
+  },
+  isAudeoOpen: {
+    type: Boolean,
+    required: true,
+  },
 })
 
 // 이쪽은 샘플로 넣을 User 수 정하는 거 (최종본에는 지울 내용)
@@ -79,7 +87,8 @@ for (let i = 1; i < customNumber.value; i++) {
 
 // --------------------------------------open vidu-----------------------------------------------
 // 여기서 부턴 openVidu
-const OPENVIDU_SERVER_URL = "https://" + "i7a501.p.ssafy.io" + ":8443"
+// const OPENVIDU_SERVER_URL = "https://" + "i7a501.p.ssafy.io" + ":8443"
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443"
 const OPENVIDU_SERVER_SECRET = "MY_SECRET"
 const state = reactive({
   OV: undefined,
@@ -122,15 +131,18 @@ const state = reactive({
 //     return videoOff
 //   }),
 // })
+
 // toggle
-// const toggleVideo = () => {
-//   vidoman.publishVideo = !vidoman.publishVideo
-//   if (vidoman.publishVideo) {
-//     state.publisher.publishVideo(true)
-//   } else {
-//     state.publisher.publishVideo(false)
-//   }
-// }
+watchEffect(() => {
+  if (state.publisher) {
+    console.log("비디오 온 오프?", props.isVideoOpen)
+    state.publisher.publishVideo(props.isVideoOpen)
+  }
+  if (state.publisher) {
+    console.log("오디오 온 오프?", props.isAudeoOpen)
+    state.publisher.publishAudio(props.isAudeoOpen)
+  }
+})
 // const toggleAudio = () => {
 //   vidoman.publishAudio = !vidoman.publishAudio
 //   if (vidoman.publishAudio) {
