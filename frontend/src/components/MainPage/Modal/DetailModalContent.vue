@@ -88,10 +88,14 @@ export default {
           rst.value = true
         }
       })
+      console.log(
+        `> userInList Function => 이 유저는 해당 룸 안에 있습니까?: ${rst.value}`
+      )
       return rst.value
     }
 
     const joinRoom = async function () {
+      console.log("joinRoom Function Start")
       try {
         if (info.value.game === 2) {
           Swal.fire({

@@ -46,7 +46,7 @@
       </div>
       <div class="middleIconDiv">
         <input
-          @click="backToLounge"
+          @click="leaveOrKill"
           class="input exitInput"
           id="exitInput"
           type="checkbox"
@@ -102,9 +102,12 @@
 </template>
 
 <script setup>
-import store from '@/store'
-import { ref } from 'vue'
-import { watchEffect } from 'vue'
+import store from "@/store"
+import api from "@/api/api"
+import { useRouter } from "vue-router"
+import { ref, watchEffect } from "vue"
+import Swal from "sweetalert2"
+const router = useRouter()
 // 마이크가 오픈되어 있지 않음 => 기본값
 const isMicOpen = ref(false)
 
@@ -114,16 +117,92 @@ const isVideoOpen = ref(false)
 // 세팅창도 오픈되어 있지 않음 => 기본값
 const isSettingOpen = ref(false)
 
-// 빠져나가는 버튼
-const backToLounge = function () {
-  console.log('라운지로 숑숑숑')
+// 빠져나가는 버튼 (방 나가기 or 방 삭제)
+
+const leaveConfirm = async function () {
+  let a = await Swal.fire({
+    title: "방을 나가시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Room 나가기",
+    cancelButtonText: "취소",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      return true
+    } else {
+      return false
+    }
+  })
+
+  return a
+}
+const leaveRoom = async function () {
+  const rst = await leaveConfirm()
+
+  if (rst === true) {
+    Swal.fire("방 나가기 완료!", "", "success")
+    const data = { roomId: store.getters.getRoomInfo.roomId }
+    const res = await api.room.leaveRoom(data)
+    console.log(res)
+    if (res.status === 200) {
+      router.push({ name: "mainpage" })
+    }
+  }
+}
+
+const killConfirm = async function () {
+  const rst = await Swal.fire({
+    title: "당신은 호스트라서 나갈 수 없어요",
+    text: "하지만 Room 삭제는 가능합니다",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "red",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Room 삭제하기",
+    cancelButtonText: "취소",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      return true
+    }
+    return false
+  })
+  return rst
+}
+const killRoom = async function () {
+  const rst = await killConfirm()
+  if (rst === true) {
+    const data = { roomId: store.getters.getRoomInfo.roomId }
+    const res = await api.room.killRoom(data)
+    console.log("kill-room", res)
+    if (res.status === 200) {
+      Swal.fire("방 삭제 완료!", "", "success")
+      router.push({ name: "mainpage" })
+    } else {
+      Swal.fire({
+        title: "방 삭제 실패",
+        html: `ErrorCode(${res.status})<br><br>지속 발생 시 관리자에게 문의해주세요`,
+      })
+    }
+  }
+}
+
+const leaveOrKill = async function () {
+  const hostNickname = store.getters.getRoomInfo.hostNickname
+  const myNickname = store.getters.me.userNickname
+  if (hostNickname !== myNickname) {
+    leaveRoom()
+  } else {
+    killRoom()
+  }
 }
 
 // sideArea 묶음 버튼
 const sideAreaBundle = ref(false)
 
 const clickSidebarIcon = function (event) {
-  store.dispatch('openSidebar', event.target.id)
+  store.dispatch("openSidebar", event.target.id)
 }
 
 // 게임 & 방설정 언더바에서 보이게 하기 => 나중에 다시 활용할수도
@@ -139,5 +218,5 @@ watchEffect(() => {
 </script>
 
 <style scoped>
-@import url('../../../src/assets/roompage/bottombar.css');
+@import url("../../../src/assets/roompage/bottombar.css");
 </style>
