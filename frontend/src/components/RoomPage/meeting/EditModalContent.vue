@@ -152,8 +152,9 @@ export default {
             icon: 'success',
             text: '방 정보 수정이 완료되었습니다',
           })
-          store.dispatch("getRoomInfo", roomId)
-          context.emit("close")
+          store.dispatch('getRoomInfo', roomId)
+          context.emit('close')
+        }
       } catch (err) {
         console.log(err)
       }

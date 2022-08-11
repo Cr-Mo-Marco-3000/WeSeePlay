@@ -17,6 +17,7 @@ export default {
     getRoomInfo: (state) => state.roomInfo,
     // 방에 있는 User 정보 가져오기
     getUserInfo: (state) => state.roomInfo.joinUsers,
+    // 방에 있는 Chatting 정보 가져오기
     getChattings: (state) => state.roomInfo.chattings,
   },
   mutations: {
@@ -29,6 +30,9 @@ export default {
     },
     SET_ROOM_INFO: (state, data) => {
       state.roomInfo = data
+    },
+    ADD_MESSAGE: (state, message) => {
+      state.chattings.push(message)
     },
   },
   actions: {
@@ -64,6 +68,9 @@ export default {
         router.push({ name: 'errorpage', params: { errorname: '500' } })
       }
     },
-    addMessage: function () {},
+    // 매시지 추가하는 함수
+    addMessage: function ({ commit }, message) {
+      commit('ADD_MESSAGE', message)
+    },
   },
 }
