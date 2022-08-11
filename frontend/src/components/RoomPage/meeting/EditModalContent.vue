@@ -29,7 +29,7 @@
 
   <div class="private-check">
     <span>비공개</span>
-    <input type="checkbox" name="is_private" v-model="roomInfo.isPrivate" />
+    <input type="checkbox" name="is_private" v-model="isPrivate" />
   </div>
 
   <div class="user-input">
@@ -37,7 +37,7 @@
       type="password"
       name="roomPassword"
       placeholder="비밀번호 변경을 원할경우 입력해주세요"
-      :disabled="roomInfo.isPrivate == false"
+      :disabled="isPrivate == false"
       v-model="inputPassword"
     />
   </div>
@@ -69,6 +69,7 @@ export default {
     const token = store.state.users.token
     const roomId = route.params.roomId
     const inputPassword = ref("")
+    const isPrivate = ref(true)
 
     const roomInfo = ref({})
     const userInfo = ref({})
@@ -77,11 +78,9 @@ export default {
     watchEffect(() => {
       roomInfo.value = store.getters.getRoomInfo
       userInfo.value = store.getters.getUserInfo
-      if (roomInfo.value.isPrivate == 1) {
-        roomInfo.value.isPrivate = true
-      } else {
-        roomInfo.value.isPrivate = false
+      if (roomInfo.value.isPrivate == 0) {
         originPrivate.value = false
+        isPrivate.value = false
       }
     })
 
@@ -95,16 +94,13 @@ export default {
 
         let errorFlag = 0
 
-        if (roomInfo.value.isPrivate == true) {
-          roomInfo.value.isPrivate = 1
-        } else {
-          roomInfo.value.isPrivate = 0
+        if (isPrivate.value == false) {
           inputPassword.value = ""
         }
 
         // 공개방에서 공개, 비공개로 전환하는 경우
         if (!originPrivate.value) {
-          if (roomInfo.value.isPrivate == 1) {
+          if (isPrivate.value) {
             if (inputPassword.value.length == 4) {
               data.roomPassword = inputPassword.value
             } else {
@@ -113,7 +109,7 @@ export default {
             }
           }
         } else {
-          if (roomInfo.value.isPrivate == 0) {
+          if (!isPrivate.value) {
             inputPassword.value = ""
             data.roomPassword = ""
           } else {
@@ -128,8 +124,6 @@ export default {
           }
         }
 
-        console.log(data)
-
         if (roomInfo.value.title == "") {
           editErrorMsg.value = "방 이름을 정해 주세요"
           errorFlag = true
@@ -141,6 +135,8 @@ export default {
           return
         }
 
+        console.log(originPrivate.value)
+        console.log(roomInfo.value.isPrivate)
         const response = await axios({
           url: api.room.editRoom(roomId),
           method: "PATCH",
@@ -166,6 +162,7 @@ export default {
       roomInfo,
       userInfo,
       editRoom,
+      isPrivate,
     }
   },
 }
