@@ -204,4 +204,10 @@ public class UserServiceImpl implements UserService {
 	public void delCertificationPw(String userEmail) {
 		emailPwRepository.deleteByUserEmail(userEmail);
 	}
+
+	@Override
+	@Transactional
+	public int deleteUser(String userEmail) {
+		return userRepository.deleteByUserEmail(userEmail);
+	}
 }

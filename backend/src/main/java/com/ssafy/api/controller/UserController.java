@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -303,5 +304,25 @@ public class UserController {
 			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "비밀번호가 맞지 않습니다."));
 		}
 		
+	}
+	
+	@DeleteMapping("/delete")
+	@ApiOperation(value = "회원 탈퇴", notes = "회원을 삭제한다.") 
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공", response = BaseResponseBody.class),
+        @ApiResponse(code = 401, message = "인증 실패", response = BaseResponseBody.class),
+        @ApiResponse(code = 404, message = "사용자 없음", response = BaseResponseBody.class)
+    })
+	public ResponseEntity<?> delete(@ApiIgnore Authentication authentication) {
+		if(authentication==null) {
+			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Not Exist User"));
+		}
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String userEmail = userDetails.getUsername();
+		int check=userService.deleteUser(userEmail);
+		if(check==0) {
+			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Not Exist User"));
+		}
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
 }
