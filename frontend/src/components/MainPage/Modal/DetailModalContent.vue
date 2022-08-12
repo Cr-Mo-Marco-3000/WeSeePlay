@@ -68,43 +68,22 @@ watchEffect(async () => {
   }
 })
 
-const userInList = function (nickname) {
-  const userList = info.value.joinUsers
-  const rst = ref(false)
-  if (info.value.hostNickname === nickname) {
-    return true
-  }
-  userList.forEach((user) => {
-    if (user.userNickname === nickname) {
-      rst.value = true
-    }
-  })
-  console.log(
-    `> userInList Function => 이 유저는 해당 룸 안에 있습니까?: ${rst.value}`
-  )
-  return rst.value
+const errMsg = {
+  inGame: "게임 중인 방에는 입장할 수 없습니다",
+  inRoom: "이미 참가 중인 방 입니다! <br><br> 1초 후, Room으로 이동합니다.",
+  "Bad Request - Bad Password": "비밀번호가 틀렸습니다",
+  "Bad Request - Too Many People": "수용 인원을 초과하였습니다!",
+  "Bad Request - Can't Enter Game Room": "게임 중인 방에는 입장할 수 없습니다",
+  "Bad Request - No User": "존재하지 않는 계정입니다. 다시 시도해 주세요.",
+  "Bad Request - No Room": "해당 Room은 존재하지 않습니다.",
+}
+
+const joinError = function (key) {
+  Swal.fire({ icon: "error", html: `${errMsg[key]}`, timer: 1000 })
 }
 
 const joinRoom = async function () {
   console.log("joinRoom Function Start")
-  // 게임 중인 방 or 이미 참가 중인 방에 입장하는 경우
-  if (info.value.game === 2) {
-    Swal.fire({
-      icon: "error",
-      html: "이미 참가 중인 방 입니다! <br><br> 1초 후, Room으로 이동합니다.",
-      timer: 1000,
-    })
-  } else if (userInList(store.getters.me.userNickname) === true) {
-    Swal.fire({
-      icon: "error",
-      html: "이미 참가 중인 방 입니다! <br><br> 1초 후, Room으로 이동합니다.",
-      timer: 1000,
-    })
-    await setTimeout(() => {
-      router.push({ name: "roompage", params: { roomId: props.roomId } })
-    }, 1000)
-    return
-  }
 
   // api.js 에 데이터(req) 넘기기
   const req = {
@@ -116,8 +95,16 @@ const joinRoom = async function () {
   console.log("enterRoom", status, data)
   if (status === 200) {
     router.push({ name: "roompage", params: { roomId: props.roomId } })
+    return
+  } else if (status === 400) {
+    joinError(data.message)
+    if (data.message === "Bad Request - No User") {
+      store.dispatch("logout")
+    } else if (data.message === "Bad Request - No Room") {
+      console.log("새로고침...")
+    }
   } else {
-    console.log("enterRoom > Error Data > ", data)
+    router.push({ name: "errorpage", params: { errorname: 500 } })
   }
 }
 </script>
