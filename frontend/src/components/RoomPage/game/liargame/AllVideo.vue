@@ -3,10 +3,11 @@
     <a class="col-1" @click.stop="getPage(currentPage - 1)">
       <img class="arrow" src="@/assets/leftArrow.png" />
     </a>
-    <div class="row col-10">
+    <!-- min width를 줘서 일정 크기 이하로 줄어들었을 때만 겹치게 함 -->
+    <div class="row col-10 row-min-width">
       <video-item
-        v-for="user in showUsers"
-        :key="user.id"
+        v-for="(user, idx) in showUsers"
+        :key="idx"
         :user="user"
         :class="gridNum[side]"
         class="self-center"
@@ -30,6 +31,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  gameUserOrder: {
+    type: Array,
+    required: true,
+  },
 })
 // pagination 관련
 const currentPage = ref(0)
@@ -45,13 +50,13 @@ const getPage = function (page) {
   if (page > maxPages.value[side.value] || page < 0) {
     return
   } else if (page === maxPages.value[side.value]) {
-    e = props.users.length
-    s = props.users.length - pageLimit.value[side.value]
+    e = props.gameUserOrder.length
+    s = props.gameUserOrder.length - pageLimit.value[side.value]
   } else {
     s = page * pageLimit.value[side.value]
     e = (page + 1) * pageLimit.value[side.value]
   }
-  showUsers.value = props.users.slice(s, e)
+  showUsers.value = props.gameUserOrder.slice(s, e)
   currentPage.value = page
   return
 }
@@ -63,12 +68,10 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
-  props.users
-  maxPages.value[0] = parseInt((props.users.length - 1) / 6)
-  maxPages.value[1] = parseInt((props.users.length - 1) / 3)
+  props.gameUserOrder
+  maxPages.value[0] = parseInt((props.gameUserOrder.length - 1) / 6)
+  maxPages.value[1] = parseInt((props.gameUserOrder.length - 1) / 3)
 })
-
-console.log(currentPage.value, maxPages.value[side.value])
 </script>
 
 <style scoped>
@@ -78,5 +81,9 @@ console.log(currentPage.value, maxPages.value[side.value])
 
 .arrow {
   width: 100%;
+}
+
+.row-min-width {
+  min-width: 35rem;
 }
 </style>

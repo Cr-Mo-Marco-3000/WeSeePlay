@@ -1,26 +1,33 @@
 <template>
   <div class="video-item">
     <div class="user-box">
-      <h3>{{ user.nickname }}</h3>
-      <p v-if="user.onVideo">
-        <img
-          class="sample"
-          src="https://cdn3.iconfinder.com/data/icons/vector-icons-6/96/256-512.png"
-        />
-      </p>
-      <p v-else>Video가 꺼져있습니다.</p>
-      <button @click.stop="$emit('next')">NEXT</button>
+      <div v-if="user">
+        <ov-video :stream-manager="user" />
+      </div>
+      <div>
+        <p>gameIdx: {{ gameIdx }} myGameIdx: {{ myGameIdx }}</p>
+      </div>
+      <button v-if="myGameIdx == gameIdx" @click.stop="$emit('next')">
+        NEXT {{ gameIdx }}
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps } from "vue"
+import OvVideo from "./OvVideo.vue"
 
 defineProps({
   user: {
     type: Object,
     required: true,
+  },
+  gameIdx: {
+    type: Number,
+  },
+  myGameIdx: {
+    type: Number,
   },
 })
 </script>

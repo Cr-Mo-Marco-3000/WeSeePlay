@@ -82,7 +82,7 @@
     </CreateRoomModal>
 
     <DetailModal v-if="isDetailModal" @close="isDetailModal = false">
-      <DetailModalContent :roomID="detailRoomID" />
+      <DetailModalContent :roomId="detailRoomId" />
     </DetailModal>
 
     <AuthModal v-if="isChangePw" @close="isChangePw = false">
@@ -103,9 +103,9 @@ import DetailModal from "@/components/MainPage/Modal/DetailModal.vue"
 import DetailModalContent from "@/components/MainPage/Modal/DetailModalContent.vue"
 import AuthModal from "@/components/MainPage/Modal/AuthModal.vue"
 import AuthModalContent from "@/components/MainPage/Modal/AuthModalContent.vue"
-import { reactive, ref, watchEffect } from "vue"
+import { reactive, ref, watchEffect, onBeforeMount } from "vue"
 import axios from "axios"
-import api from "@/api/api"
+// import api from "@/api/api"
 import { useStore } from "vuex"
 
 export default {
@@ -123,6 +123,7 @@ export default {
     AuthModal,
     AuthModalContent,
   },
+
   setup() {
     const store = useStore()
     const token = store.state.users.token
@@ -184,7 +185,52 @@ export default {
 
     // data 획득
     let roomsInfo = ref(Array)
-
+    onBeforeMount(async () => {
+      console.log(lookupInfo.sortingOrder, lookupInfo.sortingMethod)
+      try {
+        // query String 생성
+        if (isPrivatebtn.value) {
+          lookupInfo.isPrivate = 1
+        } else {
+          lookupInfo.isPrivate = 0
+        }
+        let querystring = "/?"
+        for (let key in lookupInfo) {
+          let value = lookupInfo[key]
+          querystring += key + "=" + value + "&"
+        }
+        console.log(querystring.slice(0, -1))
+        console.log("authorization : Bearer " + token)
+        const response = await axios({
+          url:
+            "https://i7a501.p.ssafy.io/api/v1/rooms" + querystring.slice(0, -1),
+          method: "GET",
+          headers: { authorization: "Bearer " + token },
+        })
+        console.log(response.data)
+        if (response.status === 200) {
+          console.log("조회 성공!")
+          roomsInfo.value = response.data.content
+          // paginator의 총 페이지 수
+          console.log("페이지네이터 내와")
+          maxpage.value = response.data.totalPage
+        }
+      } catch (err) {
+        lookupErrorMsg.value = "조회 실패."
+        // 조회 실패 시 더미 데이터
+        roomsInfo.value = [
+          ...tmparr.value.slice(
+            6 * lookupInfo.pageNumber - 6,
+            6 * lookupInfo.pageNumber
+          ),
+        ]
+        if (tmparr.value.length % 6) {
+          maxpage.value = parseInt(tmparr.value.length / 6)
+        } else {
+          maxpage.value = parseInt(tmparr.value.length / 6)
+        }
+      }
+    })
     watchEffect(async () => {
       console.log(lookupInfo.sortingOrder, lookupInfo.sortingMethod)
       try {
@@ -202,7 +248,8 @@ export default {
         console.log(querystring.slice(0, -1))
         console.log("authorization : Bearer " + token)
         const response = await axios({
-          url: api.room.createRoom() + querystring.slice(0, -1),
+          url:
+            "https://i7a501.p.ssafy.io/api/v1/rooms" + querystring.slice(0, -1),
           method: "GET",
           headers: { authorization: "Bearer " + token },
         })
@@ -232,10 +279,10 @@ export default {
     })
 
     const isDetailModal = ref(false)
-    const detailRoomID = ref({})
+    const detailRoomId = ref({})
     const openDetail = function (info) {
       isDetailModal.value = true
-      detailRoomID.value = info.roomId
+      detailRoomId.value = info.roomId
     }
 
     return {
@@ -260,7 +307,7 @@ export default {
       // roomsData,
 
       openDetail,
-      detailRoomID,
+      detailRoomId,
 
       isChangePw: ref(false),
     }

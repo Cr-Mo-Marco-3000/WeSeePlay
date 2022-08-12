@@ -9,7 +9,6 @@
 
 .detail-text span {
   font-size: 1rem;
-  color: rgba(0, 0, 0, 0.8);
 }
 
 .detail-text p {
@@ -22,6 +21,23 @@
   border: solid 2px rgba(0, 0, 0, 0.616);
   outline: none;
   background: rgba(255, 255, 255, 0.5);
+}
+
+.title-game-info {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.title-game-info .game-info {
+  color: #695eef;
+}
+
+.title-game-info .game-info i {
+  font-size: 1.2rem;
+  margin-right: 0.3rem;
+  position: relative;
+  top: 3px;
 }
 
 .host-info {
