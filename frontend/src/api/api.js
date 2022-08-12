@@ -87,6 +87,13 @@ export default {
   /* ---------- ROOM 관련 API ---------- */
   room: {
     // ROOM 생성, 삭제, 조회를 한번에!
+    getRoomList: async (data) => {
+      const req = setRequest("GET", "", "")
+      req.params = { ...data }
+      console.log(req)
+      const res = await sendAxios(req)
+      return res
+    },
 
     createRoom: async (data) => {
       const req = setRequest("POST", "", data)
