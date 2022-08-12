@@ -31,73 +31,55 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, reactive } from "vue"
-// import { computed } from "vue"
-import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 import api from "@/api/api"
-import axios from "axios"
+import Swal from "sweetalert2"
 
-export default {
-  name: "CreateRoomModalContent",
-  setup() {
-    const store = useStore()
-    const router = useRouter()
-    const token = store.state.users.token
-    // 방 생성 정보
-    let roomInfo = reactive({
-      title: "",
-      descript: "어서와요",
-      roomPassword: "",
-      game: 1,
-      isPrivate: false,
+const router = useRouter()
+
+// 방 생성 정보
+let roomInfo = reactive({
+  title: "",
+  descript: "어서와요",
+  roomPassword: "",
+  game: 1,
+  isPrivate: false,
+})
+
+// 오류 메시지
+const roomCreateInputError = ref("")
+const createRoom = async function () {
+  const data = { ...roomInfo }
+  if (!roomInfo.isPrivate) {
+    data.roomPassword = ""
+  }
+
+  data.isPrivate = Number(data.isPrivate)
+
+  if (roomInfo.title == "") {
+    roomCreateInputError.value = "방 이름을 정해 주세요"
+    return
+  } else if (
+    roomInfo.isPrivate &&
+    (roomInfo.roomPassword.length < 4 || 12 < roomInfo.roomPassword.length)
+  ) {
+    roomCreateInputError.value = "4 ~ 12자리의 비밀번호를 정해주세요"
+    return
+  }
+
+  const response = await api.room.createRoom(data)
+
+  if (response.status === 201) {
+    const roomId = response.data.roomId
+    router.push({ name: "roompage", params: { roomId: roomId } })
+  } else {
+    Swal.fire({
+      title: "방 생성에 실패했습니다",
+      text: `Errorcode: ${response.status}`,
     })
-
-    // 오류 메시지
-    const roomCreateInputError = ref("")
-    const createRoom = async function () {
-      try {
-        const data = { ...roomInfo }
-        if (!roomInfo.isPrivate) {
-          data.roomPassword = ""
-        }
-
-        data.isPrivate = Number(data.isPrivate)
-
-        if (roomInfo.title == "") {
-          roomCreateInputError.value = "방 이름을 정해 주세요"
-          return
-        } else if (
-          roomInfo.isPrivate &&
-          (roomInfo.roomPassword.length < 4 ||
-            12 < roomInfo.roomPassword.length)
-        ) {
-          roomCreateInputError.value = "4 ~ 12자리의 비밀번호를 정해주세요"
-          return
-        }
-
-        const response = await axios({
-          url: api.room.createRoom(),
-          method: "POST",
-          headers: { Authorization: "Bearer " + token },
-          data,
-        })
-        if (response.data.statusCode === 201) {
-          const roomId = response.data.roomId
-          router.push({ name: "roompage", params: { roomId: roomId } })
-        }
-      } catch (err) {
-        console.log("실패")
-      }
-    }
-
-    return {
-      roomInfo,
-      createRoom,
-      roomCreateInputError,
-    }
-  },
+  }
 }
 </script>
 

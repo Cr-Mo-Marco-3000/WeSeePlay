@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref, watchEffect, onBeforeUnmount } from "vue"
+import { ref, watchEffect, onBeforeUnmount, onMounted } from "vue"
 import VideoArea from "@/components/RoomPage/VideoArea.vue"
 import SideArea from "@/components/RoomPage/SideArea.vue"
 import BottomBar from "@/components/RoomPage/BottomBar.vue"
@@ -53,6 +53,8 @@ const route = useRoute()
 const roomId = route.params.roomId
 const store = useStore()
 store.dispatch("getRoomInfo", roomId)
+const hostEmail = store.getters.getRoomInfo.hostEmail
+const userEmail = store.getters.me.userEmail
 
 const isSide = ref(0)
 watchEffect(() => {
@@ -76,28 +78,39 @@ const editModalClose = function () {
   isEditModal.value = false
 }
 
-// 해당 페이지에서 나갈 때
-
-onBeforeUnmount(async () => {
-  const roomInfo = store.getters.getRoomInfo
-  const userInfo = store.getters.me
-  const isHost = roomInfo.hostNickname === userInfo.userNickname
+const leaveOrKill = async function () {
+  const isHost = hostEmail === userEmail
 
   const data = { roomId }
-  console.log(`isHost: ${isHost}`, `roomInfo: ${roomInfo.roomId}`)
+  console.log(`isHost: ${hostEmail} ${userEmail}`, `roomId: ${roomId}`)
   if (isHost) {
     await api.room.killRoom(data)
-    Swal.fire({
-      title: "당신은 Host 군요",
-      text: "방을 삭제했습니다.",
-    })
+    await setTimeout(() => {
+      Swal.fire({
+        title: "당신은 Host 군요",
+        text: "방을 삭제했습니다.",
+      })
+    }, 1000)
+    return
   } else {
     await api.room.leaveRoom(data)
-    Swal.fire({
-      title: "당신은 User 군요",
-      text: "방에서 나갔습니다.",
-    })
+    await setTimeout(() => {
+      Swal.fire({
+        title: "당신은 User 군요",
+        text: "방에서 나갔습니다.",
+      })
+    }, 1000)
+    return
   }
+}
+// 해당 페이지 열 때
+onMounted(() => {
+  window.addEventListener("beforeunload", leaveOrKill)
+})
+
+// 해당 페이지에서 나갈 때
+onBeforeUnmount(async () => {
+  window.removeEventListener("beforeunload", leaveOrKill)
 })
 </script>
 

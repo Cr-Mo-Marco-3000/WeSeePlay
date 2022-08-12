@@ -105,7 +105,7 @@ import AuthModal from "@/components/MainPage/Modal/AuthModal.vue"
 import AuthModalContent from "@/components/MainPage/Modal/AuthModalContent.vue"
 import { reactive, ref, watchEffect, onBeforeMount } from "vue"
 import axios from "axios"
-import api from "@/api/api"
+// import api from "@/api/api"
 import { useStore } from "vuex"
 
 export default {
@@ -202,7 +202,8 @@ export default {
         console.log(querystring.slice(0, -1))
         console.log("authorization : Bearer " + token)
         const response = await axios({
-          url: api.room.createRoom() + querystring.slice(0, -1),
+          url:
+            "https://i7a501.p.ssafy.io/api/v1/rooms" + querystring.slice(0, -1),
           method: "GET",
           headers: { authorization: "Bearer " + token },
         })
@@ -247,7 +248,8 @@ export default {
         console.log(querystring.slice(0, -1))
         console.log("authorization : Bearer " + token)
         const response = await axios({
-          url: api.room.createRoom() + querystring.slice(0, -1),
+          url:
+            "https://i7a501.p.ssafy.io/api/v1/rooms" + querystring.slice(0, -1),
           method: "GET",
           headers: { authorization: "Bearer " + token },
         })

@@ -181,12 +181,14 @@ const leaveRoom = async function () {
   const rst = await leaveConfirm()
 
   if (rst === true) {
-    Swal.fire("방 나가기 완료!", "", "success")
     const data = { roomId: store.getters.getRoomInfo.roomId }
     const res = await api.room.leaveRoom(data)
-    console.log(res)
+    console.log("leaveRoom / BottomBar", res)
     if (res.status === 200) {
+      Swal.fire("방 나가기 완료!", "", "success")
       router.push({ name: "mainpage" })
+    } else {
+      Swal.fire(`에러 발생: ${res.status}`)
     }
   }
 }
@@ -214,7 +216,7 @@ const killRoom = async function () {
   if (rst === true) {
     const data = { roomId: store.getters.getRoomInfo.roomId }
     const res = await api.room.killRoom(data)
-    console.log("kill-room", res)
+
     if (res.status === 200) {
       Swal.fire("방 삭제 완료!", "", "success")
       router.push({ name: "mainpage" })
@@ -228,11 +230,12 @@ const killRoom = async function () {
 }
 
 const leaveOrKill = async function () {
-  const hostNickname = store.getters.getRoomInfo.hostNickname
-  const myNickname = store.getters.me.userNickname
-  if (hostNickname !== myNickname) {
+  const host = store.getters.getRoomInfo.hostEmail
+  const user = store.getters.me.userEmail
+  console.log(host, user)
+  if (host !== user) {
     leaveRoom()
-  } else {
+  } else if (host === user) {
     killRoom()
   }
 }
