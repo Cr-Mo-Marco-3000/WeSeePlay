@@ -67,15 +67,16 @@
           id="sideAreaBundleInput"
           type="checkbox"
         />
-        <label
-          v-if="isGameAndSettingOpen"
-          class="btn sideAreaBundleOpen"
-          for="sideAreaBundleInput"
-        >
+        <label class="btn sideAreaBundleOpen" for="sideAreaBundleInput">
           <i class="fa-solid fa-angles-up fa-2x"></i>
         </label>
 
-        <label id="3" @click="clickSidebarIcon" class="sideAreaBundleItem">
+        <label
+          id="3"
+          v-if="isGameAndSettingOpen"
+          @click="clickSidebarIcon"
+          class="sideAreaBundleItem"
+        >
           <i id="3" class="fa-solid fa-gamepad fa-2x"></i>
         </label>
         <label id="2" @click="clickSidebarIcon" class="sideAreaBundleItem">
@@ -102,7 +103,6 @@ const isMicOpen = ref(false)
 
 // 비디오도 오픈되어 있지 않음 => 기본값
 const isVideoOpen = ref(false)
-
 const onOffMic = function () {
   isMicOpen.value = !isMicOpen.value
   if (isMicOpen.value === true) {

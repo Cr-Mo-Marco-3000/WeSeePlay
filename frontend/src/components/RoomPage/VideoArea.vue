@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
-    <button style="position: absolute; top: 1rem" @click="changeGame">
+    <button style="position: absolute; top: 1rem" @click="changeGame()">
       Game On/Off
     </button>
     <!-- isGameMode가 참이면 GameVideo가 나오게 하고, false라면 MeetingVideo가 나오게 짰어-->
@@ -28,17 +28,22 @@ import LiarGameVideo from "./game/liargame/VideoList.vue"
 import MeetingVideo from "./meeting/VideoList.vue"
 import { ref, defineProps, watchEffect } from "vue"
 import store from "@/store"
+import { useStore } from "vuex"
+import api from "@/api/api"
+import axios from "axios"
 
 //---------------------openvidu import-----------------------------------
 
 import $axios from "axios"
-import { reactive, onBeforeUnmount, onBeforeMount } from "vue"
+import { reactive, onBeforeUnmount, onMounted } from "vue"
 import { OpenVidu } from "openvidu-browser"
 // import UserVideo from "./components/UserVideo.vue"
 // import VoteModal from "./components/VoteModal.vue"
 // import VoteModalContent from "./components/VoteModalContent.vue"
 $axios.defaults.headers.post["Content-Type"] = "application/json"
 $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
+
+const usestore = useStore()
 
 const isGameMode = ref(store.getters.getRoomInfo.game)
 
@@ -64,7 +69,7 @@ const props = defineProps({
     required: true,
   },
   roomId: {
-    type: Number,
+    type: String,
   },
   isVideoOpen: {
     type: Boolean,
@@ -73,6 +78,9 @@ const props = defineProps({
   isAudeoOpen: {
     type: Boolean,
     required: true,
+  },
+  chatData: {
+    type: String,
   },
 })
 
@@ -98,8 +106,8 @@ const state = reactive({
   subscribers: [],
   mySessionId: props.roomId,
   //   computed(() => props.roomId),
-  myUserName: "Participant" + Math.floor(Math.random() * 100),
-  // myUserName: ,
+  // myUserName: "Participant" + Math.floor(Math.random() * 100),
+  myUserName: undefined,
 })
 
 // const vidoman = reactive({
@@ -135,11 +143,9 @@ const state = reactive({
 // toggle
 watchEffect(() => {
   if (state.publisher) {
-    console.log("비디오 온 오프?", props.isVideoOpen)
     state.publisher.publishVideo(props.isVideoOpen)
   }
   if (state.publisher) {
-    console.log("오디오 온 오프?", props.isAudeoOpen)
     state.publisher.publishAudio(props.isAudeoOpen)
   }
 })
@@ -155,6 +161,7 @@ const joinSession = () => {
   // --- Get an OpenVidu object ---
   console.log("오픈 비두 시작!")
   state.mySessionId = props.roomId
+  console.log(store.getters.me.userEmail)
   console.log(state.mySessionId)
   state.OV = new OpenVidu()
   // --- Init a session ---
@@ -163,8 +170,13 @@ const joinSession = () => {
   state.session.on("streamCreated", ({ stream }) => {
     const subscriber = state.session.subscribe(stream)
     state.subscribers.push(subscriber)
+    console.log(JSON.parse(subscriber.stream.connection.data).clientData)
     console.log("연결 돼ㅐㅆ냐?")
     // 여기서 플레이어 숫자 계산
+  })
+  state.session.on("signal:this is chat", (e) => {
+    console.log("이게 왜 안돼>", e.data)
+    usestore.dispatch("addMessage", e.data)
   })
 
   // On every Stream destroyed...
@@ -195,12 +207,9 @@ const joinSession = () => {
           insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
           mirror: false, // Whether to mirror your local video or not
         })
-        console.log("여기 퍼블리셔", publisher)
         state.mainStreamManager = publisher
         state.publisher = publisher
         state.session.publish(publisher)
-        console.log("이건 되고", state.mainStreamManager)
-        console.log("이건 안되?", state.publisher)
       })
       .catch((error) => {
         console.log(
@@ -285,13 +294,81 @@ const createToken = (sessionId) => {
   })
 }
 
+//---------------------------openVidu Chatting--------------------------------
+// OpenVidu 채팅 기능
+// const chattingList = ref([])
+// const inputMsg = ref("")
+
+watchEffect(() => {
+  if (props.chatData) {
+    console.log("마지막 포인트 입니다.", props.chatData)
+    sendMsg(props.chatData)
+  }
+})
+const sendMsg = (data) => {
+  console.log(data)
+  state.session
+    .signal({
+      data: state.myUserName + " : " + data,
+      to: [],
+      type: "this is chat",
+    })
+    .then(() => {
+      console.log("Chat!")
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
+
 // beforeunmount
 onBeforeUnmount(() => {
   leaveSession()
 })
 // onBeforeMount
-onBeforeMount(() => {
+onMounted(async () => {
+  const userId = ref("")
+  try {
+    console.log(localStorage.getItem("token"))
+    const response = await axios({
+      url: api.users.checkToken(),
+      method: "GET",
+      headers: { authorization: "Bearer " + localStorage.getItem("token") },
+    })
+    console.log(response)
+    userId.value = response.data.userEmail
+    state.myUserName = userId.value
+  } catch (err) {
+    console.log(err)
+  }
+  console.log("본인 아이디요", userId.value)
+
+  // try {
+  //   const response = await axios({
+  //     method: 'GET',
+  //     headers: { authorization: "Bearer " + localStorage.getItem("token") },
+  //     url: api.room.roomInfo(roomID),
+  //   })
+
+  //   if (response.status === 200) {
+  //     dispatch('setRoomInfo', response.data)
+  //   } else {
+  //     Swal.fire({
+  //       icon: 'error',
+  //       text: '존재하지 않는 방입니다',
+  //     })
+  //     router.push({ name: 'errorpage', params: { errorname: '404' } })
+  //   }
+  // } catch (err) {
+  //   Swal.fire({
+  //     icon: 'error',
+  //     text: '잘못된 접근입니다',
+  //   })
+  //   router.push({ name: 'errorpage', params: { errorname: '500' } })
+  // }
   console.log("룸 번호요", props.roomId)
+
+  console.log("본인 아이디요", userId.value)
   joinSession()
   // joinGameSession()
 })

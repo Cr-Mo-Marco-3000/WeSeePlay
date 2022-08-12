@@ -12,6 +12,7 @@
       v-if="sideBarStatus === '2'"
       :roomUserInfo="roomUserInfo"
       :roomInfo="roomInfo"
+      @send-message-from-me="chatFromSide"
     />
     <GameArea v-if="sideBarStatus === '3'" />
   </div>
@@ -19,19 +20,28 @@
 
 <script setup>
 // eslint-disable-next-line
-import { ref, watchEffect } from 'vue'
-import { useStore } from 'vuex'
-import GameArea from './sidearea/GameArea.vue'
-import ChattingArea from './sidearea/ChattingArea.vue'
-import ParticipantArea from './sidearea/ParticipantArea.vue'
+import { ref, watchEffect, defineEmits } from "vue"
+import { useStore } from "vuex"
+import GameArea from "./sidearea/GameArea.vue"
+import ChattingArea from "./sidearea/ChattingArea.vue"
+import ParticipantArea from "./sidearea/ParticipantArea.vue"
+
+const emit = defineEmits(["chatFromSide"])
+
+const msgData = ref("")
+const chatFromSide = function (data) {
+  console.log("this is isOkay", data)
+  msgData.value = data
+  emit("send-message", data)
+}
 
 // 사이드바 열고 닫는 부분
 const store = useStore()
 
 const closeSidebar = () => {
-  store.dispatch('openSidebar', '0')
+  store.dispatch("openSidebar", "0")
 }
-const sideBarStatus = ref('0')
+const sideBarStatus = ref("0")
 
 watchEffect(() => {
   sideBarStatus.value = store.getters.get_sidebar
@@ -48,5 +58,5 @@ watchEffect(() => {
 </script>
 
 <style scoped>
-@import url('../../../src/assets/roompage/sidearea.css');
+@import url("../../../src/assets/roompage/sidearea.css");
 </style>

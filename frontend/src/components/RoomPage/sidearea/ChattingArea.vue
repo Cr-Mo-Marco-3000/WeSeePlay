@@ -32,8 +32,9 @@
           class="text-area"
           autocomplete="off"
           placeholder="사람들에게 메세지 보내기"
+          v-model="sendingMessageFromMe"
         />
-        <div @click="sendMessage">
+        <div @click="sendingMsgBtn">
           <i class="fa-solid fa-paper-plane fa-lg"></i>
         </div>
       </div>
@@ -41,25 +42,33 @@
   </div>
 </template>
 <script setup>
-import { watchEffect } from 'vue'
-import { useStore } from 'vuex'
-import { ref } from 'vue'
+import { watchEffect, defineEmits } from "vue"
+import { useStore } from "vuex"
+import { ref } from "vue"
 
 const store = useStore()
 
 const chattingLog = ref([])
+const sendingMessageFromMe = ref("")
+
+const emit = defineEmits(["send-message-from-me"])
+const sendingMsgBtn = function () {
+  emit("send-message-from-me", sendingMessageFromMe.value)
+  sendingMessageFromMe.value = ""
+}
 
 // 채팅 컴포넌트를 껐다가 켰을 때도 채팅이 유지되어야 함으로, 스토어에 저장해주기로 했습니다.
 watchEffect(() => {
-  if (store.getters.getChattings.length()) {
-    chattingLog.value = store.getters.getChattings
+  chattingLog.value = store.getters.getChattings
+  if (store.state.rooms.chattings) {
+    console.log("야 읽히냐?", store.state.rooms.chattings.length)
   }
 })
 
 // add Message하는 함수인데, 아직 통째로 돌릴지, 이렇게 할지 잘 모르겠어서 일단 만들어 놓는다.
 // eslint-disable-next-line
 const addMessage = function (inComingMessage) {
-  console.log('메시지 감지!!')
+  console.log("메시지 감지!!")
   const sendMessage = {
     userNickname: inComingMessage.userNickname,
     // 메시지 컨텐츠
@@ -74,9 +83,9 @@ const addMessage = function (inComingMessage) {
   if (exName == sendMessage.userNickname && exTime == sendMessage.sendTime) {
     sendMessage.isDifferentNameAndTime = true
   }
-  store.dispatch('addMessage', sendMessage)
+  store.dispatch("addMessage", sendMessage)
 }
 </script>
 <style scoped>
-@import url('../../../../src/assets/roompage/sidearea.css');
+@import url("../../../../src/assets/roompage/sidearea.css");
 </style>

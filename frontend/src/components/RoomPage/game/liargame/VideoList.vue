@@ -1,16 +1,121 @@
 <template>
   <div class="row video-list-area">
     <button @click="gameStart">시작!</button>
-    <MainVideo
-      class="self-center"
-      :class="isSide ? 'col-7' : 'col-5'"
-      :user="gameSet.gameUserOrder[gameIdx]"
-      @next="gameIdxUp"
-    />
+    <div>
+      <MainVideo
+        v-if="gameIdx == 0"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 1"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 2"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 3"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 4"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 5"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 6"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 7"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 8"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 9"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 10"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+      <MainVideo
+        v-if="gameIdx == 11"
+        class="self-center"
+        :class="isSide ? 'col-7' : 'col-5'"
+        :user="gameSet.gameUserOrder[gameIdx]"
+        :gameIdx="gameIdx"
+        :myGameIdx="myGameIdx"
+        @next="gameIdxUp"
+      />
+    </div>
     <AllVideo
       class="self-center"
       :class="isSide ? 'col-5' : 'col-7'"
       :users="users"
+      :gameUserOrder="gameSet.gameUserOrder"
       :isSide="isSide"
     />
   </div>
@@ -59,7 +164,7 @@
 
 <script setup>
 import io from "socket.io-client"
-import { ref, reactive, defineProps, onBeforeMount } from "vue"
+import { ref, reactive, defineProps, onBeforeMount, watchEffect } from "vue"
 import MainVideo from "./MainVideo.vue"
 import AllVideo from "./AllVideo.vue"
 import store from "@/store"
@@ -107,6 +212,7 @@ const userId = store.getters.me.userEmail
 const userList = ref()
 const usersNum = ref(0)
 const gameIdx = ref(0)
+const myGameIdx = ref(0)
 const gameSet = reactive({
   isGameNow: 0,
   suggestion: "",
@@ -128,10 +234,12 @@ const joinGameSession = function () {
   })
 }
 const gameStart = function () {
+  console.log("게임 시작합니다.")
   gameSet.gameUserOrder = [] // 초기화
   socket.emit("gameStart", props.roomId) // 나중에 subject(제시어 범위), 최대 턴 수
 }
 socket.on("UALiar", (data) => {
+  console.log("UALiar 들어왔나?")
   if (data.session == props.roomId) {
     gameSet.isGameNow = 1
     console.log(data)
@@ -148,6 +256,7 @@ socket.on("UALiar", (data) => {
         console.log("반복중", userList.value[p])
         let flag = 0
         props.subscribers.forEach(function (element) {
+          console.log(JSON.parse(element.stream.connection.data).clientData)
           if (
             userList.value[p] ===
             JSON.parse(element.stream.connection.data).clientData
@@ -159,9 +268,11 @@ socket.on("UALiar", (data) => {
         })
         if (!flag) {
           console.log(userId)
+          myGameIdx.value = p
           gameSet.gameUserOrder.push(props.publisher)
         }
       }
+      console.log(gameSet.gameUserOrder)
     }
   }
 })
@@ -170,11 +281,13 @@ const gameIdxUp = function () {
   socket.emit("gameIdxUp", props.roomId)
 }
 socket.on("gameidxIncreased", (data) => {
+  console.log("인덱스가 증가한닷")
   if (props.roomId == data.session) {
     gameIdx.value = data["gameIdx"]
     gameSet.passedTurn = data["passedTurn"]
     gameSet.passedRound = data["passedRound"]
   }
+  console.log(gameIdx.value)
 })
 socket.on("openVoteModal", (info) => {
   console.log("투표 개신", info)
@@ -224,6 +337,10 @@ socket.on("endGame", (info) => {
     }
   }
 })
+watchEffect(() => {
+  console.log("게임 유저 순서", gameSet.gameUserOrder.length)
+})
+
 onBeforeMount(() => {
   joinGameSession()
 })

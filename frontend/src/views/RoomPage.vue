@@ -1,21 +1,19 @@
 <template>
   <div class="main-area">
     <VideoArea
-      v-if="isSide !== 0"
-      class="video_area video_area_on_sidebar"
-      :isSide="Boolean(isSide)"
-      :isVideoOpen="isVideoOpen"
-      :isAudeoOpen="isAudeoOpen"
-    />
-    <VideoArea
-      v-if="isSide === 0"
-      class="video_area video_area_off_sidebar"
+      class="video_area"
+      :class="isSide ? 'video_area_on_sidebar' : 'video_area_off_sidebar'"
       :isSide="Boolean(isSide)"
       :roomId="roomId"
       :isVideoOpen="isVideoOpen"
       :isAudeoOpen="isAudeoOpen"
+      :chatData="chatData"
     />
-    <SideArea class="self-center" v-if="isSide !== 0" />
+    <SideArea
+      class="self-center"
+      v-if="isSide !== 0"
+      @send-message="sideFromRoom"
+    />
   </div>
   <BottomBar
     @room-edit="isEditModal = !isEditModal"
@@ -55,6 +53,13 @@ const store = useStore()
 store.dispatch("getRoomInfo", roomId)
 const hostEmail = store.getters.getRoomInfo.hostEmail
 const userEmail = store.getters.me.userEmail
+
+const chatData = ref("")
+// 채팅 정보
+const sideFromRoom = function (e) {
+  console.log("메세지가 도착할까요?", e)
+  chatData.value = e
+}
 
 const isSide = ref(0)
 watchEffect(() => {
