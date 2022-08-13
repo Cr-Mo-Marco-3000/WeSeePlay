@@ -3,6 +3,8 @@
 #first-page-box {
   padding: 0 3rem;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 svg {
@@ -35,7 +37,6 @@ svg {
   border: 1px solid rgba(255, 255, 255, 0.125);
   position: relative;
   height: 40rem;
-  bottom: 3rem;
 }
 
 .overlay__inner {
@@ -114,12 +115,16 @@ svg {
   bottom: 2rem;
 }
 
+.orb-canvas {
+  display: none;
+}
+
 /* Not too many browser support this yet but it's good to add! */
-@media (prefers-contrast: high) {
+/* @media (prefers-contrast: high) {
   .orb-canvas {
     display: none;
   }
-}
+} */
 
 /* @media only screen and (max-width: 1140px) {
   .overlay {
