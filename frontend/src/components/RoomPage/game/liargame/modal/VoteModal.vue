@@ -2,7 +2,7 @@
   <div class="modal modal-overlay">
     <div class="modal-window">
       <h6>의심되는 참가자를 지목해주세요!</h6>
-      <div id="user-box">
+      <div id="user-vote-box">
         <div v-for="(user, key) in userInfo" :key="key" class="user-item">
           <div class="name-box">
             <span class="nickname-text">{{ user.userNickname }}</span>
