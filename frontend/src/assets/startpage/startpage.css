@@ -37,6 +37,7 @@ svg {
   border: 1px solid rgba(255, 255, 255, 0.125);
   position: relative;
   height: 40rem;
+  /* bottom: 3rem; */
 }
 
 .overlay__inner {
@@ -204,6 +205,14 @@ svg {
 .logo-img {
   width: 50%;
   height: 50%;
+  border-radius: 15px;
+}
+
+.carousel-gif {
+  width: 50%;
+  height: 50%;
+  border-radius: 15px;
+  border: solid 0.1rem #695eef;
 }
 
 .first-carousel {
