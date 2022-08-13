@@ -7,7 +7,6 @@
         <div class="main-text">
           <img src="../assets/logo_nontext.png" />
           <h6>We See! We Play!</h6>
-          <button @click="getRoomList">getRoomList</button>
         </div>
         <div id="body-content" class="row">
           <div
