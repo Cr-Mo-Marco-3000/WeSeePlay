@@ -1,6 +1,6 @@
 <template>
   <div class="row video-list-area">
-    <button @click="gameStart">시작!</button>
+    <button v-if="!gameSet.liar" @click="hostStart">시작!</button>
     <div>
       <MainVideo
         v-if="gameIdx == 0"
@@ -118,6 +118,9 @@
       :gameUserOrder="gameSet.gameUserOrder"
       :isSide="isSide"
     />
+    <!-- 일반인인지 라이어인지, 제시어 알려 주는 부분 -->
+    <div v-if="gameSet.liar == userId">당신은 라이어 입니다.</div>
+    <div v-else>제시어는 {{ gameSet.suggestion }} 입니다.</div>
   </div>
 
   <q-dialog v-model="gameSet.isVoteNow" persistent>
@@ -233,11 +236,21 @@ const joinGameSession = function () {
     session: props.roomId,
   })
 }
-const gameStart = function () {
-  console.log("게임 시작합니다.")
-  gameSet.gameUserOrder = [] // 초기화
-  socket.emit("gameStart", props.roomId) // 나중에 subject(제시어 범위), 최대 턴 수
+const hostStart = function () {
+  socket.emit("hostStart", props.roomId)
 }
+socket.on("letGameStart", (session) => {
+  if (session == props.roomId) {
+    console.log("방 초기화는 되었니?")
+    gameSet.gameUserOrder = [] // 초기화
+    socket.emit("gameStart", props.roomId) // 나중에 subject(제시어 범위), 최대 턴 수
+  }
+})
+// const gameStart = function () {
+//   console.log("게임 시작합니다.")
+//   gameSet.gameUserOrder = [] // 초기화
+//   socket.emit("gameStart", props.roomId) // 나중에 subject(제시어 범위), 최대 턴 수
+// }
 socket.on("UALiar", (data) => {
   console.log("UALiar 들어왔나?")
   if (data.session == props.roomId) {
@@ -252,6 +265,7 @@ socket.on("UALiar", (data) => {
     gameSet.passedRound = data["passedRound"]
 
     if (props.subscribers.length) {
+      gameSet.gameUserOrder = []
       for (let p = 0; p < usersNum.value; p++) {
         console.log("반복중", userList.value[p])
         let flag = 0

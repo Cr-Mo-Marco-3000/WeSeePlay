@@ -2,6 +2,7 @@
   <div class="video-item">
     <div class="user-box">
       <!-- <p>{{ user.nickname }}</p> -->
+      <p>{{ talkNow }}</p>
       <div v-if="user">
         <ov-video :stream-manager="user" />
       </div>
@@ -11,14 +12,25 @@
 
 <script setup>
 import OvVideo from "./OvVideo.vue"
-import { defineProps } from "vue"
+import { defineProps, ref } from "vue"
 
-defineProps({
+const props = defineProps({
   user: {
     type: Object,
     required: true,
   },
 })
+
+const talkNow = ref(false)
+if (props.user) {
+  props.user.on("publisherStartSpeaking", () => {
+    talkNow.value = true
+  })
+
+  props.user.on("publisherStopSpeaking", () => {
+    talkNow.value = false
+  })
+}
 </script>
 
 <style>
