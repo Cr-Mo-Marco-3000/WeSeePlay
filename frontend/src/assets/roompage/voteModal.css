@@ -1,0 +1,67 @@
+.round-time-bar {
+  margin: 1rem 0;
+  overflow: hidden;
+}
+.round-time-bar div {
+  height: 5px;
+  animation: roundtime calc(var(--duration) * 1s) steps(var(--duration))
+    forwards;
+  transform-origin: left center;
+  background: rgb(55, 0, 94);
+  background: linear-gradient(
+    90deg,
+    rgba(55, 0, 94, 1) 0%,
+    rgba(108, 39, 176, 1) 24%,
+    rgba(98, 94, 239, 1) 100%
+  );
+}
+
+.round-time-bar[data-style="smooth"] div {
+  animation: roundtime calc(var(--duration) * 1s) linear forwards;
+}
+
+#user-box {
+  display: grid;
+  justify-content: space-between;
+  width: 100%;
+  grid-template-columns: repeat(2, 1fr);
+  margin-top: 1rem;
+}
+
+.user-item,
+.skip-btn {
+  margin: 0.3rem 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background: #c9c5f1;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+.skip-btn {
+  justify-content: center;
+}
+
+.user-item input {
+  accent-color: #695eef;
+  width: 1rem;
+}
+
+.order-text {
+  margin-left: 0.5rem;
+  color: rgba(0, 0, 0, 0.3);
+  font-size: 0.8rem;
+}
+
+.active {
+  background: #695eef;
+}
+
+@keyframes roundtime {
+  to {
+    /* More performant than `width` */
+    transform: scaleX(0);
+  }
+}
