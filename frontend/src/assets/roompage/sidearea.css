@@ -190,6 +190,7 @@
   text-align: start;
   font-size: 0.9rem;
   padding-left: 0.5rem;
+  word-wrap: break-word;
 }
 
 /* 메시지 보낼 사용자들을 정하는 구간 */

@@ -17,7 +17,7 @@ export default {
     // 방에 있는 User 정보 가져오기
     getUserInfo: (state) => state.roomInfo.joinUsers,
     // 방에 있는 Chatting 정보 가져오기
-    getChattings: (state) => state.roomInfo.chattings,
+    getChattings: (state) => state.chattings,
   },
   mutations: {
     SET_SIDEBAR: (state, data) => {

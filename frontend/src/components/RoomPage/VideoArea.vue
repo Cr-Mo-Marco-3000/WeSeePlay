@@ -43,6 +43,7 @@ import { OpenVidu } from "openvidu-browser"
 $axios.defaults.headers.post["Content-Type"] = "application/json"
 $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
 
+// 다른 파일에서와는 다르게, 얘가 useStore임
 const usestore = useStore()
 
 const isGameMode = ref(store.getters.getRoomInfo.game)
@@ -174,9 +175,46 @@ const joinSession = () => {
     console.log("연결 돼ㅐㅆ냐?")
     // 여기서 플레이어 숫자 계산
   })
+  // 메시지 캐치하는 부분
   state.session.on("signal:this is chat", (e) => {
-    console.log("이게 왜 안돼>", e.data)
-    usestore.dispatch("addMessage", e.data)
+    const userList = usestore.getters.getUserInfo
+    const rawMessage = e.data
+    let splitIdx = -1
+    console.log("여기까지?")
+    for (let i = 0; i < rawMessage.length; i++) {
+      if (rawMessage[i] === ":") {
+        splitIdx = i
+        break
+      }
+    }
+    const Email = rawMessage.slice(0, splitIdx - 1)
+    const Message = rawMessage.slice(splitIdx + 2, rawMessage.length)
+    let userNickname = ""
+    userList.forEach((userInfo) => {
+      console.log(userInfo)
+      if (userInfo.userEmail === Email) {
+        userNickname = userInfo.userNickname
+        return
+      }
+    })
+    console.log(userNickname)
+    console.log(Message)
+    const sendTime = new Date().toLocaleTimeString().slice(0, -3)
+    const messageObject = {
+      userNickname: userNickname,
+      content: Message,
+      sendTime: sendTime,
+      isDifferentNameAndTime: true,
+    }
+    const exMessage = usestore.getters.getChattings.at(-1)
+    if (
+      exMessage &&
+      exMessage.userNickname === userNickname &&
+      exMessage.sendTime === sendTime
+    ) {
+      messageObject.isDifferentNameAndTime = false
+    }
+    usestore.dispatch("addMessage", messageObject)
   })
 
   // On every Stream destroyed...
