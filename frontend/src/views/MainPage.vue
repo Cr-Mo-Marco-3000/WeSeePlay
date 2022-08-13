@@ -187,10 +187,8 @@ export default {
       const reqData = { ...lookupInfo }
       reqData.isPrivate = Number(isPrivatebtn.value)
       const res = await api.room.getRoomList(reqData)
-      console.log(res)
       const { status, data } = res
       if (status === 200) {
-        console.log("조회 성공!", data)
         roomsInfo.value = data.content
         maxpage.value = data.totalPage
       } else {

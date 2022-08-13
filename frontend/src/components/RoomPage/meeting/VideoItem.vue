@@ -1,6 +1,6 @@
 <template>
   <div class="video-item">
-    <div class="user-box">
+    <div class="user-video-box">
       <!-- <p>{{ user.nickname }}</p> -->
       <p>{{ talkNow }}</p>
       <div v-if="user">
@@ -38,10 +38,7 @@ if (props.user) {
   padding: 10px;
 }
 
-.sample {
-}
-
-.user-box {
+.user-video-box {
   background-color: #c9c5f1;
   border-radius: 15px;
   width: 100%;

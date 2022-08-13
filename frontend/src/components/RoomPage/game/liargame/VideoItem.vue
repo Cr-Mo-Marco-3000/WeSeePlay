@@ -1,6 +1,6 @@
 <template>
   <div class="video-item">
-    <div class="user-box">
+    <div class="user-video-box">
       <!-- <p>{{ user.nickname }}</p> -->
       <div v-if="user">
         <ov-video :stream-manager="user" />
@@ -26,7 +26,7 @@ defineProps({
   padding: 10px;
 }
 
-.user-box {
+.user-video-box {
   background-color: #c9c5f1;
   border-radius: 15px;
   width: 100%;

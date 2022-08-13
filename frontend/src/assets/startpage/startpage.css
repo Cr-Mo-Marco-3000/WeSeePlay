@@ -240,7 +240,7 @@ svg {
   width: 100%;
   display: flex;
 }
-#user-box {
+#user-login-box {
   width: 50%;
   display: flex;
   flex-direction: column;
@@ -278,25 +278,25 @@ svg {
   );
 }
 
-#user-box .overlay__btn {
+#user-login-box .overlay__btn {
   margin-top: 1rem;
   margin-bottom: 2rem;
   width: 100%;
 }
 
-#user-box > span {
+#user-login-box > span {
   color: #695eef;
   transition: transform 150ms ease;
   margin: 0.3rem 0;
 }
 
-#user-box .forget-pw-text:hover,
-#user-box .kakao-btn:hover {
+#user-login-box .forget-pw-text:hover,
+#user-login-box .kakao-btn:hover {
   cursor: pointer;
   transform: scale(1.05);
 }
 
-#user-box .kakao-btn {
+#user-login-box .kakao-btn {
   color: black;
   font-size: 0.9rem;
 }
@@ -322,7 +322,7 @@ svg {
 
 @media only screen and (max-width: 840px) {
   .user-input input,
-  #user-box .overlay__btn {
+  #user-login-box .overlay__btn {
     width: 100%;
   }
 
@@ -430,7 +430,7 @@ svg {
     display: none;
   }
 
-  #user-box {
+  #user-login-box {
     width: 100%;
   }
 

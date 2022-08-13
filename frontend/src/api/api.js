@@ -90,7 +90,6 @@ export default {
     getRoomList: async (data) => {
       const req = setRequest("GET", "", "")
       req.params = { ...data }
-      console.log(req)
       const res = await sendAxios(req)
       return res
     },

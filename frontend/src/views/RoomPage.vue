@@ -121,7 +121,7 @@ onMounted(() => {
 })
 
 // 해당 페이지에서 나갈 때
-onBeforeUnmount(async () => {
+onBeforeUnmount(() => {
   window.removeEventListener("beforeunload", leaveOrKill)
 })
 </script>

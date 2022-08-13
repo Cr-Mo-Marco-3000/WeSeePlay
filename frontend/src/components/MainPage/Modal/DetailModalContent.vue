@@ -55,10 +55,8 @@ const userNum = ref(0)
 
 watchEffect(async () => {
   const response = await api.room.roomInfo(props.roomId)
-  console.log("ROOM 정보", response)
   const { status, data } = response
   if (status === 200) {
-    console.log("loading 성공", data)
     info.value = data
   } else {
     Swal.fire({
@@ -78,30 +76,27 @@ const errMsg = {
   "Bad Request - No Room": "해당 Room은 존재하지 않습니다.",
 }
 
-const joinError = function (key) {
-  Swal.fire({ icon: "error", html: `${errMsg[key]}`, timer: 1000 })
+const joinError = async function (key) {
+  await Swal.fire({ icon: "error", html: `${errMsg[key]}`, timer: 1000 })
 }
 
 const joinRoom = async function () {
-  console.log("joinRoom Function Start")
-
   // api.js 에 데이터(req) 넘기기
   const req = {
-    roomId: info.value.roomId,
+    roomId: info.value.roomId + 10,
     inputPassword: passwordInput.value,
   }
 
   const { status, data } = await api.room.enterRoom(req)
-  console.log("enterRoom", status, data)
   if (status === 200) {
     router.push({ name: "roompage", params: { roomId: props.roomId } })
     return
   } else if (status === 400) {
-    joinError(data.message)
+    await joinError(data.message)
     if (data.message === "Bad Request - No User") {
       store.dispatch("logout")
     } else if (data.message === "Bad Request - No Room") {
-      console.log("새로고침...")
+      location.reload()
     }
   } else {
     router.push({ name: "errorpage", params: { errorname: 500 } })
