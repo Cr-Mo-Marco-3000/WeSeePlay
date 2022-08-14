@@ -1,18 +1,22 @@
 <template>
-  <!-- <div id="logo-box">
+  <div id="logo-box">
     <img src="../../assets/logo.png" />
     <div class="logo-box-text">
       <h4>
         <span class="text-gradient">WeSeePlay</span>
       </h4>
-      <p>
-        저희 서비스는 말이죠웅 수빱뚜삐두바 뚜비두비두비 뚜비두비두비두비
-        두비두다~ 저희 서비스는 말이죠웅 수빱뚜삐두바 뚜비두비두비
-        뚜비두비두비두비 두비두다~ 저희 서비스는 말이죠웅 수빱뚜삐두바
-        뚜비두비두비 뚜비두비두비두비 두비두다~
+      <p style="margin-top: 0.5rem">
+        <br />
+        처음 만나는 사람들, 이미 만나본 사람들 모두 하나되어 즐겁게 놀 수
+        있습니다.<br />
+        사람들과 얼굴을 마주하며 함께하는 듯한 생생한 즐거움을 누리세요!
+        <br />
+        지금 <span class="text-gradient">WeSeePlay</span>의 즐거운 세상으로
+        초대합니다<br />
+        <span style="font-size: 1.1rem">We See, We Play!</span>
       </p>
     </div>
-  </div> -->
+  </div>
   <div id="carousel-box">
     <div class="q-pa-md">
       <q-carousel
