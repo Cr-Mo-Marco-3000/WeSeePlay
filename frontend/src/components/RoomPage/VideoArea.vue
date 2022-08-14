@@ -21,11 +21,21 @@
       :subscribers="state.subscribers"
     />
   </div>
+  <!-- 모달 확인용 버튼 -->
+  <button @click="isVoteModal = true">Vote!</button>
+  <button @click="isLiarInputModal = true">LiarInput!</button>
+  <button @click="isResultModal = true">Result!</button>
+  <VoteModal v-if="isVoteModal" @close="isVoteModal = false" />
+  <LiarInputModal v-if="isLiarInputModal" @close="isLiarInputModal = false" />
+  <ResultModal v-if="isResultModal" @close="isResultModal = false" />
 </template>
 
 <script setup>
 import LiarGameVideo from "./game/liargame/VideoList.vue"
 import MeetingVideo from "./meeting/VideoList.vue"
+import VoteModal from "@/components/RoomPage/game/liargame/modal/VoteModal.vue"
+import LiarInputModal from "@/components/RoomPage/game/liargame/modal/LiarInputModal.vue"
+import ResultModal from "@/components/RoomPage/game/liargame/modal/ResultModal.vue"
 import { ref, defineProps, watchEffect } from "vue"
 import store from "@/store"
 import { useStore } from "vuex"
@@ -42,6 +52,11 @@ import { OpenVidu } from "openvidu-browser"
 // import VoteModalContent from "./components/VoteModalContent.vue"
 $axios.defaults.headers.post["Content-Type"] = "application/json"
 $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
+
+// modal control
+const isVoteModal = ref(false)
+const isLiarInputModal = ref(false)
+const isResultModal = ref(false)
 
 // 다른 파일에서와는 다르게, 얘가 useStore임
 const usestore = useStore()

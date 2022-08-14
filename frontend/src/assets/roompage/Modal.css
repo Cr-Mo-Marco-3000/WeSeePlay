@@ -1,3 +1,4 @@
+/* bottomTimer.css */
 .round-time-bar {
   margin: 1rem 0;
   overflow: hidden;
@@ -20,6 +21,7 @@
   animation: roundtime calc(var(--duration) * 1s) linear forwards;
 }
 
+/* voteModal.css */
 #user-vote-box {
   display: grid;
   justify-content: space-between;
@@ -57,6 +59,34 @@
 
 .active {
   background: #695eef;
+}
+
+/* liarInputModal.css */
+#keyword-input-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.keyword-input {
+  margin: 0.5rem 0;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0 1rem;
+  border: solid 2px rgba(0, 0, 0, 0.616);
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.keyword-input:focus {
+  background: rgb(105, 94, 239);
+  background: linear-gradient(
+    90deg,
+    rgba(105, 94, 239, 0.4) 0%,
+    rgba(114, 220, 233, 0.4) 87%
+  );
 }
 
 @keyframes roundtime {

@@ -15,7 +15,6 @@
       @send-message="sideFromRoom"
     />
   </div>
-  <button @click="isVoteModal = true">Vote!</button>
   <BottomBar
     @room-edit="isEditModal = !isEditModal"
     @video-toggle="isVideoOpen = !isVideoOpen"
@@ -24,10 +23,6 @@
   <EditModal v-if="isEditModal" @close="editModalClose">
     <EditModalContent @close="editModalClose" />
   </EditModal>
-  <LiarModal v-if="isLiarModal" @close="isLiarModal = false">
-    <LiarModalContent />
-  </LiarModal>
-  <VoteModal v-if="isVoteModal" @close="isVoteModal = false" />
 </template>
 
 <script setup>
@@ -37,17 +32,10 @@ import SideArea from "@/components/RoomPage/SideArea.vue"
 import BottomBar from "@/components/RoomPage/BottomBar.vue"
 import EditModal from "@/components/RoomPage/meeting/EditModal.vue"
 import EditModalContent from "@/components/RoomPage/meeting/EditModalContent.vue"
-import LiarModal from "@/components/RoomPage/game/liargame/modal/LiarModal.vue"
-import LiarModalContent from "@/components/RoomPage/game/liargame/modal/LiarModalContent.vue"
 import { useRoute } from "vue-router"
 import { useStore } from "vuex"
 import api from "@/api/api"
 import Swal from "sweetalert2"
-// vote modal
-import VoteModal from "@/components/RoomPage/game/liargame/modal/VoteModal.vue"
-
-// vote modal 임의 데이터
-const isVoteModal = ref(false)
 
 // video toggle
 const isVideoOpen = ref(true)

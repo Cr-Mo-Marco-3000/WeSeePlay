@@ -81,7 +81,7 @@ export default {
 </script>
 
 <style>
-@import url("@/assets/roompage/voteModal.css");
+@import url("@/assets/roompage/Modal.css");
 
 .modal-window {
   height: auto;
