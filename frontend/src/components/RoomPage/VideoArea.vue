@@ -1,17 +1,23 @@
 <template>
   <div>
     <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
-    <button style="position: absolute; top: 1rem" @click="changeGame()">
+    <button style="position: absolute; top: 1rem" @click="gameStart">
       Game On/Off
     </button>
     <!-- isGameMode가 참이면 GameVideo가 나오게 하고, false라면 MeetingVideo가 나오게 짰어-->
     <LiarGameVideo
       v-if="isGameMode === 2"
-      :users="userList"
       :isSide="isSide"
       :roomId="roomId"
-      :publisher="state.publisher"
-      :subscribers="state.subscribers"
+      :setting="gameSet"
+      :session="state.session"
+      :isLiar="isLiar"
+      :tmpNum="tmpNum"
+      :tmpvote="tmpvote"
+      :tmpUserList="tmpUserList"
+      :tmpliarInputModal="tmpliarInputModal"
+      :tmpGameResultModal="tmpGameResultModal"
+      :tmpGameResult="tmpGameResult"
     />
     <MeetingVideo
       v-if="isGameMode === 1"
@@ -66,18 +72,104 @@ const isGameMode = ref(store.getters.getRoomInfo.game)
 watchEffect(() => {
   isGameMode.value = store.getters.getRoomInfo.game
 })
-const changeGame = function () {
-  if (isGameMode.value === 1) {
-    isGameMode.value = 2
-    console.log("gamemode: ", isGameMode.value)
-    return
-  } else {
-    isGameMode.value = 1
-    console.log("gamemode: ", isGameMode.value)
-    return
+// 게임 정보
+const gameSet = reactive({
+  gameIdx: 0,
+  isGameNow: 0,
+  suggestion: "",
+  maxRound: 0,
+  liar: "",
+  passedTurn: 0,
+  passedRound: 0,
+  gameUserList: [],
+  gameUserOrder: [],
+  liarInput: "",
+  liarInputModal: false,
+  isVoteNow: false,
+  gameResult: false,
+  gameResultModal: false,
+  votingProcess: {},
+  skipNum: 0,
+  voteNum: 0,
+})
+// const changeGame = function () {
+//   if (isGameMode.value === 1) {
+//     isGameMode.value = 2
+//     console.log("gamemode: ", isGameMode.value)
+//     return
+//   } else {
+//     isGameMode.value = 1
+//     console.log("gamemode: ", isGameMode.value)
+//     return
+//   }
+// }
+function shuffle(array) {
+  for (let index = array.length - 1; index > 0; index--) {
+    // 무작위 index 값을 만든다. (0 이상의 배열 길이 값)
+    const randomPosition = Math.floor(Math.random() * (index + 1))
+
+    // 임시로 원본 값을 저장하고, randomPosition을 사용해 배열 요소를 섞는다.
+    const temporary = array[index]
+    array[index] = array[randomPosition]
+    array[randomPosition] = temporary
   }
 }
+function pickLiar(array) {
+  const randomPosition = Math.floor(Math.random() * array.length)
+  return array[randomPosition]
+}
+const gameStart = function async() {
+  gameSet.gameUserOrder = [] // 초기화
+  gameSet.gameUserList.value = []
+  state.subscribers.forEach(function (element) {
+    gameSet.gameUserList.value.push(
+      JSON.parse(element.stream.connection.data).clientData
+    )
+  })
+  gameSet.gameUserList.value.push(state.myUserName)
+  gameSet.maxRound = 5
+  gameSet.suggestion = "사자"
+  shuffle(gameSet.gameUserList.value)
+  gameSet.liar = pickLiar(gameSet.gameUserList.value)
 
+  state.session
+    .signal({
+      data: gameSet.liar,
+      to: [],
+      type: "whoIsLiar",
+    })
+    .then(() => {
+      console.log("who is Liar")
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+
+  state.session
+    .signal({
+      data: gameSet.gameUserList.value.join(),
+      to: [],
+      type: "gameOrder",
+    })
+    .then(() => {
+      console.log("gameOrder")
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+  state.session
+    .signal({
+      data: "2," + gameSet.suggestion + "," + String(gameSet.maxRound),
+      to: [],
+      type: "gameStart",
+    })
+    .then(() => {
+      console.log("game Start!")
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
 const userList = ref([]) // Component에 넘겨줄 user list
 const props = defineProps({
   isSide: {
@@ -111,8 +203,8 @@ for (let i = 1; i < customNumber.value; i++) {
 
 // --------------------------------------open vidu-----------------------------------------------
 // 여기서 부턴 openVidu
-const OPENVIDU_SERVER_URL = "https://" + "i7a501.p.ssafy.io" + ":8443"
-// const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443"
+// const OPENVIDU_SERVER_URL = "https://" + "i7a501.p.ssafy.io" + ":8443"
+const OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443"
 const OPENVIDU_SERVER_SECRET = "MY_SECRET"
 const state = reactive({
   OV: undefined,
@@ -121,40 +213,9 @@ const state = reactive({
   publisher: undefined,
   subscribers: [],
   mySessionId: props.roomId,
-  //   computed(() => props.roomId),
-  // myUserName: "Participant" + Math.floor(Math.random() * 100),
   myUserName: undefined,
+  playersNum: 1,
 })
-
-// const vidoman = reactive({
-//   publishVideo: true,
-//   publishAudio: true,
-// })
-
-// const sortvideo = reactive({
-//   videoOn: computed(() => {
-//     let videoOn = []
-//     if (state.subscribers.length) {
-//       state.subscribers.forEach(function (element) {
-//         if (element.stream.videoActive) {
-//           videoOn.push(element)
-//         }
-//       })
-//     }
-//     return videoOn
-//   }),
-//   videoOff: computed(() => {
-//     let videoOff = []
-//     if (state.subscribers.length) {
-//       state.subscribers.forEach(function (element) {
-//         if (!element.stream.videoActive) {
-//           videoOff.push(element)
-//         }
-//       })
-//     }
-//     return videoOff
-//   }),
-// })
 
 // toggle
 watchEffect(() => {
@@ -173,6 +234,39 @@ watchEffect(() => {
 //     state.publisher.publishAudio(false)
 //   }
 // }
+const endGame = function (result) {
+  console.log("게임좀 끝내줘 멍청아")
+  gameSet.gameResultModal = true
+  tmpGameResultModal.value = gameSet.gameResultModal
+  gameSet.gameResultModal = false
+  result = Boolean(result)
+  console.log(result)
+  if (result) {
+    if (gameSet.liar === state.myUserName) {
+      gameSet.gameResult = "니가 졌어"
+    } else {
+      gameSet.gameResult = "이겼습니다."
+    }
+  } else {
+    console.log("여기까지 온거 아냐?")
+    if (gameSet.liar === state.myUserName) {
+      gameSet.gameResult = "이겼습니다"
+    } else {
+      gameSet.gameResult = "니가 졌어."
+    }
+  }
+  tmpGameResult.value = gameSet.gameResult
+  gameSet.gameResult = ""
+}
+
+const isLiar = ref(false)
+const tmpNum = ref(0)
+const tmpvote = ref(false)
+const tmpliarInputModal = ref(false)
+const tmpUserList = ref([])
+const tmpGameResultModal = ref(false)
+const tmpGameResult = ref("")
+
 const joinSession = () => {
   // --- Get an OpenVidu object ---
   console.log("오픈 비두 시작!")
@@ -186,8 +280,7 @@ const joinSession = () => {
   state.session.on("streamCreated", ({ stream }) => {
     const subscriber = state.session.subscribe(stream)
     state.subscribers.push(subscriber)
-    console.log(JSON.parse(subscriber.stream.connection.data).clientData)
-    console.log("연결 돼ㅐㅆ냐?")
+    state.playersNum += 1
     // 여기서 플레이어 숫자 계산
   })
   // 메시지 캐치하는 부분
@@ -240,6 +333,125 @@ const joinSession = () => {
   // On every asynchronous exception...
   state.session.on("exception", ({ exception }) => {
     console.warn(exception)
+  })
+
+  // liar Game
+  state.session.on("signal:gameStart", (data) => {
+    console.log("게임이 시작 되었는가?????????????")
+    let info = data.data.split(",")
+    console.log(info)
+    gameSet.suggestion = info[1]
+    gameSet.maxRound = parseInt(info[2])
+    isGameMode.value = parseInt(info[0])
+  })
+  state.session.on("signal:whoIsLiar", (data) => {
+    console.log(data.data)
+    gameSet.liar = data.data
+    if (gameSet.liar == state.myUserName) {
+      isLiar.value = true
+    }
+  })
+  state.session.on("signal:gameOrder", (data) => {
+    console.log(data.data)
+    gameSet.gameUserList.value = data.data.split(",")
+    tmpUserList.value = gameSet.gameUserList.value
+    for (let p = 0; p < state.playersNum; p++) {
+      let flag = 0
+      state.subscribers.forEach(function (element) {
+        if (
+          gameSet.gameUserList.value[p] ===
+          JSON.parse(element.stream.connection.data).clientData
+        ) {
+          // console.log(JSON.parse(element.stream.connection.data).clientData)
+          gameSet.gameUserOrder.push(element)
+          flag = 1
+        }
+      })
+      if (!flag) {
+        gameSet.gameUserOrder.push(state.publisher)
+      }
+    }
+  })
+  state.session.on("signal:gameIdxUp", (data) => {
+    console.log(data.data)
+    let flag = 0
+    gameSet.gameIdx += 1
+    if (gameSet.gameIdx >= state.playersNum) {
+      gameSet.gameIdx = 0
+      gameSet.passedRound += 1
+      flag = 1
+    }
+    tmpNum.value = gameSet.gameIdx
+    gameSet.passedTurn += 1
+    // 모든 사용자 gameidx증가
+    if (flag && gameSet.passedRound > 1) {
+      // 만약에 라운드가 넘어갔다면 투표
+      console.log("왜 투표를 안하나요")
+      gameSet.isVoteNow = true
+      tmpvote.value = gameSet.isVoteNow
+      gameSet.isVoteNow = false
+    }
+    console.log("gameSet.gameIdx : ", gameSet.gameIdx)
+  })
+  state.session.on("signal:heIsLiar", (data) => {
+    console.log(data.data)
+    const suspect = data.data
+    if (suspect == "skip") {
+      gameSet.skipNum += 1
+    } else {
+      gameSet.voteNum += 1
+      if (suspect in gameSet.votingProcess) {
+        // 이미 있으면,,
+        gameSet.votingProcess[suspect] += 1
+      } else {
+        // 없으면 추가
+        gameSet.votingProcess[suspect] = 1
+      }
+    }
+    //투표 끝
+    let maxKey
+    let maxValue = 0
+    if (state.playersNum == gameSet.skipNum + gameSet.voteNum) {
+      if (gameSet.skipNum < gameSet.voteNum) {
+        // 스킵 되지 않은 경우
+        for (const [key, value] of Object.entries(gameSet.votingProcess)) {
+          if (value > maxValue) {
+            maxValue = value
+            maxKey = key
+          }
+        }
+      }
+      // 스킵 되며 최대 턴을 찍은 경우
+      let isEnd = false
+      if (
+        gameSet.passedRound == gameSet.maxRound &&
+        gameSet.skipNum >= gameSet.voteNum
+      ) {
+        isEnd = true
+      }
+      if (maxValue) {
+        if (maxKey == gameSet.liar) {
+          if (state.myUserName == gameSet.liar) {
+            gameSet.liarInputModal = true
+            tmpliarInputModal.value = gameSet.liarInputModal
+            gameSet.liarInputModal = false
+          }
+        } else {
+          isEnd = true
+        }
+      }
+      if (isEnd) {
+        endGame(false)
+      }
+      tmpvote.value = gameSet.isVoteNow
+      gameSet.votingProcess = {}
+      gameSet.skipNum = 0
+      gameSet.voteNum = 0
+    }
+  })
+  state.session.on("signal:liarInput", (data) => {
+    tmpliarInputModal.value = gameSet.liarInputModal
+    endGame(data.data)
   })
   // 'getToken' method is simulating what your server-side should do.
   // 'token' parameter should be retrieved and returned by your own backend
@@ -371,6 +583,8 @@ const sendMsg = (data) => {
       console.error(error)
     })
 }
+
+//-----------------------------Liar Game--------------------------------
 
 // beforeunmount
 onBeforeUnmount(() => {

@@ -5,11 +5,9 @@
         <ov-video :stream-manager="user" />
       </div>
       <div>
-        <p>gameIdx: {{ gameIdx }} myGameIdx: {{ myGameIdx }}</p>
+        <p>gameIdx: {{ gameIdx }}</p>
       </div>
-      <button v-if="myGameIdx == gameIdx" @click.stop="$emit('next')">
-        NEXT {{ gameIdx }}
-      </button>
+      <button @click.stop="$emit('next')">NEXT {{ gameIdx }}</button>
     </div>
   </div>
 </template>
@@ -24,9 +22,6 @@ defineProps({
     required: true,
   },
   gameIdx: {
-    type: Number,
-  },
-  myGameIdx: {
     type: Number,
   },
 })
