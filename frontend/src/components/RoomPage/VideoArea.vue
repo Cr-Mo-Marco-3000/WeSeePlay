@@ -28,9 +28,11 @@
     />
   </div>
   <!-- 모달 확인용 버튼 -->
+  <button @click="isCategoryModal = true">Category</button>
   <button @click="isVoteModal = true">Vote!</button>
   <button @click="isLiarInputModal = true">LiarInput!</button>
   <button @click="isResultModal = true">Result!</button>
+  <CategoryModal v-if="isCategoryModal" @close="isCategoryModal = false" />
   <VoteModal v-if="isVoteModal" @close="isVoteModal = false" />
   <LiarInputModal v-if="isLiarInputModal" @close="isLiarInputModal = false" />
   <ResultModal v-if="isResultModal" @close="isResultModal = false" />
@@ -39,6 +41,7 @@
 <script setup>
 import LiarGameVideo from "./game/liargame/VideoList.vue"
 import MeetingVideo from "./meeting/VideoList.vue"
+import CategoryModal from "@/components/RoomPage/game/liargame/modal/CategoryModal.vue"
 import VoteModal from "@/components/RoomPage/game/liargame/modal/VoteModal.vue"
 import LiarInputModal from "@/components/RoomPage/game/liargame/modal/LiarInputModal.vue"
 import ResultModal from "@/components/RoomPage/game/liargame/modal/ResultModal.vue"
@@ -60,6 +63,7 @@ $axios.defaults.headers.post["Content-Type"] = "application/json"
 $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
 
 // modal control
+const isCategoryModal = ref(false)
 const isVoteModal = ref(false)
 const isLiarInputModal = ref(false)
 const isResultModal = ref(false)

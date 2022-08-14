@@ -80,7 +80,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import url("@/assets/roompage/Modal.css");
 
 .modal-window {

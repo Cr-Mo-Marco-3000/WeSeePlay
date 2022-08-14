@@ -28,10 +28,14 @@
       <div v-if="!waiting && liarWin" class="winner-box">
         <div class="winner"><span>라이어</span> 승리!</div>
         <div class="video-box">대충 여기에 화면 띄워주기</div>
-        <span>라이어 닉네임</span>
+        <p>최고의 거짓말쟁이, {{ liarNickname }}!</p>
       </div>
       <div v-if="!waiting && !liarWin">
         <div class="winner"><span>참가자</span> 승리!</div>
+        <div class="word">
+          제시어: <span>{{ word }}</span>
+          <p>거짓말쟁이를 찾아냈어요!<i class="fa-solid fa-hand-peace"></i></p>
+        </div>
       </div>
     </div>
   </div>
@@ -45,6 +49,8 @@ export default {
     const time = ref(3)
     const waiting = ref(true)
     const liarWin = ref(false)
+    const word = ref("강낭콩")
+    const liarNickname = ref("이동준")
 
     setInterval(function () {
       if (time.value > 0) {
@@ -61,7 +67,7 @@ export default {
         return
       }
     }, 1000)
-    return { time, waiting, liarWin }
+    return { time, waiting, liarWin, word, liarNickname }
   },
 }
 </script>

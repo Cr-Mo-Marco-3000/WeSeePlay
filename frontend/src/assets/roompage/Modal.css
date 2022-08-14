@@ -21,6 +21,45 @@
   animation: roundtime calc(var(--duration) * 1s) linear forwards;
 }
 
+/* categoryModal.css */
+#category-box {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 0;
+}
+
+.category-item {
+  padding: 0.3rem;
+}
+
+.category-btn {
+  background: #c9c5f1;
+  height: 2rem;
+  color: black;
+  width: 100%;
+}
+
+.random-btn {
+  background: #c9c5f1;
+  height: 2rem;
+  color: black;
+  width: 98%;
+  margin: 0.3rem;
+}
+
+.start-btn {
+  height: 2.2rem;
+  width: 98%;
+  margin: 0.3rem;
+  margin-top: 1rem;
+}
+
+.start-btn:hover {
+  background: black;
+  color: white;
+}
+
 /* voteModal.css */
 #user-vote-box {
   display: grid;
@@ -59,6 +98,7 @@
 
 .active {
   background: #695eef;
+  color: white;
 }
 
 /* liarInputModal.css */
@@ -132,6 +172,21 @@
   margin-top: 2rem;
   margin-bottom: 1rem;
   border-radius: 2rem;
+}
+
+.word {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.word span {
+  color: #9c27b0;
+}
+
+.winner-box p {
+  margin-top: 1rem;
+  font-size: 1.2rem;
 }
 
 @keyframes roundtime {
@@ -281,12 +336,6 @@
   to {
     transform: translateY(100vh);
   }
-}
-body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  overflow: hidden;
 }
 
 .pyro > .before,
