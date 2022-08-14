@@ -271,6 +271,13 @@ public class RoomController {
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
 		JsonObject jo=new JsonObject();
+		if(map.get("pageNumber")==null || map.get("contentsCount")==null || map.get("isPrivate")==null || map.get("sortingOrder")==null
+				 || map.get("sortingMethod")==null || map.get("query")==null || map.get("queryType")==null) {
+			jo.addProperty("statusCode",400);
+			jo.addProperty("message","Bad Request");
+			return  jo.toString();
+		}
+		
 		Page<Room> totalRoomList=roomService.getRoomList(map);
 		List<Room> roomList=totalRoomList.getContent();
 		JsonArray jsonArray=new JsonArray();
