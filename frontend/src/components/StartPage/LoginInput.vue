@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="login">
-    <div id="user-login-box">
+    <div id="user-box">
       <h5>로그인</h5>
       <div class="user-input">
         <span>이메일</span>
