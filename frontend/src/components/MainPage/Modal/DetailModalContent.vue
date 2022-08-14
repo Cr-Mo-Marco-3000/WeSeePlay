@@ -22,7 +22,7 @@
     <p>{{ info.descript }}</p>
   </div>
   <div v-if="!info.isPrivate" class="detail-text">
-    <span>참여자 목록 ({{ userNum }})</span>
+    <span>참여자 목록 ({{ info.joinUsers.length + 1 }})</span>
     <div class="user-list">
       <div>{{ info.hostNickname }}</div>
       <div v-for="(user, idx) in info.joinUsers" :key="idx">
@@ -47,17 +47,17 @@ import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 
 const props = defineProps({ roomId: Number })
-const info = ref({})
+const info = ref({ joinUsers: [] })
 const store = useStore()
 const router = useRouter()
 const passwordInput = ref("")
-const userNum = ref(0)
 
 watchEffect(async () => {
   const response = await api.room.roomInfo(props.roomId)
   const { status, data } = response
   if (status === 200) {
     info.value = data
+    console.log(data)
   } else {
     Swal.fire({
       title: "방 정보가 존재하지 않습니다.",
