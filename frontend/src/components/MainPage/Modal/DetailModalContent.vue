@@ -63,6 +63,9 @@ watchEffect(async () => {
       icon: "error",
     })
   }
+
+  let tmp = new Date(`${data.callStartTime} UTC`)
+  data.callStartTime = tmp.toLocaleString("ko-KR")
 })
 
 const errMsg = {
