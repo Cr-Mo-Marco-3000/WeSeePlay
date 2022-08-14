@@ -5,7 +5,7 @@
         <h1 class="overlay__title">
           함께하는 즐거운 시간,
           <span class="text-gradient">WeSeePlay</span>에서<br />
-          <span>즐기던가</span>
+          <span>즐기세요</span>
         </h1>
         <p class="overlay__description">
           우리 <span class="text-gradient">WeSeePlay</span>에서는 말이죠,
