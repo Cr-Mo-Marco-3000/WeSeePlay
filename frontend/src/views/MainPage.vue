@@ -67,6 +67,8 @@
               <q-pagination
                 autocomplete="off"
                 v-model="lookupInfo.pageNumber"
+                color="purple-7"
+                input-class="text-purple-7"
                 :max="maxpage"
                 input
               />
@@ -144,7 +146,7 @@ export default {
     }
     function changeSortMethod() {
       if (lookupInfo.sortingMethod == "byTime") {
-        lookupInfo.sortingMethod = "byNumber"
+        lookupInfo.sortingMethod = "byUserNumByTime"
       } else {
         lookupInfo.sortingMethod = "byTime"
       }

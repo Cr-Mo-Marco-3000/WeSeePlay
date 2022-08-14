@@ -5,7 +5,7 @@
       rounded
       v-model="query"
       outlined
-      placeholder="search with title or host"
+      placeholder="search with title"
     />
     <button class="on-voice-btn" @click="onVoice">
       <i class="fa-solid fa-microphone"></i>

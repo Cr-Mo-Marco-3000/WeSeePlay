@@ -32,10 +32,10 @@ export default {
   },
   setup(props, { emit }) {
     function changeSortLevel(e) {
-      emit('changeSortLevel', e)
+      emit("changeSortLevel", e)
     }
     function changeSortMethod(e) {
-      emit('changeSortMethod', e)
+      emit("changeSortMethod", e)
     }
     return {
       changeSortLevel,
@@ -46,5 +46,5 @@ export default {
 </script>
 
 <style scoped>
-@import '../../assets/mainpage/mainpage.css';
+@import "../../assets/mainpage/mainpage.css";
 </style>
