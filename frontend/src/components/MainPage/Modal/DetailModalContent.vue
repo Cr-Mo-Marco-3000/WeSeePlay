@@ -57,7 +57,6 @@ watchEffect(async () => {
   const { status, data } = response
   if (status === 200) {
     info.value = data
-    console.log(data)
   } else {
     Swal.fire({
       title: "방 정보가 존재하지 않습니다.",

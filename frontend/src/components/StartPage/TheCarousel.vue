@@ -19,7 +19,7 @@
         v-model="slide"
         swipeable
         animated
-        :control-type="controlType"
+        control-type="flat"
         control-color="purple"
         padding
         navigation
@@ -66,7 +66,6 @@ export default {
     FifthCarousel,
   },
   setup() {
-    console.log("props.slide.key")
     const slides = ref([
       {
         title: "안녕",
@@ -79,7 +78,7 @@ export default {
         imageSrc: "안녕이미지",
       },
     ])
-    console.log(slides.value)
+
     return {
       // 처음 표시할 슬라이드
       slide: ref("1"),
