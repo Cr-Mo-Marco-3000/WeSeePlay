@@ -65,6 +65,7 @@
           <div class="col-12">
             <div class="q-pa-lg flex flex-center">
               <q-pagination
+                autocomplete="off"
                 v-model="lookupInfo.pageNumber"
                 :max="maxpage"
                 input

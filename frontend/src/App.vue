@@ -3,22 +3,21 @@
 </template>
 
 <script>
-import { useStore } from 'vuex'
+import { useStore } from "vuex"
 
 export default {
-  name: 'LayoutDefault',
+  name: "LayoutDefault",
   setup() {
     /* eslint-disable */
     Kakao.init(process.env.VUE_APP_KAKAO_JAVASCRIPT_API_KEY)
-    console.log(Kakao.isInitialized())
     const store = useStore()
-    store.dispatch('fetchMe')
+    store.dispatch("fetchMe")
   },
 }
 </script>
 <style>
 #app {
-  font-family: 'paybooc-Bold';
+  font-family: "paybooc-Bold";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

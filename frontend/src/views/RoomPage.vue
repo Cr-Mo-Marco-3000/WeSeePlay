@@ -57,9 +57,6 @@ const isAudeoOpen = ref(true)
 const route = useRoute()
 const roomId = route.params.roomId
 const store = useStore()
-store.dispatch("getRoomInfo", roomId)
-const hostEmail = store.getters.getRoomInfo.hostEmail
-const userEmail = store.getters.me.userEmail
 
 const chatData = ref("")
 // 채팅 정보
@@ -91,10 +88,11 @@ const editModalClose = function () {
 }
 
 const leaveOrKill = async function () {
+  const userEmail = store.getters.me.userEmail
+  const hostEmail = store.getters.getRoomInfo.hostEmail
   const isHost = hostEmail === userEmail
 
   const data = { roomId }
-  console.log(`isHost: ${hostEmail} ${userEmail}`, `roomId: ${roomId}`)
   if (isHost) {
     await api.room.killRoom(data)
     await setTimeout(() => {
@@ -116,13 +114,20 @@ const leaveOrKill = async function () {
   }
 }
 // 해당 페이지 열 때
-onMounted(() => {
-  window.addEventListener("beforeunload", leaveOrKill)
+onMounted(async () => {
+  await store.dispatch("getRoomInfo", roomId)
+  await store.dispatch("checkToken")
+  await api.room.enterRoom({ roomId })
 })
 
 // 해당 페이지에서 나갈 때
-onBeforeUnmount(() => {
-  window.removeEventListener("beforeunload", leaveOrKill)
+onBeforeUnmount(async () => {
+  if (
+    store.getters.me.userEmail !== undefined &&
+    store.getters.getRoomInfo.hostEmail !== undefined
+  ) {
+    await leaveOrKill()
+  }
 })
 </script>
 

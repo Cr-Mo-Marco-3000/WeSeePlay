@@ -92,7 +92,6 @@
 
 <script setup>
 import store from "@/store"
-import api from "@/api/api"
 import { useRouter } from "vue-router"
 import { ref, watchEffect } from "vue"
 import Swal from "sweetalert2"
@@ -155,7 +154,6 @@ const onOffVideo = function () {
 
 // 세팅창도 오픈되어 있지 않음 => 기본값
 const isSettingOpen = ref(false)
-
 // 빠져나가는 버튼 (방 나가기 or 방 삭제)
 
 const leaveConfirm = async function () {
@@ -177,21 +175,6 @@ const leaveConfirm = async function () {
 
   return a
 }
-const leaveRoom = async function () {
-  const rst = await leaveConfirm()
-
-  if (rst === true) {
-    const data = { roomId: store.getters.getRoomInfo.roomId }
-    const res = await api.room.leaveRoom(data)
-    console.log("leaveRoom / BottomBar", res)
-    if (res.status === 200) {
-      Swal.fire("방 나가기 완료!", "", "success")
-      router.push({ name: "mainpage" })
-    } else {
-      Swal.fire(`에러 발생: ${res.status}`)
-    }
-  }
-}
 
 const killConfirm = async function () {
   const rst = await Swal.fire({
@@ -211,32 +194,18 @@ const killConfirm = async function () {
   })
   return rst
 }
-const killRoom = async function () {
-  const rst = await killConfirm()
-  if (rst === true) {
-    const data = { roomId: store.getters.getRoomInfo.roomId }
-    const res = await api.room.killRoom(data)
-
-    if (res.status === 200) {
-      Swal.fire("방 삭제 완료!", "", "success")
-      router.push({ name: "mainpage" })
-    } else {
-      Swal.fire({
-        title: "방 삭제 실패",
-        html: `ErrorCode(${res.status})<br><br>지속 발생 시 관리자에게 문의해주세요`,
-      })
-    }
-  }
-}
 
 const leaveOrKill = async function () {
   const host = store.getters.getRoomInfo.hostEmail
   const user = store.getters.me.userEmail
-  console.log(host, user)
+  let rst
   if (host !== user) {
-    leaveRoom()
+    rst = await leaveConfirm()
   } else if (host === user) {
-    killRoom()
+    rst = await killConfirm()
+  }
+  if (rst === true) {
+    router.push({ name: "mainpage" })
   }
 }
 
