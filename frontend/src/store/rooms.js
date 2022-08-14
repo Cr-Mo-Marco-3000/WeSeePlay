@@ -33,6 +33,9 @@ export default {
     ADD_MESSAGE: (state, message) => {
       state.chattings.push(message)
     },
+    INIT_CHATTING: (state) => {
+      state.chattings = []
+    },
   },
   actions: {
     openSidebar: ({ commit }, data) => {
@@ -71,6 +74,10 @@ export default {
         text: "라운지로 이동했습니다",
         icon: "warning",
       })
+    },
+    initChatting: function ({ commit }) {
+      console.log("여기까진 들어오나?")
+      commit("INIT_CHATTING")
     },
   },
 }

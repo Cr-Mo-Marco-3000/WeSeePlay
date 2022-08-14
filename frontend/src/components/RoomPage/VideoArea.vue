@@ -96,7 +96,7 @@ const props = defineProps({
     required: true,
   },
   chatData: {
-    type: String,
+    type: Object,
   },
 })
 
@@ -192,10 +192,10 @@ const joinSession = () => {
   })
   // 메시지 캐치하는 부분
   state.session.on("signal:this is chat", (e) => {
+    console.log("여기까진 되니?")
     const userList = usestore.getters.getUserInfo
     const rawMessage = e.data
     let splitIdx = -1
-    console.log("여기까지?")
     for (let i = 0; i < rawMessage.length; i++) {
       if (rawMessage[i] === ":") {
         splitIdx = i
@@ -203,17 +203,14 @@ const joinSession = () => {
       }
     }
     const Email = rawMessage.slice(0, splitIdx - 1)
-    const Message = rawMessage.slice(splitIdx + 2, rawMessage.length)
+    const Message = rawMessage.slice(splitIdx + 2, rawMessage.length) + " "
     let userNickname = ""
     userList.forEach((userInfo) => {
-      console.log(userInfo)
       if (userInfo.userEmail === Email) {
         userNickname = userInfo.userNickname
         return
       }
     })
-    console.log(userNickname)
-    console.log(Message)
     const sendTime = new Date().toLocaleTimeString().slice(0, -3)
     const messageObject = {
       userNickname: userNickname,
@@ -229,6 +226,7 @@ const joinSession = () => {
     ) {
       messageObject.isDifferentNameAndTime = false
     }
+    console.log("왜안들감?")
     usestore.dispatch("addMessage", messageObject)
   })
 
@@ -353,9 +351,9 @@ const createToken = (sessionId) => {
 // const inputMsg = ref("")
 
 watchEffect(() => {
-  if (props.chatData) {
-    console.log("마지막 포인트 입니다.", props.chatData)
-    sendMsg(props.chatData)
+  // 채팅용입니다.
+  if (props.chatData.chatCount) {
+    sendMsg(props.chatData.chatData)
   }
 })
 const sendMsg = (data) => {

@@ -46,11 +46,15 @@ const route = useRoute()
 const roomId = route.params.roomId
 const store = useStore()
 
-const chatData = ref("")
-// 채팅 정보
+const chatData = ref({
+  chatData: "",
+  chatCount: 0,
+})
+
+// 채팅이 오면 받아줍니다.
 const sideFromRoom = function (e) {
-  console.log("메세지가 도착할까요?", e)
-  chatData.value = e
+  chatData.value.chatData = e
+  chatData.value.chatCount++
 }
 
 const isSide = ref(0)
@@ -116,6 +120,7 @@ onBeforeUnmount(async () => {
   ) {
     await leaveOrKill()
   }
+  store.dispatch("initChatting")
 })
 </script>
 

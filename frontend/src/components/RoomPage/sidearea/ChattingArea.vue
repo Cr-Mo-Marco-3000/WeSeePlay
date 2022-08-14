@@ -45,6 +45,7 @@
 </template>
 <script setup>
 import { watchEffect, defineEmits } from "vue"
+import { onUpdated } from "vue"
 import { useStore } from "vuex"
 import { ref } from "vue"
 
@@ -61,8 +62,17 @@ const sendingMsgBtn = function () {
 // 채팅 컴포넌트를 껐다가 켰을 때도 채팅이 유지되어야 함으로, 스토어에 저장해주기로 했습니다.
 watchEffect(() => {
   if (store.state.rooms.chattings.length) {
+    console.log(store.state.rooms.chattings.length)
     chattingLog.value = store.getters.getChattings
   }
+})
+
+onUpdated(() => {
+  // 워치이펙트 내부에 스크롤을 달아주면, 렌더링되기 전의 높이로 내리므로 항상 대화 한 마디가 끝에 남게 된다
+  // 렌더링 후 발동하는 onUpdated를 써준다.
+  const messagesArea = document.querySelector(".messages-area")
+  messagesArea.scrollTo(0, messagesArea.scrollHeight)
+  console.log(messagesArea.scrollHeight)
 })
 
 // add Message하는 함수인데, 아직 통째로 돌릴지, 이렇게 할지 잘 모르겠어서 일단 만들어 놓는다.
