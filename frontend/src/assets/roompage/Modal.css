@@ -129,7 +129,7 @@
   );
 }
 
-/* resultModal.css */
+/* liarResultModal.css */
 .timer {
   display: flex;
   justify-content: center;
@@ -187,6 +187,34 @@
 .winner-box p {
   margin-top: 1rem;
   font-size: 1.2rem;
+}
+
+/* callmynameResultModal.css */
+
+.face-icon {
+  position: absolute;
+  z-index: 100;
+  font-size: 30rem;
+  animation: scale 1.5s forwards;
+  width: 31rem;
+  height: 31rem;
+  border-radius: 100%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes scale {
+  0% {
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1) rotate(-45deg);
+  }
+  100% {
+    transform: scale(0) rotate(0);
+  }
 }
 
 @keyframes roundtime {

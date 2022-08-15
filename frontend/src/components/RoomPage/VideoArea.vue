@@ -31,11 +31,24 @@
   <button @click="isCategoryModal = true">Category</button>
   <button @click="isVoteModal = true">Vote!</button>
   <button @click="isLiarInputModal = true">LiarInput!</button>
-  <button @click="isResultModal = true">Result!</button>
+  <button @click="isLiarResultModal = true">Result!</button>
+  <button @click="isCmnInputModal = true">CmnInput!</button>
+  <button @click="isCmnResultModal = true">CmnResult!</button>
   <CategoryModal v-if="isCategoryModal" @close="isCategoryModal = false" />
   <VoteModal v-if="isVoteModal" @close="isVoteModal = false" />
   <LiarInputModal v-if="isLiarInputModal" @close="isLiarInputModal = false" />
-  <ResultModal v-if="isResultModal" @close="isResultModal = false" />
+  <LiarResultModal
+    v-if="isLiarResultModal"
+    @close="isLiarResultModal = false"
+  />
+  <CallmynameInputModal
+    v-if="isCmnInputModal"
+    @close="isCmnInputModal = false"
+  />
+  <CallmynameResultModal
+    v-if="isCmnResultModal"
+    @close="isCmnResultModal = false"
+  />
 </template>
 
 <script setup>
@@ -44,7 +57,10 @@ import MeetingVideo from "./meeting/VideoList.vue"
 import CategoryModal from "@/components/RoomPage/game/liargame/modal/CategoryModal.vue"
 import VoteModal from "@/components/RoomPage/game/liargame/modal/VoteModal.vue"
 import LiarInputModal from "@/components/RoomPage/game/liargame/modal/LiarInputModal.vue"
-import ResultModal from "@/components/RoomPage/game/liargame/modal/ResultModal.vue"
+import LiarResultModal from "@/components/RoomPage/game/liargame/modal/LiarResultModal.vue"
+import CallmynameInputModal from "@/components/RoomPage/game/callmyname/modal/CallmynameInputModal.vue"
+import CallmynameResultModal from "@/components/RoomPage/game/callmyname/modal/CallmynameResultModal.vue"
+
 import { ref, defineProps, watchEffect } from "vue"
 import store from "@/store"
 import { useStore } from "vuex"
@@ -66,7 +82,9 @@ $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
 const isCategoryModal = ref(false)
 const isVoteModal = ref(false)
 const isLiarInputModal = ref(false)
-const isResultModal = ref(false)
+const isLiarResultModal = ref(false)
+const isCmnInputModal = ref(false)
+const isCmnResultModal = ref(false)
 
 // 다른 파일에서와는 다르게, 얘가 useStore임
 const usestore = useStore()

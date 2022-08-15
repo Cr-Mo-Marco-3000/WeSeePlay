@@ -1,5 +1,5 @@
 <template>
-  <div class="modal modal-overlay" @mousedown.self="$emit('close')">
+  <div class="modal modal-overlay">
     <div v-if="!waiting" class="confetti">
       <div class="confetti-piece"></div>
       <div class="confetti-piece"></div>
@@ -28,7 +28,10 @@
       <div v-if="!waiting && liarWin" class="winner-box">
         <div class="winner"><span>라이어</span> 승리!</div>
         <div class="video-box">대충 여기에 화면 띄워주기</div>
-        <p>최고의 거짓말쟁이, {{ liarNickname }}!</p>
+        <div class="word">
+          최고의 거짓말쟁이, <span>{{ liarNickname }}</span
+          >!
+        </div>
       </div>
       <div v-if="!waiting && !liarWin">
         <div class="winner"><span>참가자</span> 승리!</div>
@@ -44,7 +47,7 @@
 import { ref } from "vue"
 
 export default {
-  name: "ResultModal",
+  name: "LiarResultModal",
   setup() {
     const time = ref(3)
     const waiting = ref(true)
