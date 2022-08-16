@@ -48,8 +48,17 @@ export default {
     INIT_CHATTING: (state) => {
       state.chattings = []
     },
+    EDIT_ROOM: (state, data) => {
+      const keys = Object.keys(data)
+      keys.forEach((key) => {
+        state.roomInfo[key] = data[key]
+      })
+    },
   },
   actions: {
+    editRoomInfo: ({ commit }, data) => {
+      commit("EDIT_ROOM", data)
+    },
     openSidebar: ({ commit }, data) => {
       commit("SET_SIDEBAR", data)
     },

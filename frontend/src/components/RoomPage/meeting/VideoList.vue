@@ -45,14 +45,6 @@ const maxPages = ref(0)
 const pageLimit = ref(6)
 
 const getPageUser = function (page) {
-  // console.log(
-  //   "page number다 짜식드라",
-  //   currentPage.value,
-  //   "입력 값: ",
-  //   page,
-  //   "maxpage: ",
-  //   maxPages.value
-  // )
   if (page > maxPages.value || page < 0) {
     return
   }
@@ -62,25 +54,6 @@ const getPageUser = function (page) {
 // 비디오 사용자들(subscribers)
 const UserVideo = ref([])
 const PageUserVideo = ref([])
-
-// const getPageUserVideo = function (page) {
-//   if (props.publisher) {
-//     if (page > maxPages.value || page < 0) {
-//       return
-//     } else if (page === maxPages.value) {
-//       PageUserVideo.value = UserVideo.value.slice(
-//         UserVideo.value.length - pageLimit.value,
-//         UserVideo.value.length
-//       )
-//     } else {
-//       PageUserVideo.value = UserVideo.value.slice(
-//         page * pageLimit.value,
-//         (page + 1) * pageLimit.value
-//       )
-//     }
-//     currentPage.value = page
-//   }
-// }
 
 getPageUser(0)
 // getPageUserVideo(0)

@@ -12,7 +12,7 @@
       </div>
     </div>
     <div>
-      <button v-if="isHost" class="end-button">
+      <button v-if="isHost" class="end-button" @click="toMeeting">
         <div>
           <i class="fa-solid fa-person-running fa-xl"></i>
         </div>
@@ -24,7 +24,9 @@
   </div>
 </template>
 <script setup>
+import api from "@/api/api"
 import store from "@/store"
+import Swal from "sweetalert2"
 import { defineProps, watchEffect, ref } from "vue"
 // eslint-disable-next-line
 
@@ -34,6 +36,25 @@ defineProps({
 const gameSet = ref(store.getters.getLiarGameSet)
 const isLiar = ref(true)
 const myMail = store.getters.me.userEmail
+
+const getConfirm = async function () {
+  const confirm = await Swal.fire({
+    title: "게임을 종료하시겠습니까?",
+    showDenyButton: true,
+  }).then((result) => {
+    return result.isConfirmed
+  })
+  return confirm
+}
+
+const toMeeting = async function () {
+  const roomId = store.getters.getRoomInfo.roomId
+  const confirm = await getConfirm()
+  if (confirm) {
+    await api.room.editRoom(roomId, { game: 1 })
+  }
+}
+
 watchEffect(() => {
   gameSet.value = store.getters.getLiarGameSet
   console.log(
