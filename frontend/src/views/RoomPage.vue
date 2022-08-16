@@ -1,6 +1,5 @@
 <template>
-  <TopBar v-if="isGameMode == 2" :isHost="isHost" />
-
+  <TopBar v-if="isGamoMode !== 1" :isHost="isHost" />
   <div class="main-area">
     <VideoArea
       :isSide="Boolean(isSide)"

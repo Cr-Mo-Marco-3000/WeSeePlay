@@ -18,6 +18,18 @@ export default {
     getUserInfo: (state) => state.roomInfo.joinUsers,
     // 방에 있는 Chatting 정보 가져오기
     getChattings: (state) => state.chattings,
+    getNickname: (state) => (email) => {
+      const users = state.roomInfo.joinUsers
+      const nameDict = {}
+      users.forEach((user) => {
+        nameDict[user.userEmail] = user.userNickname
+      })
+      const val =
+        nameDict[email] !== undefined
+          ? nameDict[email]
+          : state.roomInfo.hostNickname
+      return val
+    },
   },
   mutations: {
     SET_SIDEBAR: (state, data) => {

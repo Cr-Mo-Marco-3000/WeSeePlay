@@ -10,6 +10,7 @@
         :key="idx"
         :user="user"
         :class="gridNum[side]"
+        :userEmail="emailData[idx]"
         class="self-center"
       />
     </div>
@@ -32,6 +33,10 @@ const props = defineProps({
     required: true,
   },
   gameUserOrder: {
+    type: Array,
+    required: true,
+  },
+  emailData: {
     type: Array,
     required: true,
   },

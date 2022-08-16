@@ -2,7 +2,7 @@
   <div class="video-item">
     <div class="user-video-box">
       <!-- <p>{{ user.nickname }}</p> -->
-      <p>{{ talkNow }}</p>
+      <!-- <p>{{ talkNow }}</p> -->
       <div v-if="user">
         <ov-video :stream-manager="user" />
       </div>

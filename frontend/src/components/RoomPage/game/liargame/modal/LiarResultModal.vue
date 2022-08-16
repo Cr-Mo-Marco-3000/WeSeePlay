@@ -37,6 +37,7 @@
           ><br />
           라이어가 제출한 제시어: {{ liarWord }}
           <p>거짓말쟁이를 찾아냈어요!<i class="fa-solid fa-hand-peace"></i></p>
+          <p>라이어가 입력한 값: {{ gameSet.liarInput }}</p>
         </div>
       </div>
     </div>
