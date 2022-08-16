@@ -8,7 +8,7 @@
       </div>
       <!-- 일반 참가자일때 뜨는 부분 -->
       <div v-if="!isLiar">
-        <span class="notify-span">제시어: ㅇㅇㅇ</span>
+        <span class="notify-span">제시어: {{ gameSet.suggestion }}</span>
       </div>
     </div>
     <div>
@@ -24,12 +24,29 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue"
+import store from "@/store"
+import { defineProps, watchEffect, ref } from "vue"
 // eslint-disable-next-line
+
 defineProps({
   isHost: Boolean,
 })
-const isLiar = ref(false)
+const gameSet = ref(store.getters.getLiarGameSet)
+const isLiar = ref(true)
+const myMail = store.getters.me.userEmail
+watchEffect(() => {
+  gameSet.value = store.getters.getLiarGameSet
+  console.log(
+    "%c gameSet 정보 불러옴 (from TopBar.vue) ",
+    "color: white;background: pink",
+    store.getters.getLiarGameSet
+  )
+  if (myMail === gameSet.value.liar) {
+    isLiar.value = true
+  } else {
+    isLiar.value = false
+  }
+})
 </script>
 <style scoped>
 @import url("../../../../assets/roompage/topbar.css");

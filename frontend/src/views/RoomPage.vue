@@ -1,5 +1,5 @@
 <template>
-  <TopBar v-if="isGamoMode !== 1" :isHost="isHost" />
+  <TopBar v-if="isGameMode !== 1" :isHost="isHost" />
   <div class="main-area">
     <VideoArea
       :isSide="Boolean(isSide)"
@@ -23,9 +23,6 @@
   <EditModal v-if="isEditModal" @close="editModalClose">
     <EditModalContent @close="editModalClose" />
   </EditModal>
-
-  <button @click="isLiarWaiting = true">waiting</button>
-  <LiarWaitingModal v-if="isLiarWaiting" @close="isLiarWaiting = false" />
 </template>
 
 <script setup>
@@ -41,9 +38,6 @@ import { useRoute } from "vue-router"
 import { useStore } from "vuex"
 import api from "@/api/api"
 import Swal from "sweetalert2"
-/* 라이어게임 모달 */
-import LiarWaitingModal from "@/components/RoomPage/game/liargame/modal/LiarWaitingModal.vue"
-const isLiarWaiting = ref(false)
 
 // video toggle
 const isVideoOpen = ref(true)
