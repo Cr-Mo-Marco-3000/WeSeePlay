@@ -9,3 +9,9 @@
 .error-area {
   margin-top: 20vh;
 }
+
+.StartPageLink {
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+}
