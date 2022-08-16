@@ -1,5 +1,9 @@
 <template>
-  <div v-if="!(sideBarStatus === '0')" class="sideArea">
+  <div
+    v-if="!(sideBarStatus === '0')"
+    class="sideArea"
+    :class="{ 'sideArea-on-game': isGameMode }"
+  >
     <button class="exit">
       <i @click="closeSidebar" class="fa-solid fa-x fa-lg exit-label"></i>
     </button>
@@ -20,14 +24,16 @@
 
 <script setup>
 // eslint-disable-next-line
-import { ref, watchEffect, defineEmits } from "vue"
+import { ref, watchEffect, defineEmits, defineProps } from "vue"
 import { useStore } from "vuex"
 import GameArea from "./sidearea/GameArea.vue"
 import ChattingArea from "./sidearea/ChattingArea.vue"
 import ParticipantArea from "./sidearea/ParticipantArea.vue"
 
 const emit = defineEmits(["chatFromSide"])
-
+defineProps({
+  isGameMode: Number,
+})
 const msgData = ref("")
 const chatFromSide = function (data) {
   console.log("this is isOkay", data)

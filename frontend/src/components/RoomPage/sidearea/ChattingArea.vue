@@ -14,7 +14,7 @@
       </div>
     </div>
     <!-- 받는 사람 정하는 부분 -->
-    <div class="recipient-area">
+    <!-- <div class="recipient-area">
       <div>받는 사람:</div>
       <div>
         <select name="recipient" id="recipient">
@@ -24,7 +24,7 @@
         </select>
       </div>
       <div><button>모두에게</button></div>
-    </div>
+    </div> -->
     <!-- 메시지 보내는 textarea -->
     <div class="typping-area">
       <div>

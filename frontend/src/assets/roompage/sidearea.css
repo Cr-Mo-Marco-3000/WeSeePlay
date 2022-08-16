@@ -12,6 +12,10 @@
   overflow: hidden;
 }
 
+.sideArea-on-game {
+  top: 6rem;
+}
+
 .exit {
   border: none;
   background-color: transparent;

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="video-area" :class="{ 'video-area-on-sidebar': isSide }">
     <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
     <button
       v-if="isGameMode === 1"
@@ -695,4 +695,20 @@ onMounted(async () => {
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.video-area {
+  position: absolute;
+  left: 3rem;
+  top: 3rem;
+  bottom: 5rem;
+  display: flex;
+  align-items: center;
+  right: 3rem;
+}
+
+/* sidebar가 켜지고 꺼짐에 따라서, position absolute로 지정한 오른쪽에 여백이 증가하고 감소한다 */
+/* col-3을 쓰면, 화면 사이즈의 전체 비율에 따라 조절하게 되기 때문에 레이아웃이 어그러지더라 */
+.video-area-on-sidebar {
+  right: 26rem;
+}
+</style>

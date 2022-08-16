@@ -1,8 +1,7 @@
 <template>
+  <TopBar v-if="isGameMode" :isHost="isHost" />
   <div class="main-area">
     <VideoArea
-      class="video_area"
-      :class="isSide ? 'video_area_on_sidebar' : 'video_area_off_sidebar'"
       :isSide="Boolean(isSide)"
       :roomId="roomId"
       :isVideoOpen="isVideoOpen"
@@ -13,6 +12,7 @@
       class="self-center"
       v-if="isSide !== 0"
       @send-message="sideFromRoom"
+      :isGameMode="isGameMode"
     />
   </div>
   <BottomBar
@@ -32,6 +32,7 @@ import SideArea from "@/components/RoomPage/SideArea.vue"
 import BottomBar from "@/components/RoomPage/BottomBar.vue"
 import EditModal from "@/components/RoomPage/meeting/EditModal.vue"
 import EditModalContent from "@/components/RoomPage/meeting/EditModalContent.vue"
+import TopBar from "@/components/RoomPage/game/liargame/TopBar.vue"
 import { useRoute } from "vue-router"
 import { useStore } from "vuex"
 import api from "@/api/api"
@@ -57,6 +58,12 @@ const sideFromRoom = function (e) {
   chatData.value.chatCount++
 }
 
+// 게임 모드 판별하는 변수
+const isGameMode = ref(store.getters.getRoomInfo.game)
+
+// 본인이 호스트인지 판별하는 변수
+const isHost = ref(false)
+
 const isSide = ref(0)
 watchEffect(() => {
   /* eslint-disable */
@@ -66,7 +73,16 @@ watchEffect(() => {
   // SideArea Open 정보
   // 게터에 저장되어 있는 정보를 가져왔습니다.
   // 이미 문자열로 저장되어 있는 부분 처리하기 싫어서 여기서는 숫자로 처리해 주었습니다.
+
+  // 방정보의 호스트와 내 이메일 주소가 일치하면
+  if (store.getters.me.userEmail === store.getters.getRoomInfo.hostEmail) {
+    isHost.value = true
+  } else {
+    isHost.value = false
+  }
+
   isSide.value = parseInt(store.getters.get_sidebar)
+  isGameMode.value = store.getters.getRoomInfo.game
 })
 
 /* 방정보 수정 모달 */
@@ -129,7 +145,7 @@ onBeforeUnmount(async () => {
   border: solid 1px black;
 }
 .main-area {
-  top: 1rem;
+  top: 5rem;
   bottom: 5rem;
   position: absolute;
   left: 3vw;
@@ -139,24 +155,5 @@ onBeforeUnmount(async () => {
   min-width: 794px;
   display: flex;
   align-items: center;
-}
-
-.video_area {
-  position: absolute;
-  left: 3rem;
-  top: 3rem;
-  bottom: 5rem;
-  display: flex;
-  align-items: center;
-}
-
-/* sidebar가 켜지고 꺼짐에 따라서, position absolute로 지정한 오른쪽에 여백이 증가하고 감소한다 */
-/* col-3을 쓰면, 화면 사이즈의 전체 비율에 따라 조절하게 되기 때문에 레이아웃이 어그러지더라 */
-.video_area_on_sidebar {
-  right: 26rem;
-}
-
-.video_area_off_sidebar {
-  right: 3rem;
 }
 </style>

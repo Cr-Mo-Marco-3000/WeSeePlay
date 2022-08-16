@@ -103,6 +103,7 @@ export default {
     roomInfo: async (roomId) => {
       const req = setRequest("GET", `/info/${roomId}`)
       const res = await sendAxios(req)
+      console.log(res)
       return res
     },
 
