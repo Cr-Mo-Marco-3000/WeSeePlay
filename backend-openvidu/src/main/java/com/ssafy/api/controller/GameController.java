@@ -1,5 +1,7 @@
 package com.ssafy.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.api.response.CallMyNameGetRes;
 import com.ssafy.api.response.LiarWordGetRes;
 import com.ssafy.api.service.GameService;
 import com.ssafy.api.service.UserService;
@@ -50,4 +53,22 @@ public class GameController {
 			}
 		}
 	}
+	
+	@GetMapping("/callmyname")
+	public ResponseEntity<? extends BaseResponseBody> getCallMyNameWordList(@ApiIgnore Authentication authentication) {
+		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
+		String userEmail = userDetails.getUsername();
+		User user = userService.getUserByUserEmail(userEmail);
+
+		if (user == null) {
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+		} else {
+			List<String> wordList = gameService.getCallMyNameWord();
+			
+			if(wordList == null) return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request"));
+			else return ResponseEntity.status(200).body(CallMyNameGetRes.of(200, "Success", wordList));
+		}
+	}
+	
+	
 }
