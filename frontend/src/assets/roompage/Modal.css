@@ -189,6 +189,24 @@
   font-size: 1.2rem;
 }
 
+/* liarWaitingModal.css */
+.waiting-icon {
+  font-size: 6rem;
+  color: #a69fee;
+  animation: rotate 1.5s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
 /* callmynameResultModal.css */
 
 .face-icon {

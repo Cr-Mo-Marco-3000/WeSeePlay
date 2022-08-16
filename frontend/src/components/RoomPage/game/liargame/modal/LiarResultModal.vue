@@ -33,7 +33,9 @@
       <div v-if="!waiting && liarWin">
         <div class="winner"><span>참가자</span> 승리!</div>
         <div class="word">
-          제시어: <span>{{ word }}</span>
+          제시어: <span>{{ word }}</span
+          ><br />
+          라이어가 제출한 제시어: {{ liarWord }}
           <p>거짓말쟁이를 찾아냈어요!<i class="fa-solid fa-hand-peace"></i></p>
         </div>
       </div>
@@ -53,6 +55,7 @@ export default {
     const liarWin = ref(props.whoWin)
     const word = ref(props.gameSet.suggestion)
     const liarNickname = ref(props.gameSet.liar)
+    const liarWord = ref("내가 어케아는데")
 
     setInterval(function () {
       if (time.value > 0) {
@@ -69,7 +72,7 @@ export default {
         return
       }
     }, 1000)
-    return { time, waiting, liarWin, word, liarNickname }
+    return { time, waiting, liarWin, word, liarNickname, liarWord }
   },
 }
 </script>
