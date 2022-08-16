@@ -25,22 +25,63 @@ import { ref } from "vue"
 
 export default {
   name: "CallmynameInputModal",
-  emits: ["close"],
-  props: [],
+  emits: ["close", "gameIdxUp"],
+  props: ["suggestion", "gameIdx", "session"],
+
   setup(props, context) {
     const inputKeyword = ref("")
     const submitKeyword = function () {
       console.log(inputKeyword.value)
       context.emit("close")
       // socet 통신 코드 작성
-
-      // 틀렸을 경우
-      Swal.fire({
-        icon: "error",
-        title: "틀렸습니다!",
-        showConfirmButton: false,
-        timer: 1500,
-      })
+      if (props.suggestion == inputKeyword.value) {
+        props.session
+          .signal({
+            data: props.gameIdx,
+            to: [],
+            type: "callMynameChooseCorrect",
+          })
+          .then(() => {
+            console.log("callMynameChooseCorrect")
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      } else {
+        props.session
+          .signal({
+            data: inputKeyword.value,
+            to: [],
+            type: "callMynamechooseIncorrect",
+          })
+          .then(() => {
+            console.log("callMynamechooseIncorrect")
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+        // 틀렸을 경우
+        Swal.fire({
+          icon: "error",
+          title: "틀렸습니다!",
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        context.emit("gameIdxUp")
+        props.session
+          .signal({
+            data: 1,
+            to: [],
+            type: "Call my name, idx up",
+          })
+          .then(() => {
+            console.log("Call my name, idx up")
+          })
+          .catch((error) => {
+            console.error(error)
+          })
+      }
+      inputKeyword.value = ""
     }
     return { inputKeyword, submitKeyword }
   },

@@ -48,11 +48,12 @@ import { ref } from "vue"
 
 export default {
   name: "CallmynameResultModal",
-  setup() {
-    const win = ref(false)
-    const winnerNickname = ref("홍제민")
-    const word = ref("강낭콩")
-
+  props: ["winner", "isWin", "suggestion"],
+  setup(props) {
+    console.log(props.winner, props.isWin, props.suggestion)
+    const win = ref(props.isWin)
+    const winnerNickname = ref(props.winner)
+    const word = ref(props.suggestion)
     return { win, winnerNickname, word }
   },
 }
