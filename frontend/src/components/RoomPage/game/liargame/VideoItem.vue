@@ -1,9 +1,7 @@
 <template>
   <div class="padding-area">
     <div class="radius-area row">
-      <div :class="[talkNow ? 'talk-now' : 'non-talk']">
-        {{ nickname }}
-      </div>
+      <div :class="[talkNow ? 'talk-now' : 'non-talk']">{{ nickname }}</div>
       <ov-video class="ov-area" :stream-manager="user" />
     </div>
   </div>
@@ -12,7 +10,7 @@
 <script setup>
 import OvVideo from "./OvVideo.vue"
 import { defineProps, ref } from "vue"
-import store from "@/store"
+// import store from "@/store"
 
 const props = defineProps({
   user: {
@@ -24,7 +22,10 @@ const props = defineProps({
   },
 })
 
-const nickname = store.getters.getNickname(props.userEmail)
+let data = { ...props.user }
+console.log("%c Main Video ", "color: black;background: brown", data)
+data = JSON.parse(data.stream.connection.data)
+const nickname = data.userNickname
 
 const talkNow = ref(false)
 

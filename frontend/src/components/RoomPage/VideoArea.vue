@@ -408,9 +408,10 @@ const joinSession = () => {
   // --- Get an OpenVidu object ---
   console.log("오픈 비두 시작!")
   state.mySessionId = props.roomId
-  console.log(store.getters.me.userEmail)
-  console.log(state.mySessionId)
+
   state.OV = new OpenVidu()
+  console.log("%cSTATE 시작 전", "color: white; background: red")
+  console.log(state)
   // --- Init a session ---
   state.session = state.OV.initSession()
   // On every new Stream received...
@@ -563,8 +564,6 @@ const joinSession = () => {
     }
   })
   state.session.on("signal:gameOrder", (data) => {
-    console.log("%casdasdasdasd", "background: red;")
-    console.log(data.data)
     gameSet.gameUserList.value = data.data.split(",")
     tmpUserList.value = gameSet.gameUserList.value
     for (let p = 0; p < gameSet.gameUserList.value.length; p++) {
@@ -668,13 +667,17 @@ const joinSession = () => {
     tmpliarInputModal.value = gameSet.liarInputModal
     const [result, inputValue] = [...data.data.split(",")]
     gameSet.liarInput = inputValue
+    console.log(data.data)
     endGame(result)
   })
   // 'getToken' method is simulating what your server-side should do.
   // 'token' parameter should be retrieved and returned by your own backend
   getToken(state.mySessionId).then((token) => {
     state.session
-      .connect(token, { clientData: state.myUserName })
+      .connect(token, {
+        clientData: state.myUserName,
+        userNickname: store.getters.me.userNickname,
+      })
       .then(() => {
         // --- Get your own camera stream with the desired properties ---
         let publisher = state.OV.initPublisher(undefined, {
@@ -723,6 +726,7 @@ const leaveSession = () => {
       })
   }
   if (state.session) state.session.disconnect()
+
   state.session = undefined
   state.mainStreamManager = undefined
   state.publisher = undefined

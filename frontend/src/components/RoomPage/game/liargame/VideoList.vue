@@ -114,20 +114,6 @@
   <VoteModal v-if="voteNow" :userList="tmpUserList" @vote="heIsLiar" />
 
   <liarInputModal v-if="liarInputNow" @answer="liarFinalInput" />
-
-  <q-dialog v-model="gameResultModal" persistent>
-    <q-card style="min-width: 350px">
-      <q-card-section>
-        <div>
-          <p>
-            {{ tmpGameResult }}
-          </p>
-        </div>
-
-        <div @click="gameResultModal = false">끝</div>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
 </template>
 
 <script setup>
