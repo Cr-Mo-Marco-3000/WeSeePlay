@@ -46,7 +46,7 @@ export default {
     setTimeout(function () {
       // socket 보내는거
       // 만약 이때까지 start 버튼을 안눌렀다면 여기서 주제를 socket으로 보냄
-      context.emit("close")
+      context.emit("close", "liarGameStart")
     }, 30000)
 
     const pickCategory = ref("")
@@ -79,6 +79,7 @@ export default {
     const submitCategory = function () {
       // socket 통신 코드 작성 유저가 주제 선정 후 gamestart 버튼을 누르면 모달 바로 닫기
       context.emit("close")
+      context.emit("liarGameStart")
     }
     return { categoryList, selectCategory, submitCategory }
   },

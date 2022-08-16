@@ -6,13 +6,13 @@
       style="position: absolute; top: 1rem"
       @click="callmyNameGameStart"
     >
-      이건 왜 안떠요Game On/Off
+      이건 왜 안떠요Game On/Off 이게 콜마네
     </button>
     <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
     <button
       v-if="isGameMode === 1"
       style="position: absolute; top: 1rem"
-      @click="gameStart"
+      @click="selectingCategory = true"
     >
       Game On/Off
     </button>
@@ -48,6 +48,17 @@
     />
   </div>
 
+  <CategoryModal
+    v-if="selectingCategory"
+    @close="selectingCategory = false"
+    @liarGameStart="gameStart"
+  />
+  <LiarWaitingModal
+    v-if="isLiarWaiting"
+    :liar="gameSet.liar"
+    @close="isLiarWaiting = false"
+  />
+
   <LiarResultModal
     v-if="tmpGameResultModal"
     :whoWin="tmpGameResult"
@@ -68,6 +79,8 @@
 import CallMyNameVideo from "./game/callmyname/VideoList.vue"
 import LiarGameVideo from "./game/liargame/VideoList.vue"
 import MeetingVideo from "./meeting/VideoList.vue"
+import CategoryModal from "@/components/RoomPage/game/liargame/modal/CategoryModal.vue"
+import LiarWaitingModal from "@/components/RoomPage/game/liargame/modal/LiarWaitingModal.vue"
 import LiarResultModal from "@/components/RoomPage/game/liargame/modal/LiarResultModal.vue"
 import CallmynameResultModal from "@/components/RoomPage/game/callmyname/modal/CallmynameResultModal.vue"
 
@@ -151,7 +164,8 @@ let callMyNamegameSet = reactive({
 //     userList: [],
 //   })
 // }
-const callmyNameGameStart = function () {
+const callmyNameGameStart = async function () {
+  await api.room.editRoom(state.mySessionId, { game: 3 })
   callMyNameCoolDown.value = 3
   callMyNameGameIdx.value = 0
   callMyNamegameSet.userList = []
@@ -214,6 +228,8 @@ watchEffect(() => {
   isGameMode.value = store.getters.getRoomInfo.game
 })
 // 게임 정보
+const isLiarWaiting = ref(false)
+const selectingCategory = ref(false)
 let gameSet = reactive({
   gameIdx: 0,
   isGameNow: 0,
@@ -249,7 +265,8 @@ function pickLiar(array) {
   const randomPosition = Math.floor(Math.random() * array.length)
   return array[randomPosition]
 }
-const gameStart = function async() {
+const gameStart = async function () {
+  await api.room.editRoom(state.mySessionId, { game: 2 })
   gameSet.gameUserOrder = [] // 초기화
   gameSet.gameUserList.value = []
   state.subscribers.forEach(function (element) {
@@ -368,12 +385,9 @@ watchEffect(() => {
 //   }
 // }
 const endGame = async function (result) {
-  console.log("게임좀 끝내줘 멍청아")
-
+  await api.room.editRoom(state.mySessionId, { game: 1 })
   result = Boolean(result)
-  console.log(`%c누가이겼냐 ${result}`, "color: white;background: red")
   tmpGameResult.value = result
-
   tmpGameResultModal.value = true
   // if (result) {
   //   if (gameSet.liar === state.myUserName) {
@@ -539,6 +553,7 @@ const joinSession = () => {
 
     if (state.myUserName === callMyNameGameResultWinner.value) {
       callMyNameGameResult.value = true
+      await api.room.editRoom(state.mySessionId, { game: 1 })
     }
     callMyNamegameSet.gameResultModal = true
     isGameMode.value = 1
@@ -649,6 +664,8 @@ const joinSession = () => {
             gameSet.liarInputModal = true
             tmpliarInputModal.value = gameSet.liarInputModal
             gameSet.liarInputModal = false
+          } else {
+            isLiarWaiting.value = true
           }
         } else {
           isEnd = true
@@ -667,7 +684,7 @@ const joinSession = () => {
     tmpliarInputModal.value = gameSet.liarInputModal
     const [result, inputValue] = [...data.data.split(",")]
     gameSet.liarInput = inputValue
-    console.log(data.data)
+    isLiarWaiting.value = false
     endGame(result)
   })
   // 'getToken' method is simulating what your server-side should do.
