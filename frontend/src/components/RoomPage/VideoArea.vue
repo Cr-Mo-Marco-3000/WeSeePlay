@@ -68,9 +68,6 @@
 import CallMyNameVideo from "./game/callmyname/VideoList.vue"
 import LiarGameVideo from "./game/liargame/VideoList.vue"
 import MeetingVideo from "./meeting/VideoList.vue"
-import CategoryModal from "@/components/RoomPage/game/liargame/modal/CategoryModal.vue"
-import VoteModal from "@/components/RoomPage/game/liargame/modal/VoteModal.vue"
-import LiarInputModal from "@/components/RoomPage/game/liargame/modal/LiarInputModal.vue"
 import LiarResultModal from "@/components/RoomPage/game/liargame/modal/LiarResultModal.vue"
 import CallmynameResultModal from "@/components/RoomPage/game/callmyname/modal/CallmynameResultModal.vue"
 
@@ -95,7 +92,7 @@ $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
 const usestore = useStore()
 
 const isGameMode = ref(store.getters.getRoomInfo.game)
-
+const router = useRouter()
 const initSetting = function () {
   gameSet = reactive({
     gameIdx: 0,
