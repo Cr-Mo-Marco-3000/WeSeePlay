@@ -71,7 +71,11 @@ export default {
     // 이메일 체크(비밀번호 찾기)
     sendEmailForPW: () => HOST + USERS + EMAIL + CERTIFICATION + "/pw",
 
+    // 이메일 인증 확인, 비밀번호 변경
     verifyEmailForPW: () => HOST + USERS + EMAIL + CERTIFICATION + "/pw/check",
+
+    // 계정삭제
+    deleteUser: () => HOST + USERS + "/delete",
 
     // verifyEmailForPW: (email) =>
     //   HOST + USERS + EMAIL + CERTIFICATION + `/pw/check?userEmail=${email}`,

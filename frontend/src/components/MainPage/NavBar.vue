@@ -24,10 +24,10 @@
               :placeholder="username"
             />
             <span @click="onChangeNickname">X</span>
-            <button @click="changeNickname">변경</button>
+            <button @click.prevent="changeNickname">변경</button>
           </li>
           <li @click="$emit('change-pw')">비밀번호 변경</li>
-          <li>회원 삭제</li>
+          <li @click="$emit('delete-user')">회원 삭제</li>
         </ul>
       </li>
       <li @click="logout" class="nav-item logout-box">
