@@ -1,6 +1,13 @@
+.talk-now-box {
+  background-color: rgb(94, 144, 219);
+}
+
+.non-talk-box {
+  background-color: #c9c5f1;
+}
+
 .padding-area {
   padding: 5px;
-  background-color: #c9c5f1;
   border-radius: 15px;
 }
 .radius-area {

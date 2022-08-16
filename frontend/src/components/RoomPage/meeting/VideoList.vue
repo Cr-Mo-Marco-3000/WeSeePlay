@@ -9,14 +9,13 @@
         :key="idx"
         :user="user"
         :class="grid"
-        class="self-center"
+        class="self-center q-mb-xs"
       />
     </div>
     <a class="col-1" @click.stop="getPageUser(currentPage + 1)">
       <img src="@/assets/rightArrow.png" />
     </a>
   </div>
-  <div>{{ currentPage }}</div>
 </template>
 
 <script setup>

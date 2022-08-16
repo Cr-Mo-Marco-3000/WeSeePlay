@@ -1,18 +1,18 @@
 <template>
-  <div class="video-item">
-    <div class="user-video-box">
-      <!-- <p>{{ user.nickname }}</p> -->
-      <!-- <p>{{ talkNow }}</p> -->
-      <div v-if="user">
-        <ov-video :stream-manager="user" />
-      </div>
+  <div
+    class="padding-area"
+    :class="[talkNow ? 'talk-now-box' : 'non-talk-box']"
+  >
+    <div class="radius-area row">
+      <div :class="[talkNow ? 'talk-now' : 'non-talk']">{{ nickname }}</div>
+      <ov-video class="ov-area" :stream-manager="user" />
     </div>
   </div>
 </template>
 
 <script setup>
 import OvVideo from "./OvVideo.vue"
-import { defineProps, ref } from "vue"
+import { defineProps, ref, watchEffect } from "vue"
 
 const props = defineProps({
   user: {
@@ -21,7 +21,13 @@ const props = defineProps({
   },
 })
 
+let data = { ...props.user }
+console.log("%c Main Video ", "color: black;background: brown", data)
+data = JSON.parse(data.stream.connection.data)
+const nickname = ref(data.userNickname)
+
 const talkNow = ref(false)
+
 if (props.user) {
   props.user.on("publisherStartSpeaking", () => {
     talkNow.value = true
@@ -31,16 +37,16 @@ if (props.user) {
     talkNow.value = false
   })
 }
+
+watchEffect(() => {
+  props.user
+  let data = { ...props.user }
+  console.log("%c Main Video ", "color: black;background: brown", data)
+  data = JSON.parse(data.stream.connection.data)
+  nickname.value = data.userNickname
+})
 </script>
 
-<style>
-.video-item {
-  padding: 10px;
-}
-
-.user-video-box {
-  background-color: #c9c5f1;
-  border-radius: 15px;
-  width: 100%;
-}
+<style scoped>
+@import url("@/assets/roompage/videoBox.css");
 </style>
