@@ -15,7 +15,7 @@
       <div id="card-host" class="col-12">host: {{ info.hostNickname }}</div>
 
       <div class="col-12 card-bottom">
-        <div class="game-info" v-if="info.game == 2">
+        <div class="game-info" v-if="info.game !== 1">
           <span><i class="fa-solid fa-gamepad"></i></span>
           <span>현재 게임 진행 중!</span>
         </div>

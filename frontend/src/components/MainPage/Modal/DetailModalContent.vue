@@ -2,7 +2,7 @@
   <div class="detail-text">
     <div class="title-game-info">
       <span>제목</span>
-      <div v-if="info.game == 2" class="game-info">
+      <div v-if="info.game !== 1" class="game-info">
         <span><i class="fa-solid fa-gamepad"></i></span>
         <span>현재 게임 진행 중!</span>
       </div>
