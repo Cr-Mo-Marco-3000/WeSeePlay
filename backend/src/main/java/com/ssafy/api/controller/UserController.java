@@ -315,13 +315,13 @@ public class UserController {
     })
 	public ResponseEntity<?> delete(@ApiIgnore Authentication authentication) {
 		if(authentication==null) {
-			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Not Exist User"));
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
 		}
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		int check=userService.deleteUser(userEmail);
 		if(check==0) {
-			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Not Exist User"));
+			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Not Exist User"));
 		}
 		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
 	}
