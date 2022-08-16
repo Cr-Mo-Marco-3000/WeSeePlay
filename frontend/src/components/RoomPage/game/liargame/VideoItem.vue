@@ -9,7 +9,7 @@
 
 <script setup>
 import OvVideo from "./OvVideo.vue"
-import { defineProps, ref } from "vue"
+import { defineProps, ref, watchEffect } from "vue"
 // import store from "@/store"
 
 const props = defineProps({
@@ -25,7 +25,7 @@ const props = defineProps({
 let data = { ...props.user }
 console.log("%c Main Video ", "color: black;background: brown", data)
 data = JSON.parse(data.stream.connection.data)
-const nickname = data.userNickname
+const nickname = ref(data.userNickname)
 
 const talkNow = ref(false)
 
@@ -38,6 +38,14 @@ if (props.user) {
     talkNow.value = false
   })
 }
+
+watchEffect(() => {
+  props.user
+  let data = { ...props.user }
+  console.log("%c Main Video ", "color: black;background: brown", data)
+  data = JSON.parse(data.stream.connection.data)
+  nickname.value = data.userNickname
+})
 </script>
 
 <style scoped>

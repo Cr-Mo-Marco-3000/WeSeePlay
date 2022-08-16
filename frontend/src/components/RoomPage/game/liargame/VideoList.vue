@@ -1,9 +1,9 @@
 <template>
   <div class="row video-list-area">
-    <div class="col-5 row">
+    <div class="row" :class="isSide ? 'col-7' : 'col-5'">
       <MainVideo
         v-if="tmpNum == 0"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -11,7 +11,7 @@
       />
       <MainVideo
         v-if="tmpNum == 1"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -19,7 +19,7 @@
       />
       <MainVideo
         v-if="tmpNum == 2"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -27,7 +27,7 @@
       />
       <MainVideo
         v-if="tmpNum == 3"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -35,7 +35,7 @@
       />
       <MainVideo
         v-if="tmpNum == 4"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -43,7 +43,7 @@
       />
       <MainVideo
         v-if="tmpNum == 5"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -51,7 +51,7 @@
       />
       <MainVideo
         v-if="tmpNum == 6"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -59,7 +59,7 @@
       />
       <MainVideo
         v-if="tmpNum == 7"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -67,7 +67,7 @@
       />
       <MainVideo
         v-if="tmpNum == 8"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -75,7 +75,7 @@
       />
       <MainVideo
         v-if="tmpNum == 9"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -83,7 +83,7 @@
       />
       <MainVideo
         v-if="tmpNum == 10"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
@@ -91,7 +91,7 @@
       />
       <MainVideo
         v-if="tmpNum == 11"
-        class="self-center"
+        class="self-center col-12"
         :user="gameSet.gameUserOrder[tmpNum]"
         :gameIdx="tmpNum"
         @next="gameIdxUp"
