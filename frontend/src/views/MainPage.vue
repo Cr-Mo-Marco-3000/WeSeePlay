@@ -1,7 +1,10 @@
 <template>
   <TheBackground />
   <div id="meeting-list-page">
-    <nav-bar @change-pw="isChangePw = true"></nav-bar>
+    <nav-bar
+      @change-pw="isChangePw = true"
+      @delete-user="isDeleteUser = true"
+    ></nav-bar>
     <div class="flex flex-center">
       <div id="container" class="flex flex-center">
         <div class="main-text">
@@ -91,6 +94,10 @@
     <AuthModal v-if="isChangePw" @close="isChangePw = false">
       <AuthModalContent />
     </AuthModal>
+
+    <DeleteUserModal v-if="isDeleteUser" @close="isDeleteUser = false">
+      <DeleteUserModalContent />
+    </DeleteUserModal>
   </div>
 </template>
 
@@ -106,6 +113,8 @@ import DetailModal from "@/components/MainPage/Modal/DetailModal.vue"
 import DetailModalContent from "@/components/MainPage/Modal/DetailModalContent.vue"
 import AuthModal from "@/components/MainPage/Modal/AuthModal.vue"
 import AuthModalContent from "@/components/MainPage/Modal/AuthModalContent.vue"
+import DeleteUserModal from "@/components/MainPage/Modal/DeleteUserModal.vue"
+import DeleteUserModalContent from "@/components/MainPage/Modal/DeleteUserModalContent.vue"
 import { reactive, ref, watchEffect, onBeforeMount } from "vue"
 import api from "@/api/api.js"
 // import api from "@/api/api"
@@ -124,6 +133,8 @@ export default {
     DetailModalContent,
     AuthModal,
     AuthModalContent,
+    DeleteUserModal,
+    DeleteUserModalContent,
   },
 
   setup() {
@@ -246,6 +257,7 @@ export default {
       detailRoomId,
 
       isChangePw: ref(false),
+      isDeleteUser: ref(false),
     }
   },
 }
