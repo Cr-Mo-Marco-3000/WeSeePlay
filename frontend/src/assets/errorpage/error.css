@@ -1,17 +1,50 @@
+#error-page-box {
+  padding: 0 1rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+#error-state-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .error-box {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-bottom: 8vh;
+  margin-bottom: 2rem;
 }
 
-.error-area {
-  margin-top: 20vh;
+.error-box .error-code {
+  color: #dd2929;
+  font-size: 3rem;
+}
+
+.error-box .error-info {
+  font-size: 1.7rem;
+}
+
+.error-box .error-text {
+  margin-top: 1rem;
+  font-size: 1.3rem;
 }
 
 .StartPageLink {
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
+  width: 10rem;
+}
+
+#error-state-box img {
+  width: 50%;
+  max-width: 20rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .StartPageLink {
+    width: 100%;
+  }
 }

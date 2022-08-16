@@ -1,18 +1,22 @@
 <template>
-  <div class="overlay error-area">
-    <div id="statebox">
-      <img
-        style="width: 30%; height: auto"
-        src="../assets/greenkiwi.png"
-        alt="WeSeePlayLogo"
-      />
-      <div v-if="error404">
-        <Error404 />
+  <div id="error-page-box">
+    <canvas class="orb-canvas"></canvas>
+    <div class="overlay error-area">
+      <div id="error-state-box">
+        <img src="../assets/greenkiwi.png" alt="WeSeePlayLogo" />
+        <div v-if="error404">
+          <Error404 />
+        </div>
+        <div v-if="error500">
+          <Error500 />
+        </div>
+        <button
+          class="overlay__btn overlay__btn--transparent StartPageLink"
+          @click="toStart"
+        >
+          {{ whichPage }}로 이동
+        </button>
       </div>
-      <div v-if="error500">
-        <Error500 />
-      </div>
-      <span class="StartPageLink" @click="toStart">{{ whichPage }}로 이동</span>
     </div>
   </div>
 </template>
@@ -42,7 +46,11 @@ if (errorname === "404") {
 }
 </script>
 
-<style>
+<style scoped>
 @import "../assets/errorpage/error.css";
 @import "../assets/startpage/startpage.css";
+
+.overlay {
+  height: auto;
+}
 </style>
