@@ -1,5 +1,6 @@
 <template>
-  <TopBar v-if="isGameMode !== 1" :isHost="isHost" />
+  <!-- <TopBar :isHost="isHost" :isGameMode="isGameMode" /> -->
+  <TopBar v-if="isGameMode !== 1" :isHost="isHost" :isGameMode="isGameMode" />
   <div class="main-area">
     <VideoArea
       :isSide="Boolean(isSide)"
@@ -84,6 +85,7 @@ watchEffect(() => {
 
   isSide.value = parseInt(store.getters.get_sidebar)
   isGameMode.value = store.getters.getRoomInfo.game
+  console.log(isGameMode.value, "오잉?")
 })
 
 /* 방정보 수정 모달 */
