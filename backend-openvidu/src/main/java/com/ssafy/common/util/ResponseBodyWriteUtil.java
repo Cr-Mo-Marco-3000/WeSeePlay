@@ -19,6 +19,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 public class ResponseBodyWriteUtil {
 	
+	private ResponseBodyWriteUtil() {
+		
+	}
+	
 	public static void sendApiResponse(HttpServletResponse response, BaseResponseBody apiResponse) throws IOException {
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(APPLICATION_JSON_VALUE);

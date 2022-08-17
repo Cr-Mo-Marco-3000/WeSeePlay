@@ -1,7 +1,7 @@
 package com.ssafy.api.controller;
 
 import java.net.URI;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
@@ -9,9 +9,6 @@ import java.util.Random;
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
-import org.apache.http.HttpStatus;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.ssafy.api.request.ChangeNicknameReq;
@@ -38,7 +34,6 @@ import com.ssafy.api.response.UserRes;
 import com.ssafy.api.service.UserService;
 import com.ssafy.common.auth.SsafyUserDetails;
 import com.ssafy.common.model.response.BaseResponseBody;
-import com.ssafy.common.util.JwtTokenUtil;
 import com.ssafy.common.util.RandomStringUtil;
 import com.ssafy.common.util.SendEmailUtil;
 import com.ssafy.db.entity.Email;
@@ -71,6 +66,11 @@ public class UserController {
 	@Autowired
 	RandomStringUtil randomStringUtil;
 	
+	Random rand = new Random();
+	
+	static String success="Success";
+	static String unauthorized="Unauthorized";
+	
 	@GetMapping("/email/duplicate/check")
 	@ApiOperation(value = "중복 이메일 확인", notes = "<strong>중복 체크를 실행한다.") 
 	@ApiResponses({
@@ -78,7 +78,7 @@ public class UserController {
 		@ApiResponse(code = 409, message = "존재하는 이메일"),
 		@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<? extends BaseResponseBody> duplicateCheck(
+	public ResponseEntity<BaseResponseBody> duplicateCheck(
 			@RequestParam @ApiParam(value="이메일 주소", required = true) String userEmail) {
 		
 		//중복 아이디가 있는지 확인
@@ -86,7 +86,7 @@ public class UserController {
 		if(existUser) {
 			return ResponseEntity.status(409).body(BaseResponseBody.of(409, "Exist Email"));
 		}
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, success));
 	}
 	
 	@PostMapping("/email/certification")
@@ -96,17 +96,17 @@ public class UserController {
 		@ApiResponse(code = 400, message = "주소 오류"),
 		@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<? extends BaseResponseBody> emailCertification(
+	public ResponseEntity<BaseResponseBody> emailCertification(
 			@RequestBody @ApiParam(value="이메일 주소", required = true) UserRegisterPostReq registerInfo) {
 		try {
 			userService.createCertificationCheck(registerInfo.getUserEmail());
-			SendEmailUtil.SendEmail(registerInfo.getUserEmail());
+			SendEmailUtil.sendEmail(registerInfo.getUserEmail());
 		} catch (AddressException e) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "AddressException"));
 		} catch (MessagingException e) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "MessagingException"));
 		}
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, success));
 	}
 	
 	@PostMapping("/email/certification/pw")
@@ -116,19 +116,19 @@ public class UserController {
 		@ApiResponse(code = 400, message = "주소 오류"),
 		@ApiResponse(code = 500, message = "서버 오류")
 	})
-	public ResponseEntity<? extends BaseResponseBody> emailCertificationPw(
+	public ResponseEntity<BaseResponseBody> emailCertificationPw(
 			@RequestBody @ApiParam(value="이메일 주소", required = true) UserRegisterPostReq registerInfo) {
 		boolean existUser=userService.duplicateCheck(registerInfo.getUserEmail());
 		if(existUser) {
 			try {
 				userService.createCertificationCheckPw(registerInfo.getUserEmail());
-				SendEmailUtil.SendEmailPw(registerInfo.getUserEmail());
+				SendEmailUtil.sendEmailPw(registerInfo.getUserEmail());
 			} catch (AddressException e) {
 				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "AddressException"));
 			} catch (MessagingException e) {
 				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "MessagingException"));
 			}
-			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, success));
 		}
 		return ResponseEntity.status(403).body(BaseResponseBody.of(403, "Not Exist Email"));
 	}
@@ -144,7 +144,7 @@ public class UserController {
 	public RedirectView updateCertification(
 			@RequestParam (value="userEmail", required = true) String userEmail) {
 	
-		Email res=userService.updateCertification(userEmail);
+		userService.updateCertification(userEmail);
 
 		HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/"));
@@ -162,7 +162,7 @@ public class UserController {
 	public RedirectView updateCertificationPw(
 			@RequestParam (value="userEmail", required = true) String userEmail) {
 	
-		EmailPw res=userService.updateCertificationPw(userEmail);
+		userService.updateCertificationPw(userEmail);
 
 		HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/"));
@@ -176,14 +176,14 @@ public class UserController {
         @ApiResponse(code = 401, message = "인증 실패"),
         @ApiResponse(code = 500, message = "서버 오류")
     })
-	public ResponseEntity<? extends BaseResponseBody> certificationCheck(
+	public ResponseEntity<BaseResponseBody> certificationCheck(
 			@RequestParam (value="userEmail", required = true) String userEmail) {
 	
 		Optional<Email> email = userService.certificationCheck(userEmail);
 		if(email.isPresent() && email.get().getCertificationCheck().equals("1")) {
-			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, success));
 		}else {
-			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, unauthorized));
 		}
 	}
 	
@@ -194,19 +194,19 @@ public class UserController {
         @ApiResponse(code = 401, message = "인증 실패"),
         @ApiResponse(code = 500, message = "서버 오류")
     })
-	public ResponseEntity<? extends BaseResponseBody> certificationPwCheck(
-			@RequestBody HashMap<String, String> map) {
-		Optional<EmailPw> emailPw = userService.certificationPwCheck(map.get("userEmail"));
+	public ResponseEntity<BaseResponseBody> certificationPwCheck(
+			@RequestBody Map<String, String> map) {
+		String email="userEmail";
+		Optional<EmailPw> emailPw = userService.certificationPwCheck(map.get(email));
 		if(emailPw.isPresent() && emailPw.get().getCertificationCheck().equals("1")) {
-			Random rand = new Random();
 			int pwLen=rand.nextInt(5)+8;
 			String tempPw=randomStringUtil.getRandomPw(pwLen);
-			userService.updatePassword(map.get("userEmail"),tempPw);
-			userService.delCertificationPw(map.get("userEmail"));
+			userService.updatePassword(map.get(email),tempPw);
+			userService.delCertificationPw(map.get(email));
 			
-			return ResponseEntity.status(201).body(UserPwGetRes.of(200, "Success",tempPw));
+			return ResponseEntity.status(201).body(UserPwGetRes.of(200, success,tempPw));
 		}else {
-			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, unauthorized));
 		}
 	}
 	
@@ -217,7 +217,7 @@ public class UserController {
         @ApiResponse(code = 401, message = "인증 실패"),
         @ApiResponse(code = 500, message = "서버 오류")
     })
-	public ResponseEntity<? extends BaseResponseBody> register(
+	public ResponseEntity<BaseResponseBody> register(
 			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserRegisterPostReq registerInfo) {
 
 		Optional<Email> email = userService.certificationCheck(registerInfo.getUserEmail());
@@ -234,7 +234,7 @@ public class UserController {
 		}
 		
 		//인증되지 않은 이메일일 때
-		return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+		return ResponseEntity.status(401).body(BaseResponseBody.of(401, unauthorized));
 	}
 	
 	//본인 정보 조회
@@ -265,7 +265,7 @@ public class UserController {
         @ApiResponse(code = 404, message = "사용자 없음"),
         @ApiResponse(code = 500, message = "서버 오류")
     })
-	public ResponseEntity<? extends BaseResponseBody> changeNickname(@RequestBody @ApiParam(value="변경 요청 정보", required = true) ChangeNicknameReq changeInfo) {
+	public ResponseEntity<BaseResponseBody> changeNickname(@RequestBody @ApiParam(value="변경 요청 정보", required = true) ChangeNicknameReq changeInfo) {
 		try {
 			User user = userService.changeNickname(changeInfo.getUserEmail(), changeInfo.getUserNewNickname());
 			if (user == null) return ResponseEntity.status(404).body(BaseResponseBody.of(404, "이메일에 해당하는 유저가 없습니다")); // 로그인된 사용자만 사용하기 때문에 필요할지
@@ -284,7 +284,7 @@ public class UserController {
         @ApiResponse(code = 404, message = "사용자 없음"),
         @ApiResponse(code = 500, message = "서버 오류")
     })
-	public ResponseEntity<? extends BaseResponseBody> changeUserPassword(@RequestBody @ApiParam(value="변경 요청 정보", required = true) ChangeUserPasswordReq changeInfo) {
+	public ResponseEntity<BaseResponseBody> changeUserPassword(@RequestBody @ApiParam(value="변경 요청 정보", required = true) ChangeUserPasswordReq changeInfo) {
 		String userEmail = changeInfo.getUserEmail();
 		String userPassword = changeInfo.getUserPassword();
 		
@@ -313,9 +313,9 @@ public class UserController {
         @ApiResponse(code = 401, message = "인증 실패", response = BaseResponseBody.class),
         @ApiResponse(code = 404, message = "사용자 없음", response = BaseResponseBody.class)
     })
-	public ResponseEntity<?> delete(@ApiIgnore Authentication authentication) {
+	public ResponseEntity<BaseResponseBody> delete(@ApiIgnore Authentication authentication) {
 		if(authentication==null) {
-			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
+			return ResponseEntity.status(401).body(BaseResponseBody.of(401, unauthorized));
 		}
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
@@ -323,6 +323,6 @@ public class UserController {
 		if(check==0) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Not Exist User"));
 		}
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, success));
 	}
 }

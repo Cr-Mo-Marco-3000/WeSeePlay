@@ -19,7 +19,6 @@ import com.ssafy.common.model.response.BaseResponseBody;
 import com.ssafy.db.entity.User;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiParam;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
@@ -37,7 +36,7 @@ public class GameController {
 	GameService gameService;
 	
 	@GetMapping("/{liarGenre}")
-	public ResponseEntity<? extends BaseResponseBody> getSuggestion(
+	public ResponseEntity<BaseResponseBody> getSuggestion(
 			@ApiIgnore Authentication authentication, @PathVariable int liarGenre){
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();

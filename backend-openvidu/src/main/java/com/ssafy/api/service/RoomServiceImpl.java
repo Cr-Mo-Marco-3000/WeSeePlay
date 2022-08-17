@@ -2,8 +2,8 @@ package com.ssafy.api.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import com.ssafy.db.entity.UserRoom;
 import com.ssafy.db.repository.RoomRepository;
 import com.ssafy.db.repository.UserRepository;
 import com.ssafy.db.repository.UserRoomRepository;
-//import com.ssafy.db.repository.RoomRepository;
 
 @Service("roomService")
 public class RoomServiceImpl implements RoomService {
@@ -40,6 +39,12 @@ public class RoomServiceImpl implements RoomService {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	public static final String QUERY = "query";
+	public static final String PAGENUMBER = "pageNumber";
+	public static final String CALL_START_TIME = "callStartTime";
+	public static final String CONTENTS_COUNT = "contentsCount";
+	public static final String IS_PRIVATE = "isPrivate";
 	
 	@Override
 	public Room createRoom(RoomCreatePostReq roomCreatePostReq) {
@@ -86,14 +91,17 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public Room updateRoom(int roomId,RoomUpdatePatchReq roomUpdatePatchReq) {
 		Optional<Room> room = roomRepository.findById((long)roomId);
-		if(roomUpdatePatchReq.getTitle()!=null &&!roomUpdatePatchReq.getTitle().equals("")) {
+		if(!room.isPresent()) {
+			return null;
+		}
+		if(roomUpdatePatchReq.getTitle()!=null &&!"".equals(roomUpdatePatchReq.getTitle())) {
 			room.get().setTitle(roomUpdatePatchReq.getTitle());
 		}
 		if(roomUpdatePatchReq.getDescript()!=null) {
 			room.get().setDescript(roomUpdatePatchReq.getDescript());
 		}
 		//공개방으로 전환
-		if(roomUpdatePatchReq.getRoomPassword()=="") {
+		if("".equals(roomUpdatePatchReq.getRoomPassword())) {
 			room.get().setRoomPassword(null);
 			room.get().setIsPrivate(0);
 		}else if(roomUpdatePatchReq.getRoomPassword()!=null) {
@@ -112,57 +120,56 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	@Override
-	public Page<Room> getRoomList(HashMap<String, Object> map) {
+	public Page<Room> getRoomList(Map<String, Object> map) {
 		Pageable pageable=null;
-		if(map.get("sortingMethod").equals("byTime")) {
-			if(map.get("sortingOrder").equals("toUp")) {
-				pageable=PageRequest.of(Integer.valueOf((String) map.get("pageNumber"))-1, 
-						Integer.valueOf((String) map.get("contentsCount")),Sort.by("callStartTime"));
+		if("byTime".equals(map.get("sortingMethod"))) {
+			if("toUp".equals(map.get("sortingOrder"))) {
+				pageable=PageRequest.of(Integer.valueOf((String) map.get(PAGENUMBER))-1, 
+						Integer.valueOf((String) map.get(CONTENTS_COUNT)),Sort.by(CALL_START_TIME));
 			}else {
-				pageable=PageRequest.of(Integer.valueOf((String) map.get("pageNumber"))-1, 
-						Integer.valueOf((String) map.get("contentsCount")),Sort.by("callStartTime").descending());
+				pageable=PageRequest.of(Integer.valueOf((String) map.get(PAGENUMBER))-1, 
+						Integer.valueOf((String) map.get(CONTENTS_COUNT)),Sort.by(CALL_START_TIME).descending());
 			}
-		}else if (map.get("sortingMethod").equals("byUserNumByTime")) {
-			if(map.get("sortingOrder").equals("toUp")) {
-				pageable=PageRequest.of(Integer.valueOf((String) map.get("pageNumber"))-1, 
-						Integer.valueOf((String) map.get("contentsCount")),Sort.by("joinCount").and(Sort.by("callStartTime").descending()));
+		}else if ("byUserNumByTime".equals(map.get("sortingMethod"))) {
+			if("toUp".equals(map.get("sortingOrder"))) {
+				pageable=PageRequest.of(Integer.valueOf((String) map.get(PAGENUMBER))-1, 
+						Integer.valueOf((String) map.get(CONTENTS_COUNT)),Sort.by("joinCount").and(Sort.by(CALL_START_TIME).descending()));
 			}else {
-				pageable=PageRequest.of(Integer.valueOf((String) map.get("pageNumber"))-1, 
-						Integer.valueOf((String) map.get("contentsCount")),Sort.by("joinCount").descending().and(Sort.by("callStartTime").descending()));
+				pageable=PageRequest.of(Integer.valueOf((String) map.get(PAGENUMBER))-1, 
+						Integer.valueOf((String) map.get(CONTENTS_COUNT)),Sort.by("joinCount").descending().and(Sort.by(CALL_START_TIME).descending()));
 			}
+		}else {
+			return null;
 		}
-//		Pageable pageable=PageRequest.of(Integer.valueOf((String) map.get("pageNumber"))-1, 
-//				Integer.valueOf((String) map.get("contentsCount")));
 		Page<Room> room;
 		
-		if (map.get("query").equals("")) {
-			if(map.get("isPrivate").equals("0")) {
+		if ("".equals(map.get(QUERY))) {
+			if("0".equals(map.get(IS_PRIVATE))) {
 				room=roomRepository.findAll(pageable);
 			}else {
 				room=roomRepository.findAllByIsPrivate(0,pageable);
 			}
 		}else {
 			//방제로 검색
-			if(map.get("queryType").equals("1")) {
-				if(map.get("isPrivate").equals("0")) {
-					room=roomRepository.findAllByTitleContains((String)map.get("query"),pageable);
+			if("1".equals(map.get("queryType"))) {
+				if("0".equals(map.get(IS_PRIVATE))) {
+					room=roomRepository.findAllByTitleContains((String)map.get(QUERY),pageable);
 				}else {
-					room=roomRepository.findAllByIsPrivateAndTitleContains(0,(String)map.get("query"),pageable);
+					room=roomRepository.findAllByIsPrivateAndTitleContains(0,(String)map.get(QUERY),pageable);
 				}
 			//호스트 명으로 검색
 			}else {
-				List<User> users=userRepository.findAllByUserNicknameContains((String)map.get("query"));
-				List<Long> userIds=new ArrayList<Long>();
+				List<User> users=userRepository.findAllByUserNicknameContains((String)map.get(QUERY));
+				List<Long> userIds=new ArrayList<>();
 				for (User user : users) {
 					userIds.add(user.getId());
 				}
 				List<UserRoom>userRooms=userRoomRepository.findAllByIsHostAndUserIdIn(1,userIds);
-				System.out.println(userRooms.toString());
-				List<Long> roomIds=new ArrayList<Long>();
+				List<Long> roomIds=new ArrayList<>();
 				for (UserRoom userRoom : userRooms) {
 					roomIds.add(userRoom.getRoomId());
 				}
-				if(map.get("isPrivate").equals("0")) {
+				if("0".equals(map.get(IS_PRIVATE))) {
 					room=roomRepository.findAllByIdIn(roomIds,pageable);
 				}else {
 					room=roomRepository.findAllByIsPrivateAndIdIn(0,roomIds,pageable);
@@ -175,27 +182,33 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public void plus(Long roomId) {
 		Optional<Room> room = roomRepository.findById(roomId);
-		room.get().setJoinCount(room.get().getJoinCount()+1);
-		roomRepository.save(room.get());
+		if(room.isPresent()) {
+			room.get().setJoinCount(room.get().getJoinCount()+1);
+			roomRepository.save(room.get());
+		}
 	}
 
 	@Override
 	public void minus(Long roomId) {
 		Optional<Room> room = roomRepository.findById(roomId);
-		room.get().setJoinCount(room.get().getJoinCount()-1);
-		roomRepository.save(room.get());
+		if(room.isPresent()) {
+			room.get().setJoinCount(room.get().getJoinCount()-1);
+			roomRepository.save(room.get());
+		}
 	}
 
 	@Override
 	public void setMode(int roomId, int gameMode) {
 		Optional<Room> room = roomRepository.findById((long) roomId);
-		room.get().setGame(gameMode);
-		roomRepository.save(room.get());
+		if(room.isPresent()) {
+			room.get().setGame(gameMode);
+			roomRepository.save(room.get());
+		}
 	}
 
 	@Override
 	public int getGameMode(int roomId) {
-		Room room=roomRepository.findGameById((long)roomId);
+		Room room=roomRepository.findGameById(roomId);
 		return room.getGame();
 		
 	}
