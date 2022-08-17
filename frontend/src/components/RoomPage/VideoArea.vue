@@ -465,35 +465,22 @@ const joinSession = () => {
   })
   // 메시지 캐치하는 부분
   state.session.on("signal:this is chat", (e) => {
-    const userList = usestore.getters.getUserInfo
-    const rawMessage = e.data
-    let splitIdx = -1
-    for (let i = 0; i < rawMessage.length; i++) {
-      if (rawMessage[i] === ":") {
-        splitIdx = i
-        break
-      }
-    }
-    const Email = rawMessage.slice(0, splitIdx - 1)
-    const Message = rawMessage.slice(splitIdx + 2, rawMessage.length) + " "
-    let userNickname = ""
-    userList.forEach((userInfo) => {
-      if (userInfo.userEmail === Email) {
-        userNickname = userInfo.userNickname
-        return
-      }
-    })
+    const rawMessage = JSON.parse(e.data)
+    const { nickname, message } = rawMessage
+
     const sendTime = new Date().toLocaleTimeString().slice(0, -3)
     const messageObject = {
-      userNickname: userNickname,
-      content: Message,
+      userNickname: nickname,
+      content: message,
       sendTime: sendTime,
       isDifferentNameAndTime: true,
     }
+
     const exMessage = usestore.getters.getChattings.at(-1)
+
     if (
       exMessage &&
-      exMessage.userNickname === userNickname &&
+      exMessage.userNickname === nickname &&
       exMessage.sendTime === sendTime
     ) {
       messageObject.isDifferentNameAndTime = false
@@ -881,7 +868,7 @@ watchEffect(() => {
 const sendMsg = (data) => {
   state.session
     .signal({
-      data: state.myUserName + " : " + data,
+      data: JSON.stringify(data),
       to: [],
       type: "this is chat",
     })

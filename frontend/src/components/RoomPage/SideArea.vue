@@ -38,11 +38,12 @@ const emit = defineEmits(["chatFromSide"])
 defineProps({
   isGameMode: Number,
 })
-const msgData = ref("")
-const chatFromSide = function (data) {
-  console.log("this is isOkay", data)
-  msgData.value = data
-  emit("send-message", data)
+const msgData = {}
+const chatFromSide = function (msg) {
+  console.log("this is isOkay", msg)
+  msgData.message = msg
+  msgData.nickname = store.getters.me.userNickname
+  emit("send-message", msgData)
 }
 
 // 사이드바 열고 닫는 부분

@@ -102,7 +102,7 @@ const roomId = route.params.roomId
 const store = useStore()
 
 const chatData = ref({
-  chatData: "",
+  chatData: {},
   chatCount: 0,
 })
 

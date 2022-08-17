@@ -13,19 +13,7 @@
         <div class="message-send-content">{{ chat.content }}</div>
       </div>
     </div>
-    <!-- 받는 사람 정하는 부분 -->
-    <!-- <div class="recipient-area">
-      <div>받는 사람:</div>
-      <div>
-        <select name="recipient" id="recipient">
-          <option value="아무무">아무무</option>
-          <option value="노틸러스">노틸러스</option>
-          <option value="야스오">야스오</option>
-        </select>
-      </div>
-      <div><button>모두에게</button></div>
-    </div> -->
-    <!-- 메시지 보내는 textarea -->
+
     <div class="typping-area">
       <div>
         <textarea
