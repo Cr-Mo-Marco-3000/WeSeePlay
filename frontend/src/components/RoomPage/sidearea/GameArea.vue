@@ -3,7 +3,7 @@
   <div class="title">게임</div>
   <!-- 본문 -->
   <div class="game-list-area">
-    <div class="game-item">
+    <div class="game-item" @click="$emit('click-liargame')">
       <div class="game-title game-text">라이어게임</div>
       <!-- 아래 부분의 game-text가 게임 하나 부분입니다. -->
       <div class="game-text">
@@ -14,11 +14,16 @@
         누가 거짓말을 하고 있는 라이어일까요?<br />
       </div>
     </div>
+    <div class="game-item" @click="$emit('click-callmyname')">
+      <div class="game-title game-text">콜 마이 네임</div>
+      <!-- 아래 부분의 game-text가 게임 하나 부분입니다. -->
+      <div class="game-text">당신의 이름은 무엇일 까요? <br /></div>
+    </div>
   </div>
 </template>
 
 <script setup></script>
 
 <style>
-@import url('../../../../src/assets/roompage/sidearea.css');
+@import url("../../../../src/assets/roompage/sidearea.css");
 </style>

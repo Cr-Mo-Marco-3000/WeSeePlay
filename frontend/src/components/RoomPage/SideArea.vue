@@ -18,7 +18,11 @@
       :roomInfo="roomInfo"
       @send-message-from-me="chatFromSide"
     />
-    <GameArea v-if="sideBarStatus === '3'" />
+    <GameArea
+      v-if="sideBarStatus === '3'"
+      @click-liargame="$emit('click-liargame')"
+      @click-callmyname="$emit('click-callmyname')"
+    />
   </div>
 </template>
 

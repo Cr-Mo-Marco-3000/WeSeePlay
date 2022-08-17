@@ -47,14 +47,14 @@ import { ref } from "vue"
 
 export default {
   name: "LiarResultModal",
-  props: ["whoWin", "gameSet", "suggestion", "liarInput"], // liar 찾으면 true / 아니면 false
+  props: ["whoWin", "gameSet", "suggestion", "liarInput", "liar"], // liar 찾으면 true / 아니면 false
 
   setup(props) {
     const time = ref(3)
     const waiting = ref(true)
     const liarWin = ref(props.whoWin)
     const word = ref(props.suggestion)
-    const liarNickname = ref(props.gameSet.liar)
+    const liarNickname = ref(props.liar)
     const liarWord = ref(props.liarInput)
     setInterval(function () {
       if (time.value > 0) {
@@ -67,7 +67,12 @@ export default {
       if (time.value == 0) {
         waiting.value = false
         // 라이어 승리시
-        liarWin.value = props.whoWin
+        if (word.value === liarWord.value) {
+          liarWin.value = false
+        } else {
+          liarWin.value = true
+        }
+
         return
       }
     }, 1000)
