@@ -21,10 +21,6 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  users: {
-    type: Array,
-    required: true,
-  },
   gameUserOrder: {
     type: Array,
     required: true,
@@ -34,25 +30,33 @@ const props = defineProps({
     required: true,
   },
 })
+const userList = ref([])
+const numUser = ref(0)
 const grid = ref("col-6")
-const userList = [...props.gameUserOrder]
-const numUser = userList.length
 
-if (numUser <= 6) {
+if (numUser.value < 6) {
   grid.value = "col-6"
 } else {
   grid.value = "col-4"
 }
 watchEffect(() => {
-  if (numUser === 2) {
+  userList.value = []
+  userList.value = [...props.gameUserOrder]
+  numUser.value = userList.value.length
+  if (numUser.value === 2) {
     grid.value = "col-7"
-  } else if (numUser < 7) {
+  } else if (numUser.value < 7) {
     grid.value = "col-5"
-  } else if (numUser > 9 && props.isSide === false) {
+  } else if (numUser.value > 9 && props.isSide === false) {
     grid.value = "col-3"
   } else {
     grid.value = "col-4"
   }
+  console.log(
+    "%c Oh Yes TEST BABY ",
+    "color: white; background: rgb(1,23,112)",
+    props.gameUserOrder
+  )
 })
 </script>
 

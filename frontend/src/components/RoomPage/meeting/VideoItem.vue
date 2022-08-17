@@ -1,9 +1,9 @@
 <template>
-  <div
-    class="padding-area"
-    :class="[talkNow ? 'talk-now-box' : 'non-talk-box']"
-  >
-    <div class="radius-area row">
+  <div class="padding-area">
+    <div
+      class="radius-area row"
+      :class="[talkNow ? 'talk-now-box' : 'non-talk-box']"
+    >
       <div :class="[talkNow ? 'talk-now' : 'non-talk']">{{ nickname }}</div>
       <ov-video class="ov-area" :stream-manager="user" />
     </div>

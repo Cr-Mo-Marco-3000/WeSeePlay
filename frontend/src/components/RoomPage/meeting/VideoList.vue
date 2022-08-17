@@ -17,10 +17,6 @@ import VideoItem from "./VideoItem.vue"
 import { ref, defineProps, watchEffect } from "vue"
 
 const props = defineProps({
-  users: {
-    type: Array,
-    required: true,
-  },
   isSide: {
     type: Boolean,
     required: true,
@@ -39,15 +35,18 @@ const numUser = ref(0)
 const grid = ref("col-6")
 const less = ref(true)
 watchEffect(() => {
+  UserVideo.value = []
   if (props.publisher) {
     console.log(props.subscribers.length)
     UserVideo.value.push(props.publisher)
     UserVideo.value.push(...props.subscribers)
   }
   numUser.value = UserVideo.value.length
-  if (numUser.value > 9) {
-    grid.value = "col-3"
+  if (numUser.value == 1) {
+    grid.value = "col-12"
   } else if (numUser.value > 6) {
+    grid.value = "col-3"
+  } else if (numUser.value > 4) {
     grid.value = "col-4"
   } else {
     grid.value = "col-6"

@@ -14,6 +14,8 @@
   border-radius: 15px;
   overflow: hidden;
   position: relative;
+  box-sizing: content-box;
+  padding: 5px;
 }
 
 .talk-now {
@@ -55,4 +57,8 @@
   color: white;
   border: none;
   border: solid 1px white;
+}
+
+.ov-area {
+  border-radius: 10px;
 }
