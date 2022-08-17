@@ -95,6 +95,8 @@ export default {
           return
         }
       } catch (err) {
+        const errorTxt = document.querySelector(".error-message")
+        errorTxt.style.color = "#e31818"
         loginErrorMsg.value = "입력한 정보를 다시 확인해 주세요"
         return
       }

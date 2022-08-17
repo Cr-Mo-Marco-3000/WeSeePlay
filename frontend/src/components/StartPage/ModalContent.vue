@@ -97,7 +97,7 @@ export default {
           return
         }
       } catch (error) {
-        if (error.response.data.statusCode === 404) {
+        if (error.response.data.statusCode === 403) {
           emailErrorMsg.value = "해당 이메일로 가입된 계정이 없습니다"
         } else if (error.response.data.statusCode === 500) {
           router.push({ name: "errorpage", params: { errorname: 500 } })
