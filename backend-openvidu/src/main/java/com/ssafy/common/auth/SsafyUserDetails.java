@@ -15,12 +15,12 @@ import com.ssafy.db.entity.User;
  */
 public class SsafyUserDetails implements UserDetails {
 	@Autowired
-	User user;
+	transient User user;
 	boolean accountNonExpired;
     boolean accountNonLocked;
     boolean credentialNonExpired;
     boolean enabled = false;
-    List<GrantedAuthority> roles = new ArrayList<>();
+    private List<GrantedAuthority> roles = new ArrayList<>();
     
     public SsafyUserDetails(User user) {
     		super();

@@ -1,12 +1,17 @@
 package com.ssafy.common.util;
 
 public class SendEmailAccountInfoUtil {
+	
+	static final String EMAIL="leesh0768@gmail.com";
+	static final String PASSWORD="mkahznisbzsfpcuv";
+	
+	private SendEmailAccountInfoUtil() {
+		
+	}
 	public static String getEmail() {
-		final String email="leesh0768@gmail.com";
-		return email;
+		return EMAIL;
 	}
 	public static String getEmailPassword() {
-		final String password="mkahznisbzsfpcuv";
-		return password;
+		return PASSWORD;
 	}
 }

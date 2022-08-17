@@ -27,4 +27,5 @@ public interface UserService {
 	EmailPw createCertificationCheckPw(String userEmail);
 	Optional<EmailPw> certificationPwCheck(String userEmail);
 	void delCertificationPw(String userEmail);
+	int deleteUser(String userEmail);
 }

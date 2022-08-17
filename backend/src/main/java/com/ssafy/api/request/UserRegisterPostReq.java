@@ -1,9 +1,5 @@
 package com.ssafy.api.request;
 
-import javax.persistence.Column;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
