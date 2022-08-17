@@ -43,6 +43,7 @@ import api from "@/api/api"
 import store from "@/store"
 import Swal from "sweetalert2"
 import { defineProps, watchEffect, ref } from "vue"
+import Swal from "sweetalert2"
 // eslint-disable-next-line
 defineProps({
   isHost: Boolean,
