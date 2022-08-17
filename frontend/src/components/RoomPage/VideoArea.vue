@@ -181,7 +181,8 @@ const callmyNameGameStart = async function () {
   })
   callMyNamegameSet.userList.push(state.myUserName)
   callMyNamegameSet.maxRound = 5
-  callMyNamegameSet.suggestion = ["아이유", "산타클로스", "뽀로로"]
+  const nameApiRequest = await api.game.getcallmyname()
+  callMyNamegameSet.suggestion = nameApiRequest.data.wordList
   shuffle(callMyNamegameSet.userList)
 
   state.session
@@ -265,7 +266,7 @@ function pickLiar(array) {
   const randomPosition = Math.floor(Math.random() * array.length)
   return array[randomPosition]
 }
-const gameStart = async function () {
+const gameStart = async function (data) {
   await api.room.editRoom(state.mySessionId, { game: 2 })
   gameSet.gameUserOrder = [] // 초기화
   gameSet.gameUserList.value = []
@@ -276,7 +277,7 @@ const gameStart = async function () {
   })
   gameSet.gameUserList.value.push(state.myUserName)
   gameSet.maxRound = 5
-  gameSet.suggestion = "사자"
+  gameSet.suggestion = data
   shuffle(gameSet.gameUserList.value)
   gameSet.liar = pickLiar(gameSet.gameUserList.value)
   state.session
@@ -419,12 +420,8 @@ const tmpGameResult = ref(false)
 
 const joinSession = () => {
   // --- Get an OpenVidu object ---
-  console.log("오픈 비두 시작!")
   state.mySessionId = props.roomId
-
   state.OV = new OpenVidu()
-  console.log("%cSTATE 시작 전", "color: white; background: red")
-  console.log(state)
   // --- Init a session ---
   state.session = state.OV.initSession()
   // On every new Stream received...
@@ -436,7 +433,6 @@ const joinSession = () => {
   })
   // 메시지 캐치하는 부분
   state.session.on("signal:this is chat", (e) => {
-    console.log("여기까진 되니?")
     const userList = usestore.getters.getUserInfo
     const rawMessage = e.data
     let splitIdx = -1
@@ -470,7 +466,6 @@ const joinSession = () => {
     ) {
       messageObject.isDifferentNameAndTime = false
     }
-    console.log("왜안들감?")
     usestore.dispatch("addMessage", messageObject)
   })
 
@@ -486,10 +481,20 @@ const joinSession = () => {
     console.warn(exception)
   })
   state.session.on("signal:get out of this room!", (data) => {
-    console.log(data.data)
     if (state.myUserName !== data.data) {
-      leaveSession()
-      router.push({ name: "mainpage" })
+      setTimeout(() => {
+        let isHostLeave = 1
+        state.subscribers.forEach(function (element) {
+          if (
+            data.data === JSON.parse(element.stream.connection.data).clientData
+          ) {
+            isHostLeave = 0
+          }
+        })
+        if (isHostLeave) {
+          router.push({ name: "mainpage" })
+        }
+      }, 5000)
     }
   })
   //call my name game
@@ -501,11 +506,9 @@ const joinSession = () => {
     callMyNamegameSet.maxRound = parseInt(info[1])
   })
   state.session.on("signal:callMyNamegameSuggestion", (data) => {
-    console.log(data.data)
     callMyNamegameSet.suggestion = data.data.split(",")
   })
   state.session.on("signal:callMyNamegameOrder", (data) => {
-    console.log(data.data)
     callMyNamegameSet.userList = data.data.split(",")
     callMyNamegameSet.targetPlayer = callMyNamegameSet.userList.slice(0, 3)
     callMyNamegameSet.nontargetPlayer = callMyNamegameSet.userList.slice(3)
@@ -526,8 +529,7 @@ const joinSession = () => {
       }
     }
   })
-  state.session.on("signal:Call my name, idx up", (data) => {
-    console.log(data.data)
+  state.session.on("signal:Call my name, idx up", () => {
     callMyNameGameIdx.value += 1
     if (callMyNameGameIdx.value >= 3) {
       callMyNameGameIdx.value = 0
@@ -557,15 +559,11 @@ const joinSession = () => {
     callMyNamegameSet.gameResultModal = true
     isGameMode.value = 1
   })
-  state.session.on("signal:callMynamechooseIncorrect", (data) => {
-    console.log("잘못된 값을 적었다~", data.data)
-  })
+  state.session.on("signal:callMynamechooseIncorrect", () => {})
 
   // liar Game
   state.session.on("signal:gameStart", (data) => {
-    console.log("게임이 시작 되었는가?????????????")
     let info = data.data.split(",")
-    console.log(info)
     gameSet.suggestion = info[1]
     gameSet.maxRound = parseInt(info[2])
     isGameMode.value = parseInt(info[0])
@@ -573,7 +571,6 @@ const joinSession = () => {
     store.dispatch("setGameSet", gameSet)
   })
   state.session.on("signal:whoIsLiar", (data) => {
-    console.log(data.data)
     gameSet.liar = data.data
     if (gameSet.liar == state.myUserName) {
       isLiar.value = true
@@ -599,8 +596,7 @@ const joinSession = () => {
       }
     }
   })
-  state.session.on("signal:gameIdxUp", (data) => {
-    console.log(data.data)
+  state.session.on("signal:gameIdxUp", () => {
     let flag = 0
     gameSet.gameIdx += 1
     if (gameSet.gameIdx >= gameSet.gameUserList.value.length) {
@@ -613,15 +609,12 @@ const joinSession = () => {
     // 모든 사용자 gameidx증가
     if (flag && gameSet.passedRound > 1) {
       // 만약에 라운드가 넘어갔다면 투표
-      console.log("왜 투표를 안하나요")
       gameSet.isVoteNow = true
       tmpvote.value = gameSet.isVoteNow
       gameSet.isVoteNow = false
     }
-    console.log("gameSet.gameIdx : ", gameSet.gameIdx)
   })
   state.session.on("signal:heIsLiar", (data) => {
-    console.log(data.data)
     const suspect = data.data
     if (suspect == "skip") {
       gameSet.skipNum += 1
@@ -724,11 +717,6 @@ const joinSession = () => {
 }
 const leaveSession = () => {
   // --- Leave the session by calling 'disconnect' method over the Session object ---
-  console.log(
-    "야야야야야야야야야야야야야야야야",
-    state.myUserName,
-    hostEmail.value
-  )
   if (state.myUserName === hostEmail.value) {
     state.session
       .signal({
@@ -827,7 +815,6 @@ watchEffect(() => {
   }
 })
 const sendMsg = (data) => {
-  console.log(data)
   state.session
     .signal({
       data: state.myUserName + " : " + data,
@@ -858,13 +845,11 @@ onMounted(async () => {
       method: "GET",
       headers: { authorization: "Bearer " + localStorage.getItem("token") },
     })
-    console.log(response)
     userId.value = response.data.userEmail
     state.myUserName = userId.value
   } catch (err) {
     console.log(err)
   }
-  console.log("본인 아이디요", userId.value)
 
   // try {
   //   const response = await axios({
@@ -889,9 +874,7 @@ onMounted(async () => {
   //   })
   //   router.push({ name: 'errorpage', params: { errorname: '500' } })
   // }
-  console.log("룸 번호요", props.roomId)
 
-  console.log("본인 아이디요", userId.value)
   joinSession()
   // joinGameSession()
 })

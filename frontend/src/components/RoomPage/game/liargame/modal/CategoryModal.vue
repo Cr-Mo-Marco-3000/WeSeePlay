@@ -37,6 +37,7 @@
 
 <script>
 import { ref } from "vue"
+import api from "@/api/api"
 
 export default {
   name: "CategoryModal",
@@ -49,7 +50,7 @@ export default {
       context.emit("close", "liarGameStart")
     }, 30000)
 
-    const pickCategory = ref("")
+    const pickCategory = ref(0)
 
     // 주제 더미데이터
     const categoryList = [
@@ -73,13 +74,15 @@ export default {
         btn.classList.remove("active")
       })
       event.target.classList.add("active")
-      pickCategory.value = event.target.value
+      pickCategory.value = parseInt(event.target.value) + 1
     }
 
-    const submitCategory = function () {
-      // socket 통신 코드 작성 유저가 주제 선정 후 gamestart 버튼을 누르면 모달 바로 닫기
+    const submitCategory = async function () {
+      const getLiarSuggestion = await api.game.getliarsuggestion(
+        pickCategory.value
+      )
       context.emit("close")
-      context.emit("liarGameStart")
+      context.emit("liarGameStart", getLiarSuggestion.data.suggestion)
     }
     return { categoryList, selectCategory, submitCategory }
   },
