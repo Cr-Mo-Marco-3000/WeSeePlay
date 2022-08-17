@@ -28,7 +28,7 @@
       <div v-if="!waiting && !liarWin" class="winner-box">
         <div class="winner"><span>라이어</span> 승리!</div>
         <div class="video-box">대충 여기에 화면 띄워주기</div>
-        <p>최고의 거짓말쟁이, {{ liarNickname }}!</p>
+        <p>최고의 거짓말쟁이 {{ liarNickname }}!</p>
       </div>
       <div v-if="!waiting && liarWin">
         <div class="winner"><span>참가자</span> 승리!</div>
@@ -43,7 +43,7 @@
   </div>
 </template>
 <script>
-import { ref } from "vue"
+import { ref, watchEffect } from "vue"
 
 export default {
   name: "LiarResultModal",
@@ -56,7 +56,11 @@ export default {
     const word = ref(props.suggestion)
     const liarNickname = ref(props.liar)
     const liarWord = ref(props.liarInput)
-    setInterval(function () {
+    watchEffect(() => {
+      liarWord.value = props.liarInput
+      word.value = props.suggestion
+    })
+    setInterval(async function () {
       if (time.value > 0) {
         time.value -= 1
         const timer = document.querySelector(".timer")
@@ -69,8 +73,6 @@ export default {
         // 라이어 승리시
         if (word.value === liarWord.value) {
           liarWin.value = false
-        } else {
-          liarWin.value = true
         }
 
         return

@@ -416,7 +416,6 @@ watchEffect(() => {
 // }
 const endGame = async function (result) {
   await api.room.editRoom(state.mySessionId, { game: 1 })
-  result = Boolean(result)
   tmpGameResult.value = result
   tmpGameResultModal.value = true
   // if (result) {
@@ -685,6 +684,10 @@ const joinSession = () => {
       gameSet.gameUserList.value.length ==
       gameSet.skipNum + gameSet.voteNum
     ) {
+      // 스킵 된 경우  alert 창 여기에다가 띄우면 됨
+      if (gameSet.skipNum >= gameSet.voteNum) {
+        console.log("스킵 되었습니다.")
+      }
       if (gameSet.skipNum < gameSet.voteNum) {
         // 스킵 되지 않은 경우
         for (const [key, value] of Object.entries(gameSet.votingProcess)) {
@@ -703,6 +706,8 @@ const joinSession = () => {
         isEnd = true
       }
       if (maxValue) {
+        // 여기에서 maxKey가 가장 많이 지목 당한 사람
+        console.log("가장 많이 지목 당한 사람", maxKey)
         if (maxKey == gameSet.liar) {
           if (state.myUserName == gameSet.liar) {
             gameSet.liarInputModal = true
