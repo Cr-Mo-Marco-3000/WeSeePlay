@@ -1,15 +1,10 @@
 <template>
   <div class="bottombar">
+    <!-- <button @click="">임시버튼</button> -->
     <div class="triColumn"></div>
     <div class="triColumn">
-      <div class="middleIconDiv">
-        <input
-          v-model="isMicOpen"
-          class="input"
-          id="micInput"
-          type="checkbox"
-        />
-        <label class="btn" for="micInput">
+      <div class="middleIconDiv" @click="$emit('audio-toggle')">
+        <label @click="onOffMic" class="btn">
           <i v-if="isMicOpen" class="fa-solid fa-microphone-lines fa-2x"></i>
           <i
             v-if="!isMicOpen"
@@ -17,14 +12,8 @@
           ></i>
         </label>
       </div>
-      <div class="middleIconDiv">
-        <input
-          v-model="isVideoOpen"
-          class="input videoInput"
-          id="videoInput"
-          type="checkbox"
-        />
-        <label class="btn" for="videoInput">
+      <div class="middleIconDiv" @click="$emit('video-toggle')">
+        <label @click="onOffVideo" class="btn">
           <i v-if="isVideoOpen" class="fa-solid fa-video fa-2x"></i>
           <i
             v-if="!isVideoOpen"
@@ -32,7 +21,7 @@
           ></i>
         </label>
       </div>
-      <div class="middleIconDiv">
+      <div v-if="isGameAndSettingOpen" class="middleIconDiv">
         <input
           v-model="isSettingOpen"
           class="input"
@@ -45,7 +34,7 @@
       </div>
       <div class="middleIconDiv">
         <input
-          @click="backToLounge"
+          @click="leaveOrKill"
           class="input exitInput"
           id="exitInput"
           type="checkbox"
@@ -65,7 +54,7 @@
           <i id="2" class="fa-solid fa-comments fa-2x"></i>
         </label>
       </div>
-      <div class="rightIconDiv">
+      <div v-if="isGameAndSettingOpen" class="rightIconDiv">
         <label id="3" @click="clickSidebarIcon" class="btn">
           <i id="3" class="fa-solid fa-gamepad fa-2x"></i>
         </label>
@@ -82,7 +71,12 @@
           <i class="fa-solid fa-angles-up fa-2x"></i>
         </label>
 
-        <label id="3" @click="clickSidebarIcon" class="sideAreaBundleItem">
+        <label
+          id="3"
+          v-if="isGameAndSettingOpen"
+          @click="clickSidebarIcon"
+          class="sideAreaBundleItem"
+        >
           <i id="3" class="fa-solid fa-gamepad fa-2x"></i>
         </label>
         <label id="2" @click="clickSidebarIcon" class="sideAreaBundleItem">
@@ -97,31 +91,143 @@
 </template>
 
 <script setup>
-import store from '@/store'
-import { ref } from 'vue'
+import store from "@/store"
+import { useRouter } from "vue-router"
+import { ref, watchEffect } from "vue"
+import Swal from "sweetalert2"
+const router = useRouter()
 
 // 마이크가 오픈되어 있지 않음 => 기본값
 const isMicOpen = ref(false)
 
 // 비디오도 오픈되어 있지 않음 => 기본값
 const isVideoOpen = ref(false)
+const onOffMic = function () {
+  isMicOpen.value = !isMicOpen.value
+  if (isMicOpen.value === true) {
+    Swal.fire({
+      position: "top",
+      title: "마이크가 켜졌습니다.",
+      color: "#695eef",
+      backdrop: false,
+      showConfirmButton: false,
+      timer: 700,
+      width: "25rem",
+    })
+  } else {
+    Swal.fire({
+      position: "top",
+      title: "마이크가 꺼졌습니다.",
+      color: "rgba(246, 30, 30, 0.75)",
+      backdrop: false,
+      showConfirmButton: false,
+      timer: 700,
+      width: "25rem",
+    })
+  }
+}
+
+const onOffVideo = function () {
+  isVideoOpen.value = !isVideoOpen.value
+  if (isVideoOpen.value === true) {
+    Swal.fire({
+      position: "top",
+      title: "화면이 켜졌습니다.",
+      color: "#695eef",
+      backdrop: false,
+      showConfirmButton: false,
+      timer: 700,
+      width: "25rem",
+    })
+  } else {
+    Swal.fire({
+      position: "top",
+      title: "화면이 꺼졌습니다.",
+      color: "rgba(246, 30, 30, 0.75)",
+      backdrop: false,
+      showConfirmButton: false,
+      timer: 700,
+      width: "25rem",
+    })
+  }
+}
 
 // 세팅창도 오픈되어 있지 않음 => 기본값
 const isSettingOpen = ref(false)
+// 빠져나가는 버튼 (방 나가기 or 방 삭제)
 
-// 빠져나가는 버튼
-const backToLounge = function () {
-  console.log('라운지로 숑숑숑')
+const leaveConfirm = async function () {
+  let a = await Swal.fire({
+    title: "방을 나가시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Room 나가기",
+    cancelButtonText: "취소",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      return true
+    } else {
+      return false
+    }
+  })
+
+  return a
+}
+
+const killConfirm = async function () {
+  const rst = await Swal.fire({
+    title: "당신은 호스트라서 나갈 수 없어요",
+    text: "하지만 Room 삭제는 가능합니다",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "red",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Room 삭제하기",
+    cancelButtonText: "취소",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      return true
+    }
+    return false
+  })
+  return rst
+}
+
+const leaveOrKill = async function () {
+  const host = store.getters.getRoomInfo.hostEmail
+  const user = store.getters.me.userEmail
+  let rst
+  if (host !== user) {
+    rst = await leaveConfirm()
+  } else if (host === user) {
+    rst = await killConfirm()
+  }
+  if (rst === true) {
+    router.push({ name: "mainpage" })
+  }
 }
 
 // sideArea 묶음 버튼
 const sideAreaBundle = ref(false)
 
 const clickSidebarIcon = function (event) {
-  store.dispatch('openSidebar', event.target.id)
+  store.dispatch("openSidebar", event.target.id)
 }
+
+// 게임 & 방설정 언더바에서 보이게 하기 => 나중에 다시 활용할수도
+const isGameAndSettingOpen = ref(true)
+
+watchEffect(() => {
+  if (store.getters.getRoomInfo.hostEmail === store.getters.me.userEmail) {
+    isGameAndSettingOpen.value = true
+  } else {
+    isGameAndSettingOpen.value = false
+  }
+})
 </script>
 
 <style scoped>
-@import url('../../../src/assets/roompage/bottombar.css');
+@import url("../../../src/assets/roompage/bottombar.css");
 </style>

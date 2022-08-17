@@ -1,7 +1,10 @@
 <template>
   <TheBackground />
   <div id="meeting-list-page">
-    <nav-bar @change-pw="isChangePw = true"></nav-bar>
+    <nav-bar
+      @change-pw="isChangePw = true"
+      @delete-user="isDeleteUser = true"
+    ></nav-bar>
     <div class="flex flex-center">
       <div id="container" class="flex flex-center">
         <div class="main-text">
@@ -65,7 +68,10 @@
           <div class="col-12">
             <div class="q-pa-lg flex flex-center">
               <q-pagination
+                autocomplete="off"
                 v-model="lookupInfo.pageNumber"
+                color="purple-7"
+                input-class="text-purple-7"
                 :max="maxpage"
                 input
               />
@@ -82,12 +88,16 @@
     </CreateRoomModal>
 
     <DetailModal v-if="isDetailModal" @close="isDetailModal = false">
-      <DetailModalContent :roomID="detailRoomID" />
+      <DetailModalContent :roomId="detailRoomId" />
     </DetailModal>
 
     <AuthModal v-if="isChangePw" @close="isChangePw = false">
       <AuthModalContent />
     </AuthModal>
+
+    <DeleteUserModal v-if="isDeleteUser" @close="isDeleteUser = false">
+      <DeleteUserModalContent />
+    </DeleteUserModal>
   </div>
 </template>
 
@@ -103,10 +113,11 @@ import DetailModal from "@/components/MainPage/Modal/DetailModal.vue"
 import DetailModalContent from "@/components/MainPage/Modal/DetailModalContent.vue"
 import AuthModal from "@/components/MainPage/Modal/AuthModal.vue"
 import AuthModalContent from "@/components/MainPage/Modal/AuthModalContent.vue"
-import { reactive, ref, watchEffect } from "vue"
-import axios from "axios"
-import api from "@/api/api"
-import { useStore } from "vuex"
+import DeleteUserModal from "@/components/MainPage/Modal/DeleteUserModal.vue"
+import DeleteUserModalContent from "@/components/MainPage/Modal/DeleteUserModalContent.vue"
+import { reactive, ref, watchEffect, onBeforeMount } from "vue"
+import api from "@/api/api.js"
+// import api from "@/api/api"
 
 export default {
   name: "MainPage",
@@ -122,10 +133,11 @@ export default {
     DetailModalContent,
     AuthModal,
     AuthModalContent,
+    DeleteUserModal,
+    DeleteUserModalContent,
   },
+
   setup() {
-    const store = useStore()
-    const token = store.state.users.token
     // meetingquery
     let meetingquery = ref("")
     let lookupErrorMsg = ref("")
@@ -145,7 +157,7 @@ export default {
     }
     function changeSortMethod() {
       if (lookupInfo.sortingMethod == "byTime") {
-        lookupInfo.sortingMethod = "byNumber"
+        lookupInfo.sortingMethod = "byUserNumByTime"
       } else {
         lookupInfo.sortingMethod = "byTime"
       }
@@ -185,37 +197,16 @@ export default {
     // data 획득
     let roomsInfo = ref(Array)
 
-    watchEffect(async () => {
-      console.log(lookupInfo.sortingOrder, lookupInfo.sortingMethod)
-      try {
-        // query String 생성
-        if (isPrivatebtn.value) {
-          lookupInfo.isPrivate = 1
-        } else {
-          lookupInfo.isPrivate = 0
-        }
-        let querystring = "/?"
-        for (let key in lookupInfo) {
-          let value = lookupInfo[key]
-          querystring += key + "=" + value + "&"
-        }
-        console.log(querystring.slice(0, -1))
-        console.log("authorization : Bearer " + token)
-        const response = await axios({
-          url: api.room.createRoom() + querystring.slice(0, -1),
-          method: "GET",
-          headers: { authorization: "Bearer " + token },
-        })
-        console.log(response.data)
-        if (response.status === 200) {
-          console.log("조회 성공!")
-          roomsInfo.value = response.data.content
-          // paginator의 총 페이지 수
-          console.log("페이지네이터 내와")
-          maxpage.value = response.data.totalPage
-        }
-      } catch (err) {
-        lookupErrorMsg.value = "조회 실패."
+    const getRoomList = async function () {
+      const reqData = { ...lookupInfo }
+      reqData.isPrivate = Number(isPrivatebtn.value)
+      const res = await api.room.getRoomList(reqData)
+      const { status, data } = res
+      if (status === 200) {
+        roomsInfo.value = data.content
+        maxpage.value = data.totalPage
+      } else {
+        lookupErrorMsg.value = "조회 실패"
         // 조회 실패 시 더미 데이터
         roomsInfo.value = [
           ...tmparr.value.slice(
@@ -223,22 +214,25 @@ export default {
             6 * lookupInfo.pageNumber
           ),
         ]
-        if (tmparr.value.length % 6) {
-          maxpage.value = parseInt(tmparr.value.length / 6)
-        } else {
-          maxpage.value = parseInt(tmparr.value.length / 6)
-        }
       }
+    }
+
+    onBeforeMount(async () => {
+      await getRoomList()
+    })
+    watchEffect(async () => {
+      await getRoomList()
     })
 
     const isDetailModal = ref(false)
-    const detailRoomID = ref({})
+    const detailRoomId = ref({})
     const openDetail = function (info) {
       isDetailModal.value = true
-      detailRoomID.value = info.roomId
+      detailRoomId.value = info.roomId
     }
 
     return {
+      getRoomList,
       // 검색창
       meetingquery,
       getQuery,
@@ -260,9 +254,10 @@ export default {
       // roomsData,
 
       openDetail,
-      detailRoomID,
+      detailRoomId,
 
       isChangePw: ref(false),
+      isDeleteUser: ref(false),
     }
   },
 }

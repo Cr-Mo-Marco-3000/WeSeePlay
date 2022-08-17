@@ -1,38 +1,84 @@
 <template>
-  <div class="video-item">
-    <div class="user-box">
-      <p>{{ user.nickname }}</p>
-      <p v-if="user.onVideo">
-        <img
-          class="sample"
-          src="https://cdn3.iconfinder.com/data/icons/vector-icons-6/96/256-512.png"
-        />
-      </p>
-      <p v-else>Video가 꺼져있습니다 .</p>
+  <div class="padding-area">
+    <div class="radius-area row">
+      <div :class="[talkNow ? 'talk-now' : 'non-talk']">{{ nickname }}</div>
+      <ov-video class="ov-area" :stream-manager="user" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from "vue"
+import OvVideo from "./OvVideo.vue"
+import { defineProps, ref, watchEffect } from "vue"
+// import store from "@/store"
 
-defineProps({
+const props = defineProps({
   user: {
     type: Object,
     required: true,
   },
+  userEmail: {
+    type: String,
+  },
+})
+
+let data = { ...props.user }
+console.log("%c Main Video ", "color: black;background: brown", data)
+data = JSON.parse(data.stream.connection.data)
+const nickname = ref(data.userNickname)
+
+const talkNow = ref(false)
+
+if (props.user) {
+  props.user.on("publisherStartSpeaking", () => {
+    talkNow.value = true
+  })
+
+  props.user.on("publisherStopSpeaking", () => {
+    talkNow.value = false
+  })
+}
+
+watchEffect(() => {
+  props.user
+  let data = { ...props.user }
+  console.log("%c Main Video ", "color: black;background: brown", data)
+  data = JSON.parse(data.stream.connection.data)
+  nickname.value = data.userNickname
 })
 </script>
 
 <style scoped>
-.video-item {
-  padding: 10px;
-}
-
-.user-box {
+.padding-area {
+  padding: 5px;
   background-color: #c9c5f1;
   border-radius: 15px;
-  width: 100%;
-  padding-bottom: 33%;
+}
+.radius-area {
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+}
+
+.talk-now {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgb(94, 144, 219);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  padding: 2px 10px;
+  border-radius: 5px;
+}
+
+.non-talk {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  color: rgb(0, 0, 0);
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  padding: 2px 10px;
+  border-radius: 5px;
 }
 </style>
