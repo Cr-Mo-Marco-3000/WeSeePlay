@@ -218,21 +218,32 @@ public class UserController {
         @ApiResponse(code = 500, message = "서버 오류")
     })
 	public ResponseEntity<BaseResponseBody> register(
-			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserRegisterPostReq registerInfo) {
+			@RequestBody @ApiParam(value="회원가입 정보", required = true) UserRegisterPostReq registerInfo){
 
 		Optional<Email> email = userService.certificationCheck(registerInfo.getUserEmail());
-		//인증된 이메일일 때
+//		인증된 이메일일 때
 		if(email.isPresent() && email.get().getCertificationCheck().equals("1")) {
-//			지우고 user테이블에 data추가
-			userService.delCertification(email.get());
-			User user = userService.createUser(registerInfo);
-			if(user != null) {
-				return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Created"));
+			boolean check=true;
+			if(registerInfo.getUserPassword().length()<8 || registerInfo.getUserPassword().length()>16) {
+				check=false;
+			}
+			int length=registerInfo.getUserNickname().getBytes().length;
+			if(check && length<6 || length>24) {
+				check=false;
+			}
+			if(check) {
+//				지우고 user테이블에 data추가
+				userService.delCertification(email.get());
+				User user = userService.createUser(registerInfo);
+				if(user != null) {
+					return ResponseEntity.status(201).body(BaseResponseBody.of(201, "Created"));
+				}else {
+					return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
+				}
 			}else {
-				return ResponseEntity.status(500).body(BaseResponseBody.of(500, "Server Error"));
+				return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Bad Request"));
 			}
 		}
-		
 		//인증되지 않은 이메일일 때
 		return ResponseEntity.status(401).body(BaseResponseBody.of(401, unauthorized));
 	}
