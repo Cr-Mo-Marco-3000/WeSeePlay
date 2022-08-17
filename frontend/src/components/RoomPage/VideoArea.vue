@@ -86,7 +86,7 @@ import LiarWaitingModal from "@/components/RoomPage/game/liargame/modal/LiarWait
 import LiarResultModal from "@/components/RoomPage/game/liargame/modal/LiarResultModal.vue"
 import CallmynameResultModal from "@/components/RoomPage/game/callmyname/modal/CallmynameResultModal.vue"
 
-import { ref, defineProps, watchEffect } from "vue"
+import { ref, defineProps, watchEffect, defineEmits } from "vue"
 import store from "@/store"
 import { useRouter } from "vue-router"
 import { useStore } from "vuex"
@@ -105,6 +105,7 @@ $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
 
 // 다른 파일에서와는 다르게, 얘가 useStore임
 const usestore = useStore()
+const emit = defineEmits(["tbs", "tbl"])
 
 const isGameMode = ref(1)
 const router = useRouter()
@@ -225,7 +226,6 @@ const callmyNameGameStart = async function () {
     .catch((error) => {
       console.error(error)
     })
-  store.dispatch("editRoomGame", 3)
   isGameMode.value = 3
 }
 //////////////////////////////////////////////////
@@ -422,13 +422,15 @@ const endGame = async function (result) {
   store.dispatch("editRoomGame", 1)
 }
 
-const isLiar = ref(false)
 const tmpNum = ref(0)
 const tmpvote = ref(false)
 const tmpliarInputModal = ref(false)
 const tmpUserList = ref([])
 const tmpGameResultModal = ref(false)
 const tmpGameResult = ref(false)
+
+const isLiar = ref(false)
+const topBarSuggestion = ref("")
 
 const joinSession = () => {
   // --- Get an OpenVidu object ---
@@ -516,6 +518,7 @@ const joinSession = () => {
     callMyNameGameIdx.value = 0
     callMyNameCoolDown.value = 3
     callMyNamegameSet.maxRound = parseInt(info[1])
+    store.dispatch("editRoomGame", 3)
   })
   state.session.on("signal:callMyNamegameSuggestion", (data) => {
     callMyNamegameSet.suggestion = data.data.split(",")
@@ -579,6 +582,8 @@ const joinSession = () => {
   state.session.on("signal:gameStart", (data) => {
     let info = data.data.split(",")
     gameSet.suggestion = info[1]
+    topBarSuggestion.value = info[1]
+    emit("tbs", topBarSuggestion.value)
     gameSet.maxRound = parseInt(info[2])
     isGameMode.value = parseInt(info[0])
     gameSet.isGameNow = true
@@ -589,6 +594,7 @@ const joinSession = () => {
     if (gameSet.liar == state.myUserName) {
       isLiar.value = true
     }
+    emit("tbl", isLiar.value)
   })
   state.session.on("signal:gameOrder", (data) => {
     gameSet.gameUserList.value = data.data.split(",")

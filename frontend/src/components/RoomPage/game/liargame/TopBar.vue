@@ -23,7 +23,7 @@
       </div>
       <!-- 일반 참가자일때 뜨는 부분 -->
       <div v-if="!isLiar">
-        <span class="notify-span">제시어: {{ gameSet.suggestion }}</span>
+        <span class="notify-span">제시어: {{ suggestion }}</span>
       </div>
     </div>
     <div>
@@ -44,26 +44,23 @@ import { defineProps, watchEffect, ref } from "vue"
 import Swal from "sweetalert2"
 // eslint-disable-next-line
 
-defineProps({
+const props = defineProps({
   isHost: Boolean,
   isGameMode: Number,
+  suggestion: String,
+  isLiar: Boolean,
 })
 const gameSet = ref(store.getters.getLiarGameSet)
-const isLiar = ref(true)
-const myMail = store.getters.me.userEmail
+const isLiar = ref(JSON.parse(props.isLiar))
 watchEffect(() => {
   console.log("탑바")
   gameSet.value = store.getters.getLiarGameSet
   console.log(
     "%c gameSet 정보 불러옴 (from TopBar.vue) ",
     "color: white;background: pink",
-    store.getters.getLiarGameSet
+    props.suggestion,
+    props.isLiar
   )
-  if (myMail === gameSet.value.liar) {
-    isLiar.value = true
-  } else {
-    isLiar.value = false
-  }
 })
 
 // 라이어게임 설명

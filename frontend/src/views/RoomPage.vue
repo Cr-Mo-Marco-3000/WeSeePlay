@@ -1,5 +1,11 @@
 <template>
-  <TopBar v-if="isGameMode !== 1" :isHost="isHost" :isGameMode="isGameMode" />
+  <TopBar
+    v-if="isGameMode !== 1"
+    :isHost="isHost"
+    :isGameMode="isGameMode"
+    :suggestion="liarSuggestion"
+    :isLiar="isLiar"
+  />
   <div class="main-area">
     <VideoArea
       :isSide="Boolean(isSide)"
@@ -7,6 +13,8 @@
       :isVideoOpen="isVideoOpen"
       :isAudeoOpen="isAudeoOpen"
       :chatData="chatData"
+      @tbs="getSuggestion"
+      @tbl="getLiar"
     />
     <SideArea
       class="self-center"
@@ -38,6 +46,16 @@ import { useRoute } from "vue-router"
 import { useStore } from "vuex"
 import api from "@/api/api"
 import Swal from "sweetalert2"
+
+//라이어 게임 에밋
+const liarSuggestion = ref("")
+const isLiar = ref(false)
+const getSuggestion = function (data) {
+  liarSuggestion.value = data
+}
+const getLiar = function (data) {
+  isLiar.value = data
+}
 
 // video toggle
 const isVideoOpen = ref(true)
