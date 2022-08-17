@@ -196,7 +196,7 @@ onBeforeUnmount(async () => {
   border: solid 1px black;
 }
 .main-area {
-  top: 5rem;
+  top: 80px;
   bottom: 5rem;
   position: absolute;
   left: 3vw;

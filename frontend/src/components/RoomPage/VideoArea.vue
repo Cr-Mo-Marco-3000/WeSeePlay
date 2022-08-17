@@ -1,21 +1,24 @@
 <template>
   <div class="video-area" :class="{ 'video-area-on-sidebar': isSide }">
-    <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
-    <button
-      v-if="isGameMode === 1"
-      style="position: absolute; top: 1rem"
-      @click="callmyNameGameStart"
-    >
-      이건 왜 안떠요Game On/Off 이게 콜마네
-    </button>
-    <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
-    <button
-      v-if="isGameMode === 1"
-      style="position: absolute; top: 1rem"
-      @click="selectingCategory = true"
-    >
-      Game On/Off
-    </button>
+    <div style="position: fixed; top: 0; z-index: 1">
+      <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
+      <button
+        style="background: black; color: white"
+        v-if="isGameMode === 1"
+        @click="selectingCategory = true"
+      >
+        LIAR GAME |
+      </button>
+      |||
+      <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
+      <button
+        style="background: black; color: white"
+        v-if="isGameMode === 1"
+        @click="callmyNameGameStart"
+      >
+        CALL MY NAME |
+      </button>
+    </div>
 
     <!-- isGameMode가 참이면 GameVideo가 나오게 하고, false라면 MeetingVideo가 나오게 짰어-->
     <CallMyNameVideo
