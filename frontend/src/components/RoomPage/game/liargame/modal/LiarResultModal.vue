@@ -37,7 +37,6 @@
           ><br />
           라이어가 제출한 제시어: {{ liarWord }}
           <p>거짓말쟁이를 찾아냈어요!<i class="fa-solid fa-hand-peace"></i></p>
-          <p>라이어가 입력한 값: {{ gameSet.liarInput }}</p>
         </div>
       </div>
     </div>
@@ -48,16 +47,15 @@ import { ref } from "vue"
 
 export default {
   name: "LiarResultModal",
-  props: ["whoWin", "gameSet"], // liar 찾으면 true / 아니면 false
+  props: ["whoWin", "gameSet", "suggestion", "liarInput"], // liar 찾으면 true / 아니면 false
 
   setup(props) {
     const time = ref(3)
     const waiting = ref(true)
     const liarWin = ref(props.whoWin)
-    const word = ref(props.gameSet.suggestion)
+    const word = ref(props.suggestion)
     const liarNickname = ref(props.gameSet.liar)
-    const liarWord = ref("내가 어케아는데")
-
+    const liarWord = ref(props.liarInput)
     setInterval(function () {
       if (time.value > 0) {
         time.value -= 1

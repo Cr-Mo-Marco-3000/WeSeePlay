@@ -63,6 +63,8 @@
     v-if="tmpGameResultModal"
     :whoWin="tmpGameResult"
     :gameSet="gameSet"
+    :suggestion="resultSuggestion"
+    :liarInput="liarIncorrectInput"
     @close="tmpGameResultModal = false"
   />
 
@@ -225,12 +227,12 @@ const callmyNameGameStart = async function () {
     })
 }
 //////////////////////////////////////////////////
-watchEffect(() => {
-  isGameMode.value = store.getters.getRoomInfo.game
-})
+
 // 게임 정보
 const isLiarWaiting = ref(false)
 const selectingCategory = ref(false)
+const liarIncorrectInput = ref("")
+const resultSuggestion = ref("")
 let gameSet = reactive({
   gameIdx: 0,
   isGameNow: 0,
@@ -278,6 +280,7 @@ const gameStart = async function (data) {
   gameSet.gameUserList.value.push(state.myUserName)
   gameSet.maxRound = 5
   gameSet.suggestion = data
+  resultSuggestion.value = data
   shuffle(gameSet.gameUserList.value)
   gameSet.liar = pickLiar(gameSet.gameUserList.value)
   state.session
@@ -389,6 +392,12 @@ const endGame = async function (result) {
   result = Boolean(result)
   tmpGameResult.value = result
   tmpGameResultModal.value = true
+  console.log(
+    "여기가 모달창 들어가기 전 이야기",
+    tmpGameResult.value,
+    tmpGameResultModal.value,
+    gameSet.suggestion
+  )
   // if (result) {
   //   if (gameSet.liar === state.myUserName) {
   //     gameSet.gameResult = "유저 승리"
@@ -677,9 +686,9 @@ const joinSession = () => {
   state.session.on("signal:liarInput", (data) => {
     tmpliarInputModal.value = gameSet.liarInputModal
     const [result, inputValue] = [...data.data.split(",")]
-    gameSet.liarInput = inputValue
+    liarIncorrectInput.value = inputValue
     isLiarWaiting.value = false
-    endGame(result)
+    endGame(JSON.parse(result))
   })
   // 'getToken' method is simulating what your server-side should do.
   // 'token' parameter should be retrieved and returned by your own backend
