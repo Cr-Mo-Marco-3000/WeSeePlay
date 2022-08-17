@@ -5,6 +5,7 @@
     :isGameMode="isGameMode"
     :suggestion="liarSuggestion"
     :isLiar="isLiar"
+    @quitGame="quitGame"
   />
   <div class="main-area">
     <VideoArea
@@ -13,14 +14,22 @@
       :isVideoOpen="isVideoOpen"
       :isAudeoOpen="isAudeoOpen"
       :chatData="chatData"
+      :isQuit="isQuit"
+      :isLiarGameStart="isLiarGameStart"
+      :isCallMyStart="isCallMyStart"
       @tbs="getSuggestion"
       @tbl="getLiar"
+      @heygettopbar="quitReturn"
+      @returnLiar="clickLiargameReturn"
+      @returnCallmyname="clickCallmynameReturn"
     />
     <SideArea
       class="self-center"
       v-if="isSide !== 0"
       @send-message="sideFromRoom"
       :isGameMode="isGameMode"
+      @click-liargame="clickLiargame"
+      @click-callmyname="clickCallmyname"
     />
   </div>
   <BottomBar
@@ -54,9 +63,35 @@ const getSuggestion = function (data) {
   liarSuggestion.value = data
 }
 const getLiar = function (data) {
+  console.log("데이타는 왜 안바뀌는거 같니")
   isLiar.value = data
 }
 
+//탑 바 게임 끝내기
+const isQuit = ref(1)
+const quitGame = function () {
+  isQuit.value = 2
+}
+const quitReturn = function () {
+  isQuit.value = 1
+}
+
+//라이어 게임 클릭
+const isLiarGameStart = ref(1)
+const clickLiargame = function () {
+  isLiarGameStart.value = 2
+}
+const clickLiargameReturn = function () {
+  isLiarGameStart.value = 1
+}
+// 콜마이 네임
+const isCallMyStart = ref(1)
+const clickCallmyname = function () {
+  isCallMyStart.value = 2
+}
+const clickCallmynameReturn = function () {
+  isCallMyStart.value = 1
+}
 // video toggle
 const isVideoOpen = ref(true)
 const isAudeoOpen = ref(true)

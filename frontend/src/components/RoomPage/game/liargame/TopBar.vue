@@ -16,20 +16,23 @@
         <span>게임설명</span>
       </button>
     </div>
-    <div>
+    <div v-if="isGameMode === 2">
       <!-- 라이어일때 뜨는 부분 -->
-      <div v-if="isLiar">
+      <div v-if="isLiar === 1">
         <span class="notify-span">당신은 Liar입니다</span>
       </div>
       <!-- 일반 참가자일때 뜨는 부분 -->
-      <div v-if="!isLiar">
+      <div v-if="isLiar === 2">
         <span class="notify-span">제시어: {{ suggestion }}</span>
       </div>
     </div>
     <div>
       <button v-if="isHost" class="end-button">
         <div>
-          <i class="fa-solid fa-person-running fa-xl"></i>
+          <i
+            class="fa-solid fa-person-running fa-xl"
+            @click="$emit('quitGame')"
+          ></i>
         </div>
         <div>
           <span>게임 종료</span>

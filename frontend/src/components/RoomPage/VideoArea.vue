@@ -55,13 +55,14 @@
   />
   <LiarWaitingModal
     v-if="isLiarWaiting"
-    :liar="gameSet.liar"
+    :liar="liargameLiar"
     @close="isLiarWaiting = false"
   />
 
   <LiarResultModal
     v-if="tmpGameResultModal"
     :whoWin="tmpGameResult"
+    :liar="liargameLiar"
     :gameSet="gameSet"
     :suggestion="resultSuggestion"
     :liarInput="liarIncorrectInput"
@@ -105,11 +106,13 @@ $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
 
 // 다른 파일에서와는 다르게, 얘가 useStore임
 const usestore = useStore()
-const emit = defineEmits(["tbs", "tbl"])
+const emit = defineEmits(["tbs", "tbl", "heygettopbar", "returnLiar"])
 
 const isGameMode = ref(1)
 const router = useRouter()
+
 const initSetting = function () {
+  liargameLiar.value = ""
   gameSet = reactive({
     gameIdx: 0,
     isGameNow: 0,
@@ -148,25 +151,25 @@ let callMyNamegameSet = reactive({
   gameResultModal: false,
   userList: [],
 })
-// const callMyNameInitSetting = function () {
-//   callMyNameGameIdx = ref(0)
-//   callMyNameMyName = ref("")
-//   callMyNameCoolDown = ref(3)
-//   callMyNamegameSet = reactive({
-//     isGameNow: 0,
-//     suggestion: [],
-//     maxRound: 0,
-//     targetPlayer: [],
-//     nontargetPlayer: [],
-//     passedTurn: 0,
-//     passedRound: 0,
-//     gameUserOrder: [],
-//     gameResult: false,
-//     gameResultWinner: "",
-//     gameResultModal: false,
-//     userList: [],
-//   })
-// }
+const callMyNameInitSetting = function () {
+  callMyNameGameIdx.value = 0
+  callMyNameCoolDown.value = 3
+  callMyNameMyName.value = ""
+  callMyNameGameResultWinner.value = ""
+  callMyNameGameResult.value = false
+  callMyNamegameSet = reactive({
+    isGameNow: 0,
+    suggestion: [],
+    maxRound: 0,
+    targetPlayer: [],
+    nontargetPlayer: [],
+    passedTurn: 0,
+    passedRound: 0,
+    gameUserOrder: [],
+    gameResultModal: false,
+    userList: [],
+  })
+}
 const callmyNameGameStart = async function () {
   await api.room.editRoom(state.mySessionId, { game: 3 })
   callMyNameCoolDown.value = 3
@@ -226,12 +229,12 @@ const callmyNameGameStart = async function () {
     .catch((error) => {
       console.error(error)
     })
-  isGameMode.value = 3
 }
 //////////////////////////////////////////////////
 
 // 게임 정보
 const isLiarWaiting = ref(false)
+const liargameLiar = ref("")
 const selectingCategory = ref(false)
 const liarIncorrectInput = ref("")
 const resultSuggestion = ref("")
@@ -325,6 +328,15 @@ const gameStart = async function (data) {
 }
 const userList = ref([]) // Component에 넘겨줄 user list
 const props = defineProps({
+  isLiarGameStart: {
+    type: Number,
+  },
+  isCallMyStart: {
+    type: Number,
+  },
+  isQuit: {
+    type: Number,
+  },
   isSide: {
     type: Boolean,
     required: true,
@@ -344,7 +356,39 @@ const props = defineProps({
     type: Object,
   },
 })
-
+// 강제 종료
+watchEffect(async () => {
+  if (props.isQuit === 2) {
+    console.log("꺼져줘")
+    state.session
+      .signal({
+        data: 1,
+        to: [],
+        type: "quitgame",
+      })
+      .then(() => {
+        console.log("quitgame")
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+  emit("heygettopbar")
+})
+//라이어 게임 시작
+watchEffect(() => {
+  if (props.isLiarGameStart === 2) {
+    selectingCategory.value = true
+    emit("returnLiar")
+  }
+})
+// 콜 마이 네임 시작 isCallMyStart
+watchEffect(() => {
+  if (props.isCallMyStart === 2) {
+    callmyNameGameStart()
+    emit("returnCallmyname")
+  }
+})
 // 이쪽은 샘플로 넣을 User 수 정하는 거 (최종본에는 지울 내용)
 const customNumber = ref(10)
 for (let i = 1; i < customNumber.value; i++) {
@@ -394,12 +438,6 @@ const endGame = async function (result) {
   result = Boolean(result)
   tmpGameResult.value = result
   tmpGameResultModal.value = true
-  console.log(
-    "여기가 모달창 들어가기 전 이야기",
-    tmpGameResult.value,
-    tmpGameResultModal.value,
-    gameSet.suggestion
-  )
   // if (result) {
   //   if (gameSet.liar === state.myUserName) {
   //     gameSet.gameResult = "유저 승리"
@@ -512,18 +550,18 @@ const joinSession = () => {
     }
   })
   //call my name game
-  state.session.on("signal:callMyNamegameStart", (data) => {
+  state.session.on("signal:callMyNamegameStart", async (data) => {
     let info = data.data.split(",")
-    isGameMode.value = parseInt(info[0])
     callMyNameGameIdx.value = 0
     callMyNameCoolDown.value = 3
     callMyNamegameSet.maxRound = parseInt(info[1])
+    isGameMode.value = parseInt(info[0])
     store.dispatch("editRoomGame", 3)
   })
   state.session.on("signal:callMyNamegameSuggestion", (data) => {
     callMyNamegameSet.suggestion = data.data.split(",")
   })
-  state.session.on("signal:callMyNamegameOrder", (data) => {
+  state.session.on("signal:callMyNamegameOrder", async (data) => {
     callMyNamegameSet.userList = data.data.split(",")
     callMyNamegameSet.targetPlayer = callMyNamegameSet.userList.slice(0, 3)
     callMyNamegameSet.nontargetPlayer = callMyNamegameSet.userList.slice(3)
@@ -571,6 +609,9 @@ const joinSession = () => {
       callMyNameGameResult.value = true
       await api.room.editRoom(state.mySessionId, { game: 1 })
     }
+    if (state.myUserName === hostEmail.value) {
+      await api.room.editRoom(state.mySessionId, { game: 1 })
+    }
 
     callMyNamegameSet.gameResultModal = true
     isGameMode.value = 1
@@ -582,7 +623,8 @@ const joinSession = () => {
   state.session.on("signal:gameStart", (data) => {
     let info = data.data.split(",")
     gameSet.suggestion = info[1]
-    topBarSuggestion.value = info[1]
+    topBarSuggestion.value = gameSet.suggestion
+    resultSuggestion.value = gameSet.suggestion
     emit("tbs", topBarSuggestion.value)
     gameSet.maxRound = parseInt(info[2])
     isGameMode.value = parseInt(info[0])
@@ -590,11 +632,18 @@ const joinSession = () => {
     store.dispatch("editRoomGame", 2)
   })
   state.session.on("signal:whoIsLiar", (data) => {
+    liargameLiar.value = data.data
     gameSet.liar = data.data
     if (gameSet.liar == state.myUserName) {
       isLiar.value = true
+    } else {
+      isLiar.value = false
     }
-    emit("tbl", isLiar.value)
+    if (isLiar.value) {
+      emit("tbl", 1)
+    } else {
+      emit("tbl", 2)
+    }
   })
   state.session.on("signal:gameOrder", (data) => {
     gameSet.gameUserList.value = data.data.split(",")
@@ -700,6 +749,15 @@ const joinSession = () => {
     liarIncorrectInput.value = inputValue
     isLiarWaiting.value = false
     endGame(JSON.parse(result))
+  })
+  state.session.on("signal:quitgame", async () => {
+    if (state.myUserName === hostEmail.value) {
+      await api.room.editRoom(state.mySessionId, { game: 1 })
+    }
+    initSetting()
+    callMyNameInitSetting()
+    isGameMode.value = 1
+    store.dispatch("editRoomGame", 1)
   })
   // 'getToken' method is simulating what your server-side should do.
   // 'token' parameter should be retrieved and returned by your own backend

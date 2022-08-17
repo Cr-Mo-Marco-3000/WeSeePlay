@@ -26,13 +26,13 @@ import { ref } from "vue"
 export default {
   name: "LiarWaitingModal",
   emits: ["close"],
-  props: [],
+  props: ["liar"],
   setup(props, context) {
     setTimeout(function () {
       context.emit("close")
     }, 30000)
 
-    const liarNickname = ref("원찬호")
+    const liarNickname = ref(props.liar)
 
     return { liarNickname }
   },
