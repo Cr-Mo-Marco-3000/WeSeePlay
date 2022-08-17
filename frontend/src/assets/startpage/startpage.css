@@ -3,6 +3,8 @@
 #first-page-box {
   padding: 0 3rem;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 svg {
@@ -35,7 +37,7 @@ svg {
   border: 1px solid rgba(255, 255, 255, 0.125);
   position: relative;
   height: 40rem;
-  bottom: 3rem;
+  /* bottom: 3rem; */
 }
 
 .overlay__inner {
@@ -114,12 +116,16 @@ svg {
   bottom: 2rem;
 }
 
+.orb-canvas {
+  display: none;
+}
+
 /* Not too many browser support this yet but it's good to add! */
-@media (prefers-contrast: high) {
+/* @media (prefers-contrast: high) {
   .orb-canvas {
     display: none;
   }
-}
+} */
 
 /* @media only screen and (max-width: 1140px) {
   .overlay {
@@ -133,7 +139,7 @@ svg {
   }
 
   .overlay {
-    padding: 4rem;
+    padding: 2rem;
   }
 
   .overlay__title {
@@ -166,6 +172,7 @@ svg {
     flex-wrap: wrap;
     position: relative;
     bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .overlay__btn {
@@ -199,6 +206,14 @@ svg {
 .logo-img {
   width: 50%;
   height: 50%;
+  border-radius: 15px;
+}
+
+.carousel-gif {
+  width: 50%;
+  height: 50%;
+  border-radius: 15px;
+  border: solid 0.1rem #695eef;
 }
 
 .first-carousel {

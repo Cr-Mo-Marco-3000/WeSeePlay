@@ -12,7 +12,7 @@
     <input v-model="credentials.passwordConfirm" type="password" />
   </div>
   <span class="auth-error-msg">{{ passwordErrorMsg }}</span>
-  <button class="overlay__btn pw-change-btn" @click="changePassword">
+  <button class="overlay__btn pw-change-btn" @click.prevent="changePassword">
     비밀번호 변경
   </button>
 </template>

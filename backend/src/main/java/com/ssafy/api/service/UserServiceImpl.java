@@ -110,7 +110,6 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public Optional<EmailPw> certificationPwCheck(String userEmail) {
-		// TODO Auto-generated method stub
 		return emailPwRepository.findByUserEmail(userEmail);
 	}
 
@@ -124,7 +123,7 @@ public class UserServiceImpl implements UserService {
 	public Email updateCertification(String userEmail) {
 		Email email=new Email();
 		Optional<Email> target = emailRepository.findByUserEmail(userEmail);
-		if(target.get()!=null) {
+		if(target.isPresent()&&target.get()!=null) {
 			email.setId(target.get().getId());
 			email.setUserEmail(userEmail);
 			email.setCertificationCheck("1");
@@ -138,7 +137,7 @@ public class UserServiceImpl implements UserService {
 	public EmailPw updateCertificationPw(String userEmail) {
 		EmailPw emailPw=new EmailPw();
 		Optional<EmailPw> target=emailPwRepository.findByUserEmail(userEmail);
-		if(target.get()!=null) {
+		if(target.isPresent()&&target.get()!=null) {
 			emailPw.setId(target.get().getId());
 			emailPw.setUserEmail(userEmail);
 			emailPw.setCertificationCheck("1");
@@ -150,13 +149,11 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public User updateLastLogin(String userEmail) {
-		User user = userRepository.findUserByUserEmail(userEmail).get();
-		
-		if (user != null) {
-			user.setLastLogin(LocalDateTime.now());
-			return userRepository.save(user);
+		Optional<User> user = userRepository.findUserByUserEmail(userEmail);
+		if (user.isPresent()) {
+			user.get().setLastLogin(LocalDateTime.now());
+			return userRepository.save(user.get());
 		}
-		
 		return null;
 	}
 
@@ -177,31 +174,33 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User changeNickname(String userEmail, String userNewNickname) {
-		User user = userRepository.findUserByUserEmail(userEmail).get();
-		
-		if (user != null) {
-			user.setUserNickname(userNewNickname);
-			return userRepository.save(user);
+		Optional<User> user = userRepository.findUserByUserEmail(userEmail);
+		if (user.isPresent()) {
+			user.get().setUserNickname(userNewNickname);
+			return userRepository.save(user.get());
 		}
-		
 		return null;
 	}
 
 	@Override
 	public User changePassword(ChangeUserPasswordReq changeInfo) {
-		User user = userRepository.findUserByUserEmail(changeInfo.getUserEmail()).get();
-		
-		if (user != null) {
-			user.setUserPassword(passwordEncoder.encode(changeInfo.getUserNewPassword()));
-			return userRepository.save(user);
+		Optional<User> user = userRepository.findUserByUserEmail(changeInfo.getUserEmail());
+		if(!user.isPresent()) {
+			return null;
 		}
-		
-		return null;
+		user.get().setUserPassword(passwordEncoder.encode(changeInfo.getUserNewPassword()));
+		return userRepository.save(user.get());
 	}
 
 	@Override
 	@Transactional
 	public void delCertificationPw(String userEmail) {
 		emailPwRepository.deleteByUserEmail(userEmail);
+	}
+
+	@Override
+	@Transactional
+	public int deleteUser(String userEmail) {
+		return userRepository.deleteByUserEmail(userEmail);
 	}
 }

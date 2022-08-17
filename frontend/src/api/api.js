@@ -1,5 +1,6 @@
 // 회원 서버 URL
-// const HOST = "http://localhost:8080/api/v1"
+import store from "@/store"
+import axios from "axios"
 const HOST = "https://i7a501.p.ssafy.io/api/v1"
 
 const USERS = "/users"
@@ -11,13 +12,34 @@ const ROOMS = "/rooms"
 const CERTIFICATION = "/certification"
 
 // 아래 카카오 로그인을 할 때는, 프론트엔드쪽으로 포트 번호를 맞추어야 한다
-// 즉 로컬 서버로 연결할 때는 8081, 배포 서버로 날릴 때는 8080으로 날리자
-// const KakaoLogin = 'http://localhost:8081/login/kakao'
-const KakaoLogin = "http://localhost:8080/login/kakao"
+// 즉 로컬 서버로 연결할 때는 8080, 배포 서버로 날릴 때는 본 주소로 날리자
+// const KakaoLogin = 'http://localhost:8080/login/kakao'
+const KakaoLogin = "https://i7a501.p.ssafy.io/login/kakao"
 
-const kakaoSendToken = "http://i7a501.p.ssafy.io:8010/api/v1/users/oauth/kakao"
+const kakaoSendToken = "https://i7a501.p.ssafy.io/api/v1/users/oauth/kakao"
+// const kakaoSendToken = 'http://localhost:8010/api/v1/oauth/kakao'
 
-// const kakaoSendToken = 'http://localhost:8080/api/v1/oauth/kakao'
+const setRequest = function (method, url, data = "") {
+  const req = {
+    url: HOST + ROOMS + url,
+    method,
+    headers: store.getters.authHeader,
+  }
+  if (data !== "") {
+    req.data = data
+  }
+  return req
+}
+
+const sendAxios = async function (req) {
+  let res = ""
+  try {
+    res = await axios(req)
+  } catch (error) {
+    res = error.response
+  }
+  return res
+}
 
 export default {
   // 회원 관련 API
@@ -49,7 +71,11 @@ export default {
     // 이메일 체크(비밀번호 찾기)
     sendEmailForPW: () => HOST + USERS + EMAIL + CERTIFICATION + "/pw",
 
+    // 이메일 인증 확인, 비밀번호 변경
     verifyEmailForPW: () => HOST + USERS + EMAIL + CERTIFICATION + "/pw/check",
+
+    // 계정삭제
+    deleteUser: () => HOST + USERS + "/delete",
 
     // verifyEmailForPW: (email) =>
     //   HOST + USERS + EMAIL + CERTIFICATION + `/pw/check?userEmail=${email}`,
@@ -65,10 +91,49 @@ export default {
   /* ---------- ROOM 관련 API ---------- */
   room: {
     // ROOM 생성, 삭제, 조회를 한번에!
-    createRoom: () => HOST + ROOMS,
+    getRoomList: async (data) => {
+      const req = setRequest("GET", "", "")
+      req.params = { ...data }
+      const res = await sendAxios(req)
+      return res
+    },
 
-    roomInfo: (roomID) => HOST + ROOMS + `/info/${roomID}`,
+    createRoom: async (data) => {
+      const req = setRequest("POST", "", data)
+      const res = await sendAxios(req)
+      return res
+    },
 
-    enterRoom: () => HOST + ROOMS + "/enter",
+    roomInfo: async (roomId) => {
+      const req = setRequest("GET", `/info/${roomId}`)
+      const res = await sendAxios(req)
+      console.log(res)
+      return res
+    },
+
+    // enterRoom: () => HOST + ROOMS + "/enter",
+    enterRoom: async (data) => {
+      const req = setRequest("POST", "/enter", data)
+      const res = await sendAxios(req)
+      return res
+    },
+
+    editRoom: async (roomId, data) => {
+      const req = setRequest("PATCH", `/${roomId}`, data)
+      const res = await sendAxios(req)
+      return res
+    },
+
+    leaveRoom: async (data) => {
+      const req = setRequest("DELETE", "/leave", data)
+      const res = await sendAxios(req)
+      return res
+    },
+
+    killRoom: async (data) => {
+      const req = setRequest("DELETE", "", data)
+      const res = await sendAxios(req)
+      return res
+    },
   },
 }

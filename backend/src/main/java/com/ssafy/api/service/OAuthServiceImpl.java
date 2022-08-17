@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.api.request.UserRegisterPostReq;
 import com.ssafy.common.util.APIKeyUtil;
 import com.ssafy.common.util.BCryptUtil;
 import com.ssafy.common.util.RandomStringUtil;
@@ -36,7 +35,6 @@ public class OAuthServiceImpl implements OAuthService{
 	@Override
 	public String getKakaoAccessToken(String code) {
 		String accessToken="";
-		String refreshToken="";
 		String reqURL="https://kauth.kakao.com/oauth/token";
 		
 		try {
@@ -57,22 +55,17 @@ public class OAuthServiceImpl implements OAuthService{
             bw.write(sb.toString());
             bw.flush();
             
-            //결과 코드가 200이라면 성공
-//            int responseCode = conn.getResponseCode();
-//            System.out.println("responseCode : " + responseCode);
-            
             //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = "";
-            String result = "";
+            StringBuilder result = new StringBuilder();
             
             while ((line = br.readLine()) != null) {
-                result += line;
+                result.append(line);
             }
             
-            JSONObject jObject=new JSONObject(result);
+            JSONObject jObject=new JSONObject(result.toString());
             accessToken = jObject.getString("access_token");
-            refreshToken = jObject.getString("refresh_token");
 
             br.close();
             bw.close();
@@ -87,7 +80,7 @@ public class OAuthServiceImpl implements OAuthService{
 	public JSONObject getKakaoUser(String token) throws Exception {
 
 		String reqURL = "https://kapi.kakao.com/v2/user/me";
-		String result = "";
+		StringBuilder result = new StringBuilder();
 	    //access_token을 이용하여 사용자 정보 조회
 	    try {
 	       URL url = new URL(reqURL);
@@ -98,20 +91,20 @@ public class OAuthServiceImpl implements OAuthService{
 	       conn.setRequestProperty("Authorization", "Bearer " + token); //전송할 header 작성, access_token전송
 
 	       //결과 코드가 200이라면 성공
-	       int responseCode = conn.getResponseCode();
+	       conn.getResponseCode();
 
 	       //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
 	       BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 	       String line = "";
 
 	       while ((line = br.readLine()) != null) {
-	           result += line;
+	    	   result.append(line);
 	       }
 	       br.close();
 	       } catch (Exception e) {
 	            e.printStackTrace();
 	       }
-		return new JSONObject(result);
+		return new JSONObject(result.toString());
 	 }
 
 	@Override
@@ -126,7 +119,7 @@ public class OAuthServiceImpl implements OAuthService{
 		User user = new User();
 		String id = jObject.getString("id");
 		Optional<User>target=userRepository.findAllByUserEmail(id);
-		if(target.get()!=null) {
+		if(target.isPresent() && target.get()!=null) {
 			user.setId(target.get().getId());
 			user.setUserEmail(target.get().getUserEmail());
 			user.setUserPassword(bCryptUtil.encodeBcrypt(randomStringUtil.getRandomString(10)));

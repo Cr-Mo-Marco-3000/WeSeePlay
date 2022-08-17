@@ -1,12 +1,9 @@
 package com.ssafy.db.entity;
 
-import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
-
 import org.hibernate.annotations.DynamicUpdate;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
