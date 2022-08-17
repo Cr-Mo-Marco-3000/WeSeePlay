@@ -1,6 +1,6 @@
 <template>
-  <div class="row video-list-area">
-    <div class="row" :class="isSide ? 'col-7' : 'col-5'">
+  <div class="row video-list-area justify-center">
+    <div class="row" :class="isSide ? 'col-4' : 'col-4'">
       <MainVideo
         v-if="tmpNum == 0"
         class="self-center col-12"
@@ -100,7 +100,7 @@
     </div>
     <AllVideo
       class="self-center"
-      :class="isSide ? 'col-5' : 'col-7'"
+      :class="isSide ? 'col-8' : 'col-8'"
       :gameUserOrder="gameSet.gameUserOrder"
       :isSide="isSide"
       :emailData="gameSet.gameUserList.value"
