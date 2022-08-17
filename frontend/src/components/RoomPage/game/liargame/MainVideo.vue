@@ -1,6 +1,9 @@
 <template>
   <div class="padding-area">
-    <div class="radius-area row">
+    <div
+      class="radius-area row"
+      :class="[talkNow ? 'talk-now-box' : 'non-talk-box']"
+    >
       <div :class="[talkNow ? 'talk-now' : 'non-talk']">
         {{ nickname }}
       </div>

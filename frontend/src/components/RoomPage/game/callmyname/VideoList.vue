@@ -1,6 +1,6 @@
 <template>
   <div class="row full-height justify-center items-center video-list-area">
-    <div class="row col-10">
+    <div class="row col-9 justify-center">
       <video-item
         v-for="(user, idx) in callMyNamePlayers"
         class="col-6"

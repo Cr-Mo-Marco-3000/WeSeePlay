@@ -1,6 +1,6 @@
 <template>
   <div class="row justify-center items-center q-mt-xl">
-    <div class="row col-12 justify-center">
+    <div class="row justify-center" :class="isSide ? 'col-12' : 'col-10'">
       <video-item
         v-for="(user, idx) in userList"
         :key="idx"
