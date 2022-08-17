@@ -1,26 +1,19 @@
 <template>
-  <div class="video-item">
-    <div class="user-video-box">
-      <div v-if="user">
-        <ov-video :stream-manager="user" />
+  <div class="padding-area">
+    <div class="radius-area row">
+      <div :class="[talkNow ? 'talk-now' : 'non-talk']">
+        {{ nickname }}
+        <br />
+        <span v-if="myEmail === videoUserEmail">이름: ???</span>
+        <span v-else>이름: {{ suggestion }}</span>
       </div>
-      <div>
-        <p v-if="myEmail === videoUserEmail">이름: ???</p>
-        <p v-else>이름: {{ suggestion }}</p>
-      </div>
+      <ov-video class="ov-area" :stream-manager="user" />
       <button
+        class="next-btn"
         v-if="myEmail === userEmail && myEmail === videoUserEmail"
         @click.stop="$emit('next')"
       >
-        NEXT {{ gameIdx }}
-      </button>
-      <button
-        v-if="
-          myEmail === userEmail && coolDown <= 0 && myEmail === videoUserEmail
-        "
-        @click.stop="$emit('answer')"
-      >
-        What is your name?
+        NEXT
       </button>
     </div>
   </div>
@@ -28,7 +21,7 @@
 
 <script setup>
 import store from "@/store"
-import { defineProps } from "vue"
+import { defineProps, ref } from "vue"
 import OvVideo from "./OvVideo.vue"
 
 const props = defineProps({
@@ -54,13 +47,24 @@ const props = defineProps({
 })
 
 const myEmail = store.getters.me.userEmail
-console.log("asdasdasdasdasdasdasdasdsa", myEmail, props.userEmail)
+let data = { ...props.user }
+console.log("%c Main Video ", "color: black;background: brown", data)
+data = JSON.parse(data.stream.connection.data)
+const nickname = data.userNickname
+
+const talkNow = ref(false)
+
+if (props.user) {
+  props.user.on("publisherStartSpeaking", () => {
+    talkNow.value = true
+  })
+
+  props.user.on("publisherStopSpeaking", () => {
+    talkNow.value = false
+  })
+}
 </script>
 
 <style scoped>
-.user-video-box {
-  background-color: #c9c5f1;
-  border-radius: 15px;
-  width: 100%;
-}
+@import url("@/assets/roompage/videoBox.css");
 </style>
