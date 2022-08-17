@@ -91,6 +91,8 @@ export default {
             router.push({ name: "mainpage" })
           }
         } else {
+          const errorTxt = document.querySelector(".error-message")
+          errorTxt.style.color = "#e31818"
           loginErrorMsg.value = "아이디와 비밀번호를 입력하세요"
           return
         }
