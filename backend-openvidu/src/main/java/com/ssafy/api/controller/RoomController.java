@@ -1,9 +1,8 @@
 package com.ssafy.api.controller;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.transaction.Transactional;
@@ -29,7 +28,6 @@ import com.ssafy.api.request.ForcedOutReq;
 import com.ssafy.api.request.RoomCreatePostReq;
 import com.ssafy.api.request.RoomUpdatePatchReq;
 import com.ssafy.api.response.RoomCreatePostRes;
-import com.ssafy.api.response.RoomListGetRes;
 import com.ssafy.api.response.RoomModeGetRes;
 import com.ssafy.api.service.RoomService;
 import com.ssafy.api.service.UserService;
@@ -67,6 +65,15 @@ public class RoomController {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	
+	public static final String ROOMID = "roomId";
+	public static final String MSG = "message";
+	public static final String STATUS_CODE = "statusCode";
+	public static final String IS_PRIVATE = "isPrivate";
+	public static final String SUCCESS = "Success";
+	public static final String INPUT_PASSWORD = "inputPassword";
+	public static final String BAD_REQUEST = "Bad Request";
+	boolean check;
+	
 	@PostMapping()
 	@ApiOperation(value = "방 생성", notes = "방 생성에 대한 정보를 저장한다.") 
 	@ApiResponses({
@@ -75,18 +82,21 @@ public class RoomController {
 		@ApiResponse(code = 403, message = "Forbidden")
 	})
 	//일단 방 생성시 다른 방에 참여하고 있는 사용자인지 체크하진 않았음
-	public ResponseEntity<? extends BaseResponseBody> createRoom(
+	public ResponseEntity<BaseResponseBody> createRoom(
 			@ApiIgnore Authentication authentication,
 			@RequestBody @ApiParam(value="방 생성 정보", required = true) RoomCreatePostReq roomCreatePostReq) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
+		if(roomCreatePostReq.getTitle()==null || roomCreatePostReq.getTitle().equals("")) {
+			return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, BAD_REQUEST));
+		}
 		if(user!=null) {
 			Room room=roomService.createRoom(roomCreatePostReq);
 			roomService.createUserRoom(room.getId(),user.getId(),0,1);
 			return ResponseEntity.status(201).body(RoomCreatePostRes.of(201, "Created",room.getId()));
 		}else {
-			return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, "Bad Request"));
+			return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, BAD_REQUEST));
 		}
 	}
 	
@@ -96,20 +106,23 @@ public class RoomController {
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공")
     })
-	public ResponseEntity<? extends BaseResponseBody> deleteRoom(
+	public ResponseEntity<BaseResponseBody> deleteRoom(
 			@ApiIgnore Authentication authentication,
-			@RequestBody HashMap<String, Integer> map) {
+			@RequestBody Map<String, Integer> map) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		Long userId=userService.getUserByUserEmail(userEmail).getId();
-		UserRoom userRoomRes=userRoomService.getUserRoomByRoomId((long)map.get("roomId"),userId);
+		UserRoom userRoomRes=userRoomService.getUserRoomByRoomId((long)map.get(ROOMID),userId);
 		if(userRoomRes != null && userRoomRes.getIsHost() == 1) {
-			roomService.deleteRoom(map.get("roomId"));
+			roomService.deleteRoom(map.get(ROOMID));
 			// roomId기준으로 다 방에서 퇴장 처리
-			userRoomService.deleteUserRoom(map.get("roomId"));
-			return ResponseEntity.status(200).body(RoomCreatePostRes.of(200, "Success"));
+			userRoomService.deleteUserRoom(map.get(ROOMID));
+			return ResponseEntity.status(200).body(RoomCreatePostRes.of(200, SUCCESS));
+		}else if(userRoomRes != null && userRoomRes.getIsHost() == 0) {
+			return ResponseEntity.status(401).body(RoomCreatePostRes.of(401, "Unauthorized"));
+		}else {
+			return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, BAD_REQUEST));
 		}
-		return ResponseEntity.status(400).body(RoomCreatePostRes.of(400, "Bad Request"));
 	}
 	
 	@PostMapping("/enter")
@@ -117,40 +130,48 @@ public class RoomController {
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공")
     })
-	public ResponseEntity<? extends BaseResponseBody> enterRoom(
+	public ResponseEntity<BaseResponseBody> enterRoom(
 			@ApiIgnore Authentication authentication,
-			@RequestBody HashMap<String, String> roomInfo) {
+			@RequestBody Map<String, String> roomInfo) {
 		Room room=null;
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
-		long roomId = Long.parseLong(roomInfo.get("roomId"));
-		
-		try {
-			room = roomService.getRoomById(roomId);
-		} catch (NoSuchElementException e) {
+		long roomId = Long.parseLong(roomInfo.get(ROOMID));
+		room = roomService.getRoomById(roomId);
+		if(room==null) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
 		}
-		
 		if(user != null) {
 			int count = userRoomService.getJoinCount(roomId);
-			if(count<12) {
-				if(roomInfo.get("inputPassword")==null &&room.getRoomPassword()==null) {
-					roomService.createUserRoom(roomId, user.getId(), 0, 0);
-					roomService.plus(roomId);
-				}else if(passwordEncoder.matches(roomInfo.get("inputPassword"),room.getRoomPassword())){
-					roomService.createUserRoom(roomId, user.getId(), 0, 0);
-					roomService.plus(roomId);
-				}else {
+			if(count<12 && room.getGame()==1) {
+				if((roomInfo.get(INPUT_PASSWORD)==null || "".equals(roomInfo.get(INPUT_PASSWORD))) && room.getRoomPassword()==null) {
+					check=roomService.createUserRoom(roomId, user.getId(), 0, 0);
+					if(check) {
+						roomService.plus(roomId);
+					}
+				}else if((roomInfo.get(INPUT_PASSWORD)==null || "".equals(roomInfo.get(INPUT_PASSWORD)))&& room.getRoomPassword()!=null ||roomInfo.get(INPUT_PASSWORD)!=null && !"".equals(roomInfo.get(INPUT_PASSWORD)) && room.getRoomPassword()==null ) {
 					return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Bad Password"));
 				}
-			}else {
+				else if(passwordEncoder.matches(roomInfo.get(INPUT_PASSWORD),room.getRoomPassword())){
+					check=roomService.createUserRoom(roomId, user.getId(), 0, 0);
+					if(check) {
+						roomService.plus(roomId);						
+					}
+				}
+				else {
+					return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Bad Password"));
+				}
+			}else if(room.getGame()!=1) {
+				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Can't Enter Game Room"));
+			}
+			else {
 				return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - Too Many People"));
 			}
 		} else {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No User"));
 		}
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, SUCCESS));
 	}
 	
 	@Transactional
@@ -159,28 +180,30 @@ public class RoomController {
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공")
     })
-	public ResponseEntity<? extends BaseResponseBody> leaveRoom(
+	public ResponseEntity<BaseResponseBody> leaveRoom(
 			@ApiIgnore Authentication authentication,
-			@RequestBody HashMap<String, Integer> roomInfo) {
+			@RequestBody Map<String, Integer> roomInfo) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
-		long roomId = (long) roomInfo.get("roomId");
-		
+		long roomId = roomInfo.get(ROOMID);
 		try {
-			Room room = roomService.getRoomById(roomId);
+			roomService.getRoomById(roomId);
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
 		}
-		
 		if(user != null) {
-			userRoomService.deleteUserRoom(roomId, user.getId());
-			roomService.minus(roomId);
+			check=userRoomService.deleteUserRoom(roomId, user.getId());
+			if(check) {
+				roomService.minus(roomId);
+			}else {
+				return ResponseEntity.status(400).body(BaseResponseBody.of(400, BAD_REQUEST));
+			}
 		} else {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No User"));
 		}
 
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, SUCCESS));
 	}
 	
 	@Transactional
@@ -189,7 +212,7 @@ public class RoomController {
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공")
     })
-	public ResponseEntity<? extends BaseResponseBody> forcedOutRoom(
+	public ResponseEntity<BaseResponseBody> forcedOutRoom(
 			@ApiIgnore Authentication authentication,
 			@RequestBody ForcedOutReq info) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
@@ -201,7 +224,7 @@ public class RoomController {
 		UserRoom userRoom = userRoomService.getUserRoomByRoomId(roomId, user.getId());
 		
 		try {
-			Room room = roomService.getRoomById(roomId);
+			roomService.getRoomById(roomId);
 		} catch (NoSuchElementException e) {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No Room"));
 		}
@@ -213,7 +236,7 @@ public class RoomController {
 			return ResponseEntity.status(400).body(BaseResponseBody.of(400, "Bad Request - No UserRoom"));
 		}
 
-		return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+		return ResponseEntity.status(200).body(BaseResponseBody.of(200, SUCCESS));
 	}
 	
 	@Transactional
@@ -223,24 +246,24 @@ public class RoomController {
         @ApiResponse(code = 200, message = "성공"),
         @ApiResponse(code = 401, message = "권한 없음")
     })
-	public ResponseEntity<? extends BaseResponseBody> updateRoom(
+	public ResponseEntity<BaseResponseBody> updateRoom(
 			@ApiIgnore Authentication authentication,
 			@PathVariable int roomId, @RequestBody RoomUpdatePatchReq roomUpdatePatchReq) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
 		User user = userService.getUserByUserEmail(userEmail);
-		int check=userRoomService.checkIsHost(user.getId(),(long)roomId);
-		if (check==1) {
+		int tempCheck=userRoomService.checkIsHost(user.getId(),(long)roomId);
+		if (tempCheck==1) {
 			if(roomUpdatePatchReq.getHostId()!=0) {
 				int temp=userRoomService.isExistUser(roomUpdatePatchReq.getHostId(),roomId);
 				if(temp!=0) {
-					roomService.updateRoom(roomId,roomUpdatePatchReq);
-					UserRoom temp_check=userRoomService.setIsHost(roomUpdatePatchReq.getHostId(),roomId);
+					userRoomService.setIsHost(roomUpdatePatchReq.getHostId(),roomId);
 				}else {
 					return ResponseEntity.status(403).body(BaseResponseBody.of(403, "Not Joined User"));
 				}
 			}
-			return ResponseEntity.status(200).body(BaseResponseBody.of(200, "Success"));
+			roomService.updateRoom(roomId,roomUpdatePatchReq);
+			return ResponseEntity.status(200).body(BaseResponseBody.of(200, SUCCESS));
 		}else {
 			return ResponseEntity.status(401).body(BaseResponseBody.of(401, "Unauthorized"));
 		}
@@ -252,11 +275,18 @@ public class RoomController {
         @ApiResponse(code = 200, message = "성공")
     })
 	public String getRoomList(
-			@ApiIgnore Authentication authentication, @RequestParam HashMap<String, Object>map ) {
+			@ApiIgnore Authentication authentication, @RequestParam Map<String, Object>map ) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
-		User user = userService.getUserByUserEmail(userEmail);
+		userService.getUserByUserEmail(userEmail);
 		JsonObject jo=new JsonObject();
+		if(map.get("pageNumber")==null || map.get("contentsCount")==null || map.get(IS_PRIVATE)==null || map.get("sortingOrder")==null
+				 || map.get("sortingMethod")==null || map.get("query")==null || map.get("queryType")==null) {
+			jo.addProperty(STATUS_CODE,400);
+			jo.addProperty(MSG,BAD_REQUEST);
+			return  jo.toString();
+		}
+		
 		Page<Room> totalRoomList=roomService.getRoomList(map);
 		List<Room> roomList=totalRoomList.getContent();
 		JsonArray jsonArray=new JsonArray();
@@ -264,16 +294,17 @@ public class RoomController {
 		jo.addProperty("totalData",totalRoomList.getTotalElements());
 		for (Room room : roomList) {
 			JsonObject temp=new JsonObject();
-			temp.addProperty("roomId", room.getId());
+			temp.addProperty(ROOMID, room.getId());
 			
 			UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
 			User tempuser=userService.getUserById(userRoom.getUserId());
 			temp.addProperty("hostId",userRoom.getUserId());
-			temp.addProperty("hostNickname",tempuser.getUserEmail());
+			temp.addProperty("hostEmail",tempuser.getUserEmail());
+			temp.addProperty("hostNickname",tempuser.getUserNickname());
 			temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 			temp.addProperty("title", room.getTitle());
 			temp.addProperty("descript", room.getDescript());
-			temp.addProperty("isPrivate", room.getIsPrivate());
+			temp.addProperty(IS_PRIVATE, room.getIsPrivate());
 			temp.addProperty("game", room.getGame());
 			
 			List<UserRoom>tempUserRoom=userRoomService.getMemberIdByRoomId(room.getId());
@@ -290,8 +321,8 @@ public class RoomController {
 			jsonArray.add(temp);
 		}
 		jo.add("content", jsonArray);
-		jo.addProperty("statusCode", 200);
-		jo.addProperty("message", "Success");
+		jo.addProperty(STATUS_CODE, 200);
+		jo.addProperty(MSG, SUCCESS);
 		return jo.toString();
 	}
 	
@@ -307,16 +338,17 @@ public class RoomController {
 		Room room=roomService.getRoomById(roomId);
 		if(room!=null) {
 			JsonObject temp=new JsonObject();
-			temp.addProperty("roomId", room.getId());
+			temp.addProperty(ROOMID, room.getId());
 			
 			UserRoom userRoom=userRoomService.getHostIdByRoomId(room.getId());
 			User tempuser=userService.getUserById(userRoom.getUserId());
 			temp.addProperty("hostId",userRoom.getUserId());
-			temp.addProperty("hostNickname",tempuser.getUserEmail());
+			temp.addProperty("hostEmail",tempuser.getUserEmail());
+			temp.addProperty("hostNickname",tempuser.getUserNickname());
 			temp.addProperty("callStartTime", room.getCallStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 			temp.addProperty("title", room.getTitle());
 			temp.addProperty("descript", room.getDescript());
-			temp.addProperty("isPrivate", room.getIsPrivate());
+			temp.addProperty(IS_PRIVATE, room.getIsPrivate());
 			temp.addProperty("game", room.getGame());
 			
 			List<UserRoom>tempUserRoom=userRoomService.getMemberIdByRoomId(room.getId());
@@ -330,32 +362,32 @@ public class RoomController {
 				userInfos.add(info);
 			}
 			temp.add("joinUsers", userInfos);
-			temp.addProperty("statusCode", 200);
-			temp.addProperty("message", "Success");
+			temp.addProperty(STATUS_CODE, 200);
+			temp.addProperty(MSG, SUCCESS);
 			return temp.toString();
 		}else {
 			JsonObject error=new JsonObject();
-			error.addProperty("statusCode",404);
-			error.addProperty("message","Deleted Room");
+			error.addProperty(STATUS_CODE,404);
+			error.addProperty(MSG,"Deleted Room");
 			return error.toString();
 		}
 	}
 	
 	@GetMapping("/mode/{roomId}")
-	@ApiOperation(value = "방 정보 수정", notes = "방 정보를 수정한다.") 
+	@ApiOperation(value = "방 모드 반환", notes = "방 모드를 반환한다.(1은 채팅, 2는 라이어 게임)") 
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공"),
         @ApiResponse(code = 401, message = "권한 없음")
     })
-	public ResponseEntity<? extends BaseResponseBody> updateMode(
+	public ResponseEntity<BaseResponseBody> updateMode(
 			@ApiIgnore Authentication authentication,
 			@PathVariable int roomId) {
 		SsafyUserDetails userDetails = (SsafyUserDetails)authentication.getDetails();
 		String userEmail = userDetails.getUsername();
-		User user = userService.getUserByUserEmail(userEmail);
+		userService.getUserByUserEmail(userEmail);
 		try {
 			int gameMode=roomService.getGameMode(roomId);
-			return ResponseEntity.status(200).body(RoomModeGetRes.of(200, "Success",gameMode));
+			return ResponseEntity.status(200).body(RoomModeGetRes.of(200, SUCCESS,gameMode));
 		} catch (Exception e) {
 			return ResponseEntity.status(404).body(BaseResponseBody.of(404, "Not Exist Room"));
 		}

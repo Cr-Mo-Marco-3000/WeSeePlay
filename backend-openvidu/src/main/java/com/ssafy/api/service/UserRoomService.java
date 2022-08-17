@@ -8,7 +8,7 @@ public interface UserRoomService {
 
 	UserRoom getUserRoomByRoomId(Long roomId, Long userId);
 
-	void deleteUserRoom(long roomId, long userId);
+	Boolean deleteUserRoom(long roomId, long userId);
 	void deleteUserRoom(long roomId);
 
 	UserRoom setIsHost(int hostId,int roomId);

@@ -8,7 +8,6 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -22,19 +21,31 @@ public class SendEmailUtil {
 	@Autowired
 	RandomStringUtil randomStringUtil;
 	
-	public static String SendEmail(String userEmail) throws MessagingException{
+	Random rand;
+	
+	static String port="mail.smtp.port";
+	static String host="mail.smtp.host";
+	static String hostAddress="smtp.gmail.com";
+	static String auth="mail.smtp.auth";
+	static String subject="We See Play";
+	static String enable="mail.smtp.ssl.enable";
+	static String charSet="utf-8";
+	static String trust="mail.smtp.ssl.trust";
+	
+	public static String sendEmail(String userEmail) throws MessagingException{
 		String recipient=userEmail;
 		
 		final String email=SendEmailAccountInfoUtil.getEmail();
 		final String password=SendEmailAccountInfoUtil.getEmailPassword();
 		Properties prop=new Properties();
-		prop.put("mail.smtp.host", "smtp.gmail.com");
-        prop.put("mail.smtp.port", 465);
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.ssl.enable", "true");
-        prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+		prop.put(host, hostAddress);
+        prop.put(port, 465);
+        prop.put(auth, "true");
+        prop.put(enable, "true");
+        prop.put(trust, hostAddress);
 		
         Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+        	@Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(email, password);
             }
@@ -52,30 +63,31 @@ public class SendEmailUtil {
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
  
             // Subject
-        message.setSubject("We See Play");
+        message.setSubject(subject);
  
             // Text
-        message.setText(mailContent, "utf-8", "html");
+        message.setText(mailContent, charSet, "html");
         Transport.send(message);    // send message
 
 		return null;
 	}
 	
-	public String SendPwEmail(String userEmail) throws MessagingException{
+	public String sendPwEmail(String userEmail) throws MessagingException{
 		String recipient=userEmail;
-		Random rand = new Random();
+		rand = new Random();
 		int pwLen=rand.nextInt(5)+8;
 		String tempPw=randomStringUtil.getRandomPw(pwLen);
 		final String email=SendEmailAccountInfoUtil.getEmail();
 		final String password=SendEmailAccountInfoUtil.getEmailPassword();
 		Properties prop=new Properties();
-		prop.put("mail.smtp.host", "smtp.gmail.com");
-        prop.put("mail.smtp.port", 465);
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.ssl.enable", "true");
-        prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+		prop.put(host, hostAddress);
+        prop.put(port, 465);
+        prop.put(auth, "true");
+        prop.put(enable, "true");
+        prop.put(trust, hostAddress);
 		
         Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+        	@Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(email, password);
             }
@@ -92,28 +104,29 @@ public class SendEmailUtil {
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
  
             // Subject
-        message.setSubject("We See Play");
+        message.setSubject(subject);
  
             // Text
-        message.setText(mailContent, "utf-8", "html");
+        message.setText(mailContent, charSet, "html");
         Transport.send(message);    // send message
 
 		return tempPw;
 	}
 
-	public static String SendEmailPw(String userEmail) throws MessagingException {
+	public static String sendEmailPw(String userEmail) throws MessagingException {
 		String recipient=userEmail;
 		
 		final String email=SendEmailAccountInfoUtil.getEmail();
 		final String password=SendEmailAccountInfoUtil.getEmailPassword();
 		Properties prop=new Properties();
-		prop.put("mail.smtp.host", "smtp.gmail.com");
-        prop.put("mail.smtp.port", 465);
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.ssl.enable", "true");
-        prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+		prop.put(host, hostAddress);
+        prop.put(port, 465);
+        prop.put(auth, "true");
+        prop.put(enable, "true");
+        prop.put(trust, hostAddress);
 		
         Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+        	@Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(email, password);
             }
@@ -131,10 +144,10 @@ public class SendEmailUtil {
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
  
             // Subject
-        message.setSubject("We See Play");
+        message.setSubject(subject);
  
             // Text
-        message.setText(mailContent, "utf-8", "html");
+        message.setText(mailContent, charSet, "html");
         Transport.send(message);    // send message
 
 		return null;
