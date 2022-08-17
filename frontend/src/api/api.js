@@ -120,7 +120,6 @@ export default {
 
     editRoom: async (roomId, data) => {
       const req = setRequest("PATCH", `/${roomId}`, data)
-      store.dispatch("editRoomInfo", data)
       const res = await sendAxios(req)
       return res
     },
