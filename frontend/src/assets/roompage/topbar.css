@@ -10,7 +10,7 @@
     rgba(105, 94, 239, 0.9)
   );
   display: flex;
-  justify-content: center;
+  justify-content: justify-between;
   color: rgba(11, 0, 135, 0.75);
 }
 

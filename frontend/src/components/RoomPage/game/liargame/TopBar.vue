@@ -26,13 +26,11 @@
         <span class="notify-span">제시어: {{ suggestion }}</span>
       </div>
     </div>
+    <div v-if="isGameMode === 3"></div>
     <div>
-      <button v-if="isHost" class="end-button">
+      <button v-if="isHost" class="end-button" @click="$emit('quitGame')">
         <div>
-          <i
-            class="fa-solid fa-person-running fa-xl"
-            @click="$emit('quitGame')"
-          ></i>
+          <i class="fa-solid fa-person-running fa-xl"></i>
         </div>
         <div>
           <span>게임 종료</span>

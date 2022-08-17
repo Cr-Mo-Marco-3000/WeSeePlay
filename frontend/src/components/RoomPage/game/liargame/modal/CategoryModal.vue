@@ -2,7 +2,7 @@
   <div class="modal modal-overlay" @mousedown.self="$emit('close')">
     <div class="modal-window">
       <div class="top">
-        <button @click="$emit('close')">X</button>
+        <button @click="$emit('close')" class="close-button">X</button>
       </div>
       <h6>주제 선택</h6>
       <div id="category-box">
@@ -75,7 +75,17 @@ export default {
 
 <style scoped>
 @import url("@/assets/roompage/Modal.css");
+
 .modal-window {
   height: auto;
+}
+
+.close-button {
+  background: rgba(0, 0, 0, 0);
+  font-size: 18px;
+}
+
+.close-button:hover {
+  cursor: pointer;
 }
 </style>
