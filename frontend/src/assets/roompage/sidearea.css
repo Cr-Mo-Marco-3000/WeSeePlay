@@ -12,6 +12,10 @@
   overflow: hidden;
 }
 
+.sideArea-on-game {
+  top: 6rem;
+}
+
 .exit {
   border: none;
   background-color: transparent;
@@ -165,6 +169,7 @@
 .message {
   position: relative;
   width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 .message-user-info {
@@ -190,6 +195,7 @@
   text-align: start;
   font-size: 0.9rem;
   padding-left: 0.5rem;
+  word-wrap: break-word;
 }
 
 /* 메시지 보낼 사용자들을 정하는 구간 */
@@ -303,4 +309,8 @@
   align-items: center;
   padding-top: 3px;
   cursor: pointer;
+}
+
+.text-area {
+  padding-top: 10px;
 }
