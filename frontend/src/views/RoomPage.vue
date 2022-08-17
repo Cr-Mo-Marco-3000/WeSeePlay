@@ -1,5 +1,5 @@
 <template>
-  <TopBar v-if="isGameMode !== 1" :isHost="isHost" />
+  <TopBar v-if="isGameMode !== 1" :isHost="isHost" :isGameMode="isGameMode" />
   <div class="main-area">
     <VideoArea
       :isSide="Boolean(isSide)"
@@ -60,7 +60,7 @@ const sideFromRoom = function (e) {
 }
 
 // 게임 모드 판별하는 변수
-const isGameMode = ref(store.getters.getRoomInfo.game)
+const isGameMode = ref(1)
 
 // 본인이 호스트인지 판별하는 변수
 const isHost = ref(false)

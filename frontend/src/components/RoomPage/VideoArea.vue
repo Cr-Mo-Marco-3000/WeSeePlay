@@ -106,7 +106,7 @@ $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
 // 다른 파일에서와는 다르게, 얘가 useStore임
 const usestore = useStore()
 
-const isGameMode = ref(store.getters.getRoomInfo.game)
+const isGameMode = ref(1)
 const router = useRouter()
 const initSetting = function () {
   gameSet = reactive({
@@ -225,6 +225,8 @@ const callmyNameGameStart = async function () {
     .catch((error) => {
       console.error(error)
     })
+  store.dispatch("editRoomGame", 3)
+  isGameMode.value = 3
 }
 //////////////////////////////////////////////////
 
@@ -417,6 +419,7 @@ const endGame = async function (result) {
   // }, 5000)
   initSetting()
   isGameMode.value = 1
+  store.dispatch("editRoomGame", 1)
 }
 
 const isLiar = ref(false)
@@ -565,8 +568,10 @@ const joinSession = () => {
       callMyNameGameResult.value = true
       await api.room.editRoom(state.mySessionId, { game: 1 })
     }
+
     callMyNamegameSet.gameResultModal = true
     isGameMode.value = 1
+    store.dispatch("editRoomGame", 1)
   })
   state.session.on("signal:callMynamechooseIncorrect", () => {})
 
@@ -577,7 +582,7 @@ const joinSession = () => {
     gameSet.maxRound = parseInt(info[2])
     isGameMode.value = parseInt(info[0])
     gameSet.isGameNow = true
-    store.dispatch("setGameSet", gameSet)
+    store.dispatch("editRoomGame", 2)
   })
   state.session.on("signal:whoIsLiar", (data) => {
     gameSet.liar = data.data

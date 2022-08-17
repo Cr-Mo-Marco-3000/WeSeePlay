@@ -216,7 +216,7 @@ const heIsLiar = function (suspect) {
       console.error(error)
     })
 }
-const liarFinalInput = async function (inputValue) {
+const liarFinalInput = function (inputValue) {
   liarInputNow.value = false
   let result = true
   if (inputValue == gameSet.suggestion) {
