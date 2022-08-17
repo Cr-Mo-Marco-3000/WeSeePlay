@@ -1,6 +1,9 @@
 <template>
-  <div class="modal modal-overlay">
+  <div class="modal modal-overlay" @mousedown.self="$emit('close')">
     <div class="modal-window">
+      <div class="top">
+        <button @click="$emit('close')">X</button>
+      </div>
       <h6>주제 선택</h6>
       <div id="category-box">
         <div v-for="(category, key) in categoryList" :key="key">
@@ -16,26 +19,17 @@
         </div>
       </div>
       <button
-        @click="selectCategory($event)"
-        class="overlay__btn category-btn random-btn"
-        value="random"
-      >
-        랜덤선택
-      </button>
-      <button
         @click="submitCategory"
         class="overlay__btn overlay__btn--transparent start-btn"
       >
         게임시작!
       </button>
-      <div class="round-time-bar" data-style="smooth" style="--duration: 30">
-        <div></div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Swal from "sweetalert2"
 import { ref } from "vue"
 import api from "@/api/api"
 
@@ -44,29 +38,10 @@ export default {
   emits: ["close"],
   props: [],
   setup(props, context) {
-    setTimeout(function () {
-      // socket 보내는거
-      // 만약 이때까지 start 버튼을 안눌렀다면 여기서 주제를 socket으로 보냄
-      context.emit("close", "liarGameStart")
-    }, 30000)
-
     const pickCategory = ref(0)
 
     // 주제 더미데이터
-    const categoryList = [
-      "주제1",
-      "주제2",
-      "주제3",
-      "주제4",
-      "주제5",
-      "주제6",
-      "주제7",
-      "주제8",
-      "주제9",
-      "주제10",
-      "주제11",
-      "주제12",
-    ]
+    const categoryList = ["음식", "위인", "동물", "직업", "영화", "스포츠"]
 
     const selectCategory = function (event) {
       const categoryBtns = document.querySelectorAll(".category-btn")
@@ -78,11 +53,20 @@ export default {
     }
 
     const submitCategory = async function () {
-      const getLiarSuggestion = await api.game.getliarsuggestion(
-        pickCategory.value
-      )
-      context.emit("close")
-      context.emit("liarGameStart", getLiarSuggestion.data.suggestion)
+      console.log("dkffkfkdsfsdkjfldsjflkdsjflkjdsflk", pickCategory.value)
+      if (pickCategory.value == 0) {
+        Swal.fire({
+          icon: "error",
+          text: "주제를 선택하지 않았습니다!",
+        })
+        return
+      } else {
+        const getLiarSuggestion = await api.game.getliarsuggestion(
+          pickCategory.value
+        )
+        context.emit("close")
+        context.emit("liarGameStart", getLiarSuggestion.data.suggestion)
+      }
     }
     return { categoryList, selectCategory, submitCategory }
   },
