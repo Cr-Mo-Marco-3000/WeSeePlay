@@ -82,6 +82,7 @@ import axios from "axios"
 import $axios from "axios"
 import { reactive, onBeforeUnmount, onMounted } from "vue"
 import { OpenVidu } from "openvidu-browser"
+import Swal from "sweetalert2"
 // import UserVideo from "./components/UserVideo.vue"
 
 $axios.defaults.headers.post["Content-Type"] = "application/json"
@@ -265,8 +266,9 @@ const gameStart = async function (data) {
   })
   gameSet.gameUserList.value.push(state.myUserName)
   gameSet.maxRound = 5
-  gameSet.suggestion = data
-  resultSuggestion.value = data
+  gameSet.suggestion = data.suggestion
+  const liarCategory = data.category
+  resultSuggestion.value = data.suggestion
   shuffle(gameSet.gameUserList.value)
   gameSet.liar = pickLiar(gameSet.gameUserList.value)
   state.session
@@ -294,9 +296,15 @@ const gameStart = async function (data) {
     .catch((error) => {
       console.error(error)
     })
+
+  const liarGameData = {
+    suggestion: gameSet.suggestion,
+    maxRound: gameSet.maxRound,
+    category: liarCategory,
+  }
   state.session
     .signal({
-      data: "2," + gameSet.suggestion + "," + String(gameSet.maxRound),
+      data: JSON.stringify(liarGameData),
       to: [],
       type: "gameStart",
     })
@@ -588,14 +596,23 @@ const joinSession = () => {
 
   // liar Game
   state.session.on("signal:gameStart", (data) => {
-    let info = data.data.split(",")
-    gameSet.suggestion = info[1]
-    topBarSuggestion.value = gameSet.suggestion
-    resultSuggestion.value = gameSet.suggestion
+    const { suggestion, maxRound, category } = JSON.parse(data.data)
+
+    gameSet.suggestion = suggestion
+    topBarSuggestion.value = suggestion
+    resultSuggestion.value = suggestion
     emit("tbs", topBarSuggestion.value)
-    gameSet.maxRound = parseInt(info[2])
-    isGameMode.value = parseInt(info[0])
+    console.log("%c maxRound는! ", "color: white; background: black", maxRound)
+    gameSet.maxRound = Number(maxRound)
+    isGameMode.value = 2
     gameSet.isGameNow = true
+
+    Swal.fire({
+      title: "Liar Game 시작!",
+      text: `카테고리: ${category}`,
+      icon: "info",
+    })
+
     store.dispatch("editRoomGame", 2)
   })
   state.session.on("signal:whoIsLiar", (data) => {

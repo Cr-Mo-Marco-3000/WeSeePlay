@@ -64,8 +64,12 @@ export default {
         const getLiarSuggestion = await api.game.getliarsuggestion(
           pickCategory.value
         )
+        const gameData = {
+          category: categoryList[pickCategory.value],
+          suggestion: getLiarSuggestion.data.suggestion,
+        }
         context.emit("close")
-        context.emit("liarGameStart", getLiarSuggestion.data.suggestion)
+        context.emit("liarGameStart", gameData)
       }
     }
     return { categoryList, selectCategory, submitCategory }
