@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RandomStringUtil {
 	
-	Random rand;
+	Random rand=new Random();
 	
 	public String getRandomString(int randomLength) {
 		StringBuilder randomString=new StringBuilder();
