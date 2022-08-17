@@ -174,7 +174,6 @@ const callMyNameInitSetting = function () {
   })
 }
 const callmyNameGameStart = async function () {
-  await api.room.editRoom(state.mySessionId, { game: 3 })
   callMyNameCoolDown.value = 3
   callMyNameGameIdx.value = 0
   callMyNamegameSet.userList = []
@@ -193,7 +192,6 @@ const callmyNameGameStart = async function () {
   const nameApiRequest = await api.game.getcallmyname()
   callMyNamegameSet.suggestion = nameApiRequest.data.wordList
   shuffle(callMyNamegameSet.userList)
-
   state.session
     .signal({
       data: callMyNamegameSet.suggestion.join(),
@@ -219,7 +217,7 @@ const callmyNameGameStart = async function () {
     .catch((error) => {
       console.error(error)
     })
-
+  await api.room.editRoom(state.mySessionId, { game: 3 })
   state.session
     .signal({
       data: "3," + String(callMyNamegameSet.maxRound),
