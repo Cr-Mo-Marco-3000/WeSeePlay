@@ -374,7 +374,13 @@ watchEffect(async () => {
 })
 //라이어 게임 시작
 watchEffect(() => {
-  if (props.isLiarGameStart === 2) {
+  if (isGameMode.value !== 1) {
+    Swal.fire({
+      title: "이미 게임중입니다.",
+      text: `진행 중인 게임을 먼저 종료해 주세요.`,
+      icon: "info",
+    })
+  } else if (props.isLiarGameStart === 2) {
     if (state.subscribers.length > 1) {
       selectingCategory.value = true
     } else {
@@ -389,7 +395,13 @@ watchEffect(() => {
 })
 // 콜 마이 네임 시작 isCallMyStart
 watchEffect(() => {
-  if (props.isCallMyStart === 2) {
+  if (isGameMode.value !== 1) {
+    Swal.fire({
+      title: "이미 게임중입니다.",
+      text: `진행 중인 게임을 먼저 종료해 주세요.`,
+      icon: "info",
+    })
+  } else if (props.isCallMyStart === 2) {
     if (state.subscribers.length > 1) {
       callmyNameGameStart()
     } else {

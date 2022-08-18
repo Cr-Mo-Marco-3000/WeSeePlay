@@ -2,7 +2,7 @@
   <div
     v-if="!(sideBarStatus === '0')"
     class="sideArea"
-    :class="{ 'sideArea-on-game': isGameMode - 1 }"
+    :class="{ 'sideArea-on-game': isGameMode }"
   >
     <button class="exit">
       <i @click="closeSidebar" class="fa-solid fa-x fa-lg exit-label"></i>
@@ -30,6 +30,7 @@
 // eslint-disable-next-line
 import { ref, watchEffect, defineEmits, defineProps } from "vue"
 import { useStore } from "vuex"
+import api from "@/api/api"
 import GameArea from "./sidearea/GameArea.vue"
 import ChattingArea from "./sidearea/ChattingArea.vue"
 import ParticipantArea from "./sidearea/ParticipantArea.vue"
@@ -54,21 +55,18 @@ const closeSidebar = () => {
 }
 const sideBarStatus = ref("0")
 
-watchEffect(() => {
-  sideBarStatus.value = store.getters.get_sidebar
-})
-
 // 유저 정보 출력
 const roomUserInfo = ref([])
 const roomInfo = ref({})
 
 watchEffect(() => {
-  console.log("사이드 에어리어 갱신 됐나>", roomUserInfo.value)
-  roomUserInfo.value = store.getters.getUserInfo
-  if (roomUserInfo.value.length) {
-    console.log("새로운 참가자야!")
-  }
   roomInfo.value = store.getters.getRoomInfo
+})
+
+watchEffect(async () => {
+  const res = await api.room.roomInfo(roomInfo.value.roomId)
+  sideBarStatus.value = store.getters.get_sidebar
+  roomUserInfo.value = res.data.joinUsers
 })
 </script>
 
