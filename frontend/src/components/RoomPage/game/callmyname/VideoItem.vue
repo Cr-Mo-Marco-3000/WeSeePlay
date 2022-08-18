@@ -27,6 +27,7 @@
       >
         NEXT
       </button>
+      <div class="is-ask" v-if="userEmail === videoUserEmail">Asking</div>
     </div>
   </div>
 </template>
