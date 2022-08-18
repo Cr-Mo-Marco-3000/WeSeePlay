@@ -7,7 +7,7 @@
           v-for="(user, key) in userInfo"
           :key="key"
           class="overlay__btn user-item"
-          @click="check(user)"
+          @click="check(user, key)"
           :id="user"
         >
           <div class="name-box">
@@ -30,20 +30,20 @@ import { ref } from "vue"
 export default {
   name: "VoteModal",
   emits: ["close"],
-  props: ["userList"],
+  props: ["userList", "nicknameList"],
   setup(props, context) {
     const suspect = ref("")
 
-    let userInfo = [...props.userList]
+    let userInfo = [...props.nicknameList]
 
-    const check = function (user) {
+    const check = function (user, key) {
       const checkBtns = document.querySelectorAll(".user-item")
       const skipBtn = document.querySelector(".skip-btn")
       checkBtns.forEach((cb) => {
         cb.classList.remove("active")
         if (cb.id === user) {
           cb.classList.add("active")
-          suspect.value = user
+          suspect.value = props.userList[key]
         }
       })
       skipBtn.classList.remove("active")

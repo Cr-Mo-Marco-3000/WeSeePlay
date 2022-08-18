@@ -34,10 +34,10 @@
             <ov-video class="ov-area" :stream-manager="winnerVideo" />
           </div>
         </div>
-        <div v-if="win" class="word">
+        <div v-if="win === 2" class="word">
           <p>최고의 눈치를 가졌군요!</p>
         </div>
-        <div v-else class="word">
+        <div v-else-if="win === 3" class="word">
           <div>
             당신의 제시어: <span>{{ word }}</span>
           </div>
@@ -58,13 +58,11 @@ export default {
     OvVideo,
   },
   setup(props) {
-    const win = ref(props.isWin)
+    const win = ref(1)
     const winnerNickname = ref(props.winner)
     const word = ref(props.suggestion)
     watchEffect(() => {
-      if (props.myEmail !== props.winner) {
-        win.value = false
-      }
+      win.value = props.isWin
       winnerNickname.value = JSON.parse(
         props.winnerVideo.stream.connection.data
       ).userNickname

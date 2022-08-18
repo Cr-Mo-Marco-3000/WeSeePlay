@@ -21,6 +21,7 @@
       :tmpliarInputModal="tmpliarInputModal"
       :tmpGameResultModal="tmpGameResultModal"
       :tmpGameResult="tmpGameResult"
+      :liargameNicknameList="liargameNicknameList"
     />
     <MeetingVideo
       v-if="isGameMode === 1"
@@ -39,6 +40,7 @@
   <LiarWaitingModal
     v-if="isLiarWaiting"
     :liar="liargameLiar"
+    :liarStream="liarStream"
     @close="isLiarWaiting = false"
   />
 
@@ -99,6 +101,7 @@ const isGameMode = ref(1)
 const router = useRouter()
 
 const initSetting = function () {
+  liargameNicknameList.value = []
   liargameLiar.value = ""
   gameSet = reactive({
     gameIdx: 0,
@@ -126,7 +129,7 @@ const callMyNameCoolDown = ref(3)
 const callMyNameMyName = ref("")
 const callMyNameGameResultWinner = ref("")
 const callMyNameGameWinnerVideo = ref()
-const callMyNameGameResult = ref(false)
+const callMyNameGameResult = ref(1)
 let callMyNamegameSet = reactive({
   isGameNow: 0,
   suggestion: [],
@@ -144,7 +147,7 @@ const callMyNameInitSetting = function () {
   callMyNameCoolDown.value = 3
   callMyNameMyName.value = ""
   callMyNameGameResultWinner.value = ""
-  callMyNameGameResult.value = false
+  callMyNameGameResult.value = 1
   callMyNamegameSet = reactive({
     isGameNow: 0,
     suggestion: [],
@@ -225,6 +228,7 @@ const selectingCategory = ref(false)
 const liarIncorrectInput = ref("")
 const resultSuggestion = ref("")
 const liarStream = ref()
+const liargameNicknameList = ref([])
 let gameSet = reactive({
   gameIdx: 0,
   isGameNow: 0,
@@ -565,6 +569,7 @@ const joinSession = () => {
     // 모든 사용자 gameidx증가
   })
   state.session.on("signal:callMynameChooseCorrect", async (info) => {
+    callMyNameGameResult.value = 1
     let data = parseInt(info.data)
     if (!data) {
       callMyNameGameResultWinner.value = callMyNamegameSet.userList[0]
@@ -577,10 +582,16 @@ const joinSession = () => {
       if (callMyNamegameSet.userList[i] === state.myUserName) {
         callMyNameMyName.value = callMyNamegameSet.suggestion[i]
       }
+      if (
+        callMyNamegameSet.userList[i] === state.myUserName &&
+        state.myUserName !== callMyNameGameResultWinner.value
+      ) {
+        callMyNameGameResult.value = 3
+      }
     }
 
     if (state.myUserName === callMyNameGameResultWinner.value) {
-      callMyNameGameResult.value = true
+      callMyNameGameResult.value = 2
     }
     if (state.myUserName === hostEmail.value) {
       await api.room.editRoom(state.mySessionId, { game: 1 })
@@ -639,11 +650,17 @@ const joinSession = () => {
         ) {
           // console.log(JSON.parse(element.stream.connection.data).clientData)
           gameSet.gameUserOrder.push(element)
+          liargameNicknameList.value.push(
+            JSON.parse(element.stream.connection.data).userNickname
+          )
           flag = 1
         }
       })
       if (!flag) {
         gameSet.gameUserOrder.push(state.publisher)
+        liargameNicknameList.value.push(
+          JSON.parse(state.publisher.stream.connection.data).userNickname
+        )
       }
     }
     for (let q = 0; q < gameSet.gameUserList.value.length; q++) {
@@ -693,14 +710,49 @@ const joinSession = () => {
     ) {
       // 스킵 된 경우  alert 창 여기에다가 띄우면 됨
       if (gameSet.skipNum >= gameSet.voteNum) {
-        console.log("스킵 되었습니다.")
+        if (gameSet.passedRound < 4) {
+          Swal.fire({
+            title: `${gameSet.passedRound + 1}번째 라운드로 넘어갑니다.`,
+            text: "라이어를 찾지 못해 스킵 되었습니다.",
+            icon: "info",
+          })
+        }
+        if (gameSet.passedRound === 4) {
+          Swal.fire({
+            title: `마지막 라운드로 넘어갑니다.`,
+            text: "라이어를 찾지 못해 스킵 되었습니다.",
+            icon: "info",
+          })
+        }
       }
       if (gameSet.skipNum < gameSet.voteNum) {
         // 스킵 되지 않은 경우
+        let isSame = ref(false)
         for (const [key, value] of Object.entries(gameSet.votingProcess)) {
           if (value > maxValue) {
             maxValue = value
             maxKey = key
+            isSame.value = false
+          } else if (value === maxValue) {
+            isSame.value = true
+          }
+        }
+        if (isSame.value === true) {
+          maxValue = 0
+          gameSet.skipNum += 1000
+          if (gameSet.passedRound < 4) {
+            Swal.fire({
+              title: `${gameSet.passedRound + 1}번째 라운드로 넘어갑니다.`,
+              text: "라이어를 찾지 못해 스킵 되었습니다.",
+              icon: "info",
+            })
+          }
+          if (gameSet.passedRound === 4) {
+            Swal.fire({
+              title: `마지막 라운드로 넘어갑니다.`,
+              text: "라이어를 찾지 못해 스킵 되었습니다.",
+              icon: "info",
+            })
           }
         }
       }
@@ -725,6 +777,11 @@ const joinSession = () => {
           }
         } else {
           isEnd = true
+          Swal.fire({
+            title: "라이어를 찾지 못했습니다!",
+            text: `잘못된 대상이 지목 되었습니다.`,
+            icon: "info",
+          })
         }
       }
       if (isEnd) {

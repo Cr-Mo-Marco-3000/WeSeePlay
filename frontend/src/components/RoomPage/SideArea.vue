@@ -63,7 +63,11 @@ const roomUserInfo = ref([])
 const roomInfo = ref({})
 
 watchEffect(() => {
+  console.log("사이드 에어리어 갱신 됐나>", roomUserInfo.value)
   roomUserInfo.value = store.getters.getUserInfo
+  if (roomUserInfo.value.length) {
+    console.log("새로운 참가자야!")
+  }
   roomInfo.value = store.getters.getRoomInfo
 })
 </script>

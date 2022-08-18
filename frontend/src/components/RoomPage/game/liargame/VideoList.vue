@@ -107,7 +107,12 @@
     />
   </div>
 
-  <VoteModal v-if="voteNow" :userList="tmpUserList" @vote="heIsLiar" />
+  <VoteModal
+    v-if="voteNow"
+    :userList="tmpUserList"
+    :nicknameList="nicknameList"
+    @vote="heIsLiar"
+  />
 
   <liarInputModal v-if="liarInputNow" @answer="liarFinalInput" />
 </template>
@@ -157,12 +162,16 @@ const props = defineProps({
   tmpGameResult: {
     type: String,
   },
+  liargameNicknameList: {
+    type: Array,
+  },
 })
 const gameSet = reactive({ ...props.setting })
 const voteNow = ref(false)
 const liarInputNow = ref(false)
 const gameResultModal = ref(false)
 const tmpGameResult = ref("")
+const nicknameList = ref([])
 
 watchEffect(() => {
   console.log(gameSet.gameIdx)
@@ -172,6 +181,7 @@ watchEffect(() => {
   liarInputNow.value = props.tmpliarInputModal
   gameResultModal.value = props.tmpGameResultModal
   tmpGameResult.value = props.tmpGameResult
+  nicknameList.value = props.liargameNicknameList
 })
 // 역기서 부터 게임 입니다.
 
