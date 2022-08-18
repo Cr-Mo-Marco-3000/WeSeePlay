@@ -17,7 +17,7 @@
           라이어가 눈치챌 수 있으니 주의해야겠죠?<br />
         </p>
       </div>
-      <img class="logo-img" src="../../../assets/logo.png" />
+      <img class="carousel-gif" src="../../../assets/fourthCarousel.gif" />
     </div>
   </div>
 </template>
