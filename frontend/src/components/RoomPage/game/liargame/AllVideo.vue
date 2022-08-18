@@ -52,11 +52,6 @@ watchEffect(() => {
   } else {
     grid.value = "col-4"
   }
-  console.log(
-    "%c Oh Yes TEST BABY ",
-    "color: white; background: rgb(1,23,112)",
-    props.gameUserOrder
-  )
 })
 </script>
 

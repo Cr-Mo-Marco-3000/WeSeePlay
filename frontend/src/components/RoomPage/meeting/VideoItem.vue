@@ -41,7 +41,6 @@ if (props.user) {
 watchEffect(() => {
   props.user
   let data = { ...props.user }
-  console.log("%c Main Video ", "color: black;background: brown", data)
   data = JSON.parse(data.stream.connection.data)
   nickname.value = data.userNickname
 })

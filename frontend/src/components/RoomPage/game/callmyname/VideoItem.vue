@@ -12,6 +12,15 @@
       </div>
       <ov-video class="ov-area" :stream-manager="user" />
       <button
+        class="input-my-name"
+        v-if="
+          myEmail === userEmail && myEmail === videoUserEmail && coolDown <= 0
+        "
+        @click.stop="$emit('answer')"
+      >
+        Guess my name
+      </button>
+      <button
         class="next-btn"
         v-if="myEmail === userEmail && myEmail === videoUserEmail"
         @click.stop="$emit('next')"

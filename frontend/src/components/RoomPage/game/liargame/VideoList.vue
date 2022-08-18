@@ -105,10 +105,6 @@
       :isSide="isSide"
       :emailData="gameSet.gameUserList.value"
     />
-    <!-- 일반인인지 라이어인지, 제시어 알려 주는 부분
-    <div v-if="gameSet.liar == userId">당신은 라이어 입니다.</div>
-    <div v-if="isLiar">당신은 라이어 입니다.</div>
-    <div v-else>제시어는 {{ gameSet.suggestion }} 입니다.</div> -->
   </div>
 
   <VoteModal v-if="voteNow" :userList="tmpUserList" @vote="heIsLiar" />
@@ -178,14 +174,7 @@ watchEffect(() => {
   tmpGameResult.value = props.tmpGameResult
 })
 // 역기서 부터 게임 입니다.
-//여긴 game web socket
-console.log("여기는 왜 안들어 가 있는거야?", gameSet.gameUserOrder)
-// const gameSetting = function () {
-//   gameSet.maxRound = 5
-//   gameSet.suggestion = "사자"
-//   shuffle(userList.value)
-//   gameSet.liar = pickLiar(userList.value)
-// }
+
 const gameIdxUp = function () {
   console.log(gameSet.gameUserList)
   props.session
@@ -220,7 +209,6 @@ const liarFinalInput = function (inputValue) {
   liarInputNow.value = false
   let result = true
   if (inputValue == gameSet.suggestion) {
-    console.log("정답이다 멍청아")
     result = false
   }
   console.log(result)

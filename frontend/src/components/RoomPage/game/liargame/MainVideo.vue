@@ -39,7 +39,6 @@ const props = defineProps({
 
 const myEmail = store.getters.me.userEmail
 let data = { ...props.user }
-console.log("%c Main Video ", "color: black;background: brown", data)
 data = JSON.parse(data.stream.connection.data)
 const nickname = data.userNickname
 

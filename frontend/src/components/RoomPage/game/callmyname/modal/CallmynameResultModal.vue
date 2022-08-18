@@ -29,7 +29,11 @@
         <div class="winner">
           <span>{{ winnerNickname }}</span> 승리!
         </div>
-        <div class="video-box">대충 여기에 화면 띄워주기</div>
+        <div class="padding-area">
+          <div class="radius-area row" :class="non - talk - box">
+            <ov-video class="ov-area" :stream-manager="winnerVideo" />
+          </div>
+        </div>
         <div v-if="win" class="word">
           <p>최고의 눈치를 가졌군요!</p>
         </div>
@@ -44,16 +48,28 @@
   </div>
 </template>
 <script>
-import { ref } from "vue"
+import { ref, watchEffect } from "vue"
+import OvVideo from "@/components/RoomPage/game/callmyname/OvVideo.vue"
 
 export default {
   name: "CallmynameResultModal",
-  props: ["winner", "isWin", "suggestion"],
+  props: ["winner", "isWin", "suggestion", "winnerVideo", "myEmail"],
+  components: {
+    OvVideo,
+  },
   setup(props) {
-    console.log(props.winner, props.isWin, props.suggestion)
     const win = ref(props.isWin)
     const winnerNickname = ref(props.winner)
     const word = ref(props.suggestion)
+    watchEffect(() => {
+      if (props.myEmail !== props.winner) {
+        win.value = false
+      }
+      winnerNickname.value = JSON.parse(
+        props.winnerVideo.stream.connection.data
+      ).userNickname
+    })
+    console.log(props.winner, props.isWin, props.suggestion, props.winnerVideo)
     return { win, winnerNickname, word }
   },
 }
@@ -61,7 +77,7 @@ export default {
 
 <style scoped>
 @import url("@/assets/roompage/Modal.css");
-
+@import url("@/assets/roompage/videoBox.css");
 .modal-window {
   height: auto;
 }

@@ -27,7 +27,11 @@
       </div>
       <div v-if="!waiting && !liarWin" class="winner-box">
         <div class="winner"><span>라이어</span> 승리!</div>
-        <div class="video-box">대충 여기에 화면 띄워주기</div>
+        <div class="padding-area">
+          <div class="radius-area row" :class="non - talk - box">
+            <ov-video class="ov-area" :stream-manager="liarStream" />
+          </div>
+        </div>
         <p>최고의 거짓말쟁이 {{ liarNickname }}!</p>
       </div>
       <div v-if="!waiting && liarWin">
@@ -44,11 +48,14 @@
 </template>
 <script>
 import { ref, watchEffect } from "vue"
+import OvVideo from "@/components/RoomPage/game/callmyname/OvVideo.vue"
 
 export default {
   name: "LiarResultModal",
-  props: ["whoWin", "gameSet", "suggestion", "liarInput", "liar"], // liar 찾으면 true / 아니면 false
-
+  props: ["whoWin", "gameSet", "suggestion", "liarInput", "liar", "liarStream"], // liar 찾으면 true / 아니면 false
+  components: {
+    OvVideo,
+  },
   setup(props) {
     const time = ref(3)
     const waiting = ref(true)
@@ -59,6 +66,9 @@ export default {
     watchEffect(() => {
       liarWord.value = props.liarInput
       word.value = props.suggestion
+      liarNickname.value = JSON.parse(
+        props.liarStream.stream.connection.data
+      ).userNickname
     })
     setInterval(async function () {
       if (time.value > 0) {
@@ -85,6 +95,7 @@ export default {
 
 <style scoped>
 @import url("@/assets/roompage/Modal.css");
+@import url("@/assets/roompage/videoBox.css");
 
 .modal-window {
   height: auto;
