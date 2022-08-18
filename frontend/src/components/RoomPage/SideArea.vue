@@ -2,7 +2,7 @@
   <div
     v-if="!(sideBarStatus === '0')"
     class="sideArea"
-    :class="{ 'sideArea-on-game': isGameMode }"
+    :class="{ 'sideArea-on-game': isGameMode - 1 }"
   >
     <button class="exit">
       <i @click="closeSidebar" class="fa-solid fa-x fa-lg exit-label"></i>

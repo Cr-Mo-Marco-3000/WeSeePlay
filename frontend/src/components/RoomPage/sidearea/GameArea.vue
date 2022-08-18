@@ -17,7 +17,13 @@
     <div class="game-item" @click="$emit('click-callmyname')">
       <div class="game-title game-text">콜 마이 네임</div>
       <!-- 아래 부분의 game-text가 게임 하나 부분입니다. -->
-      <div class="game-text">당신의 이름은 무엇일 까요? <br /></div>
+      <div class="game-text">
+        사람들은 다른 사람의 이름을 볼 수 있지만,<br />
+        자신의 이름은 알 수 없습니다.<br />
+        다른 사람들과의 질답을 통해<br />
+        다른 사람들보다 빠르게 <br />
+        자신이 누구인지 알아맞춰보세요!<br />
+      </div>
     </div>
   </div>
 </template>
