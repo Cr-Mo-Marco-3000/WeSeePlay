@@ -71,14 +71,11 @@
 
 .user-item,
 .skip-btn {
+  width: 100%;
+  color: black;
   margin: 0.3rem 0.5rem;
-  display: flex;
-  justify-content: space-between;
   padding: 0.5rem;
   background: #c9c5f1;
-  border-radius: 10px;
-  border: none;
-  outline: none;
 }
 
 .skip-btn {

@@ -48,7 +48,6 @@
   width: 94%;
   height: 70%;
   left: 3%;
-  overflow: hidden;
 }
 
 .game-item {
@@ -61,10 +60,12 @@
   height: auto;
   padding: 20px;
   border-radius: 20px;
+  margin-bottom: 10px;
 }
 
 .game-item:hover {
   background-color: rgba(201, 197, 241, 0.7);
+  cursor: pointer;
 }
 
 .game-item:hover > .game-text {

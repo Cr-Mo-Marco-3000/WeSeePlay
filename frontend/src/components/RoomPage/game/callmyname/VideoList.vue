@@ -1,6 +1,6 @@
 <template>
   <div class="row full-height justify-center items-center video-list-area">
-    <div class="row col-10">
+    <div class="row col-9 justify-center">
       <video-item
         v-for="(user, idx) in callMyNamePlayers"
         class="col-6"
@@ -59,8 +59,6 @@ const nonPlayers = ref(gameSet.gameUserOrder.slice(3))
 const suggestions = ref(gameSet.suggestion)
 const userInputModal = ref(false)
 const chooseIncorrectCoolDown = ref(0)
-console.log("여기까지는 들어왔나", callMyNamePlayers.value)
-console.log("이게 문제인가", gameSet.userList)
 console.log(nonPlayers)
 watchEffect(() => {
   tmpNum.value = props.gameIdx

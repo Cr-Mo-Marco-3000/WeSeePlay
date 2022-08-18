@@ -54,8 +54,11 @@ export default {
           /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!#$%&'*+-/=?^_`{|}~."(),:;<>@[\]\\])[A-Za-z\d!#$%&'*+-/=?^_`{|}~."(),:;<>@[\]\\]{8,16}$/
 
         if (!credentials.newPassword || !credentials.passwordConfirm) {
+          const errorTxt = document.querySelector(".auth-error-msg")
+          errorTxt.style.color = "#e31818"
           passwordErrorMsg.value = "비밀번호를 입력하세요"
           setTimeout(() => {
+            errorTxt.style.color = "#625eef"
             passwordErrorMsg.value =
               "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)"
           }, 3000)
@@ -64,8 +67,11 @@ export default {
           errorFlag === true &&
           !passwordRegex.test(credentials.newPassword)
         ) {
+          const errorTxt = document.querySelector(".auth-error-msg")
+          errorTxt.style.color = "#e31818"
           passwordErrorMsg.value = "비밀번호 형식이 잘못되었습니다."
           setTimeout(() => {
+            errorTxt.style.color = "#625eef"
             passwordErrorMsg.value =
               "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)"
           }, 3000)
@@ -74,8 +80,11 @@ export default {
           errorFlag === true &&
           credentials.newPassword !== credentials.passwordConfirm
         ) {
+          const errorTxt = document.querySelector(".auth-error-msg")
+          errorTxt.style.color = "#e31818"
           passwordErrorMsg.value = "두 비밀번호가 일치하지 않습니다"
           setTimeout(() => {
+            errorTxt.style.color = "#625eef"
             passwordErrorMsg.value =
               "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)"
           }, 3000)
@@ -84,9 +93,12 @@ export default {
           errorFlag === true &&
           credentials.password === credentials.newPassword
         ) {
+          const errorTxt = document.querySelector(".auth-error-msg")
+          errorTxt.style.color = "#e31818"
           passwordErrorMsg.value =
             "기존의 비밀번호와 동일한 비밀번호로 변경할 수 없습니다"
           setTimeout(() => {
+            errorTxt.style.color = "#625eef"
             passwordErrorMsg.value =
               "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)"
           }, 3000)

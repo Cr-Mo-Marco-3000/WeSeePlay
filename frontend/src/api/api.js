@@ -9,6 +9,8 @@ const EMAIL = "/email"
 
 const ROOMS = "/rooms"
 
+const GAMES = "/game"
+
 const CERTIFICATION = "/certification"
 
 // 아래 카카오 로그인을 할 때는, 프론트엔드쪽으로 포트 번호를 맞추어야 한다
@@ -22,6 +24,19 @@ const kakaoSendToken = "https://i7a501.p.ssafy.io/api/v1/users/oauth/kakao"
 const setRequest = function (method, url, data = "") {
   const req = {
     url: HOST + ROOMS + url,
+    method,
+    headers: store.getters.authHeader,
+  }
+  if (data !== "") {
+    req.data = data
+  }
+  return req
+}
+
+// 게임용 setRequest
+const setGameRequest = function (method, url, data = "") {
+  const req = {
+    url: HOST + GAMES + url,
     method,
     headers: store.getters.authHeader,
   }
@@ -132,6 +147,19 @@ export default {
 
     killRoom: async (data) => {
       const req = setRequest("DELETE", "", data)
+      const res = await sendAxios(req)
+      return res
+    },
+  },
+  game: {
+    // call my name 제시어 획득
+    getcallmyname: async () => {
+      const req = setGameRequest("GET", "/callmyname")
+      const res = await sendAxios(req)
+      return res
+    },
+    getliarsuggestion: async (data) => {
+      const req = setGameRequest("GET", `/${data}`)
       const res = await sendAxios(req)
       return res
     },
