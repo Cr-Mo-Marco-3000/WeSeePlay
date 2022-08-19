@@ -31,7 +31,9 @@
           </div>
         </div>
       </div>
-      <span class="info-text error-message">{{ emailErrorMsg }}</span>
+      <span class="info-text error-message email-error">{{
+        emailErrorMsg
+      }}</span>
       <div class="signup-password-input">
         <div class="user-input">
           <span>비밀번호</span>
@@ -50,12 +52,12 @@
           />
         </div>
       </div>
-      <span class="info-text">{{ passwordErrorMsg }}</span>
+      <span class="info-text pw-error">{{ passwordErrorMsg }}</span>
       <div class="user-input">
         <span>닉네임</span>
         <input type="text" name="nickname" v-model="credentials.nickname" />
       </div>
-      <span class="info-text">{{ nicknameErrorMsg }}</span>
+      <span class="info-text nickname-error">{{ nicknameErrorMsg }}</span>
       <button @click="checkSignup" class="auth-btn overlay__btn">
         회원가입
       </button>
@@ -106,6 +108,8 @@ export default {
       try {
         const emailRegex = /^[a-zA-Z0-9.^$*?=!:/_-]+@[a-zA-Z]+\.[A-Za-z]{2,4}$/
         if (!emailRegex.test(credentials.email)) {
+          const emailErrorTxt = document.querySelector(".email-error")
+          emailErrorTxt.style.color = "#e31818"
           emailErrorMsg.value = "이메일 형식이 올바르지 않습니다"
           return
         }
@@ -121,6 +125,8 @@ export default {
         }
       } catch (err) {
         if (err.response.data.statusCode === 409) {
+          const emailErrorTxt = document.querySelector(".email-error")
+          emailErrorTxt.style.color = "#e31818"
           emailErrorMsg.value = "이미 가입한 이메일 주소입니다"
         } else if (err.response.data.statusCode === 500) {
           router.push({ name: "errorpage", params: { errorname: 500 } })
@@ -130,6 +136,8 @@ export default {
 
     // 이메일 캔슬
     const cancelEmail = function () {
+      const emailErrorTxt = document.querySelector(".email-error")
+      emailErrorTxt.style.color = "#625eef"
       credentials.email = ""
       emailErrorMsg.value = ""
       isAuthOpen.value = false
@@ -138,6 +146,8 @@ export default {
     // 이메일 전송 & 재전송 함수
     const sendEmail = async function () {
       try {
+        const emailErrorTxt = document.querySelector(".email-error")
+        emailErrorTxt.style.color = "#625eef"
         emailErrorMsg.value = "인증 이메일이 발송 중 입니다"
         const response = await axios({
           url: api.users.sendEmail(),
@@ -175,8 +185,11 @@ export default {
         }
         // 비밀번호
         if (!credentials.password || !credentials.passwordConfirm) {
+          const pwErrorTxt = document.querySelector(".pw-error")
+          pwErrorTxt.style.color = "#e31818"
           passwordErrorMsg.value = "비밀번호를 입력하세요"
           setTimeout(() => {
+            pwErrorTxt.style.color = "#625eef"
             passwordErrorMsg.value =
               "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)"
           }, 3000)
@@ -185,8 +198,11 @@ export default {
           errorFlag === true &&
           !passwordRegex.test(credentials.password)
         ) {
+          const pwErrorTxt = document.querySelector(".pw-error")
+          pwErrorTxt.style.color = "#e31818"
           passwordErrorMsg.value = "비밀번호 형식이 잘못되었습니다."
           setTimeout(() => {
+            pwErrorTxt.style.color = "#625eef"
             passwordErrorMsg.value =
               "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)"
           }, 3000)
@@ -195,8 +211,11 @@ export default {
           errorFlag === true &&
           credentials.password !== credentials.passwordConfirm
         ) {
+          const pwErrorTxt = document.querySelector(".pw-error")
+          pwErrorTxt.style.color = "#e31818"
           passwordErrorMsg.value = "두 비밀번호가 일치하지 않습니다"
           setTimeout(() => {
+            pwErrorTxt.style.color = "#625eef"
             passwordErrorMsg.value =
               "영문, 숫자, 특수문자를 각각 1개 이상 포함(8~16자)"
           }, 3000)
@@ -204,6 +223,8 @@ export default {
         }
         // 닉네임
         if (!credentials.nickname) {
+          const nicknameErrorTxt = document.querySelector(".nickname-error")
+          nicknameErrorTxt.style.color = "#e31818"
           nicknameErrorMsg.value = "닉네임을 입력하세요"
           errorFlag = false
         } else if (
@@ -223,8 +244,11 @@ export default {
             ) ||
             !/^[ㄱ-ㅎ|가-힣|a-z|A-Z|]+$/.test(credentials.nickname))
         ) {
+          const nicknameErrorTxt = document.querySelector(".nickname-error")
+          nicknameErrorTxt.style.color = "#e31818"
           nicknameErrorMsg.value = "닉네임 형식이 잘못되었습니다."
           setTimeout(() => {
+            nicknameErrorTxt.style.color = "#625eef"
             nicknameErrorMsg.value = "한글 2~8자, 영문 6~24자(6~24 byte 이내)"
           }, 3000)
           errorFlag = false

@@ -26,7 +26,7 @@
           <div class="email-auth-btns" style="">
             <div v-if="!isAuthOpen" class="email-auth-btns-false">
               <button
-                @click="sendEmail"
+                @click.prevent="sendEmail"
                 style="background: black"
                 class="modal-email-btn"
               >
@@ -34,8 +34,12 @@
               </button>
             </div>
             <div v-else class="email-auth-btns-true">
-              <button class="resend-btn" @click="sendEmail">재발송</button>
-              <button style="background: black" @click="changePw">완료</button>
+              <button class="resend-btn" @click.prevent="sendEmail">
+                재발송
+              </button>
+              <button style="background: black" @click.prevent="changePw">
+                완료
+              </button>
             </div>
           </div>
         </div>
@@ -97,7 +101,7 @@ export default {
           return
         }
       } catch (error) {
-        if (error.response.data.statusCode === 404) {
+        if (error.response.data.statusCode === 403) {
           emailErrorMsg.value = "해당 이메일로 가입된 계정이 없습니다"
         } else if (error.response.data.statusCode === 500) {
           router.push({ name: "errorpage", params: { errorname: 500 } })

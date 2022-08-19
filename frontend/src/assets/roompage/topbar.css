@@ -10,7 +10,7 @@
     rgba(105, 94, 239, 0.9)
   );
   display: flex;
-  justify-content: center;
+  justify-content: justify-between;
   color: rgba(11, 0, 135, 0.75);
 }
 
@@ -20,7 +20,9 @@
   align-items: center;
 }
 .top-bar > div:nth-child(1) {
+  position: relative;
   justify-content: start;
+  left: 1rem;
 }
 .top-bar > div:nth-child(2) {
   justify-content: center;
@@ -45,7 +47,32 @@
   font-size: 1.3rem;
 }
 
-/* 버튼 */
+/* 매뉴얼 버튼 */
+.manual-button {
+  height: 3rem;
+  width: 6rem;
+  border: none;
+  border-radius: 10px;
+  background: rgba(84, 22, 255, 0.79);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* 아이콘과 글씨 색 한 번에 바꾸기 */
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+}
+
+.manual-button > span {
+  font-size: medium;
+}
+
+.manual-button:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.75);
+  color: rgba(84, 22, 255, 0.79);
+}
+
+/* 끝내기 버튼 */
 .end-button {
   height: 3rem;
   width: 7rem;

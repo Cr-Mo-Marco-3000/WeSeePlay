@@ -91,10 +91,14 @@ export default {
             router.push({ name: "mainpage" })
           }
         } else {
+          const errorTxt = document.querySelector(".error-message")
+          errorTxt.style.color = "#e31818"
           loginErrorMsg.value = "아이디와 비밀번호를 입력하세요"
           return
         }
       } catch (err) {
+        const errorTxt = document.querySelector(".error-message")
+        errorTxt.style.color = "#e31818"
         loginErrorMsg.value = "입력한 정보를 다시 확인해 주세요"
         return
       }

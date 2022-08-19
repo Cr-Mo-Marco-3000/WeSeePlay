@@ -27,8 +27,12 @@
       </div>
       <div v-if="!waiting && !liarWin" class="winner-box">
         <div class="winner"><span>라이어</span> 승리!</div>
-        <div class="video-box">대충 여기에 화면 띄워주기</div>
-        <p>최고의 거짓말쟁이, {{ liarNickname }}!</p>
+        <div class="padding-area">
+          <div class="radius-area row" :class="non - talk - box">
+            <ov-video class="ov-area" :stream-manager="liarStream" />
+          </div>
+        </div>
+        <p>최고의 거짓말쟁이 {{ liarNickname }}!</p>
       </div>
       <div v-if="!waiting && liarWin">
         <div class="winner"><span>참가자</span> 승리!</div>
@@ -37,28 +41,36 @@
           ><br />
           라이어가 제출한 제시어: {{ liarWord }}
           <p>거짓말쟁이를 찾아냈어요!<i class="fa-solid fa-hand-peace"></i></p>
-          <p>라이어가 입력한 값: {{ gameSet.liarInput }}</p>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { ref } from "vue"
+import { ref, watchEffect } from "vue"
+import OvVideo from "@/components/RoomPage/game/callmyname/OvVideo.vue"
 
 export default {
   name: "LiarResultModal",
-  props: ["whoWin", "gameSet"], // liar 찾으면 true / 아니면 false
-
+  props: ["whoWin", "gameSet", "suggestion", "liarInput", "liar", "liarStream"], // liar 찾으면 true / 아니면 false
+  components: {
+    OvVideo,
+  },
   setup(props) {
     const time = ref(3)
     const waiting = ref(true)
     const liarWin = ref(props.whoWin)
-    const word = ref(props.gameSet.suggestion)
-    const liarNickname = ref(props.gameSet.liar)
-    const liarWord = ref("내가 어케아는데")
-
-    setInterval(function () {
+    const word = ref(props.suggestion)
+    const liarNickname = ref(props.liar)
+    const liarWord = ref(props.liarInput)
+    watchEffect(() => {
+      liarWord.value = props.liarInput
+      word.value = props.suggestion
+      liarNickname.value = JSON.parse(
+        props.liarStream.stream.connection.data
+      ).userNickname
+    })
+    setInterval(async function () {
       if (time.value > 0) {
         time.value -= 1
         const timer = document.querySelector(".timer")
@@ -69,7 +81,10 @@ export default {
       if (time.value == 0) {
         waiting.value = false
         // 라이어 승리시
-        liarWin.value = props.whoWin
+        if (word.value === liarWord.value) {
+          liarWin.value = false
+        }
+
         return
       }
     }, 1000)
@@ -80,6 +95,7 @@ export default {
 
 <style scoped>
 @import url("@/assets/roompage/Modal.css");
+@import url("@/assets/roompage/videoBox.css");
 
 .modal-window {
   height: auto;

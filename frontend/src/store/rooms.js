@@ -48,8 +48,14 @@ export default {
     INIT_CHATTING: (state) => {
       state.chattings = []
     },
+    EDIT_GAMEMODE: (state, data) => {
+      state.roomInfo.game = data
+    },
   },
   actions: {
+    editRoomGame: ({ commit }, data) => {
+      commit("EDIT_GAMEMODE", data)
+    },
     openSidebar: ({ commit }, data) => {
       commit("SET_SIDEBAR", data)
     },

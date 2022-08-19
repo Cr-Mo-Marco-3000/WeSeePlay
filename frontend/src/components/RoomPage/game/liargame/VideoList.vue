@@ -1,6 +1,6 @@
 <template>
-  <div class="row video-list-area">
-    <div class="row" :class="isSide ? 'col-7' : 'col-5'">
+  <div class="row video-list-area justify-center">
+    <div class="row" :class="isSide ? 'col-5' : 'col-4'">
       <MainVideo
         v-if="tmpNum == 0"
         class="self-center col-12"
@@ -100,18 +100,19 @@
     </div>
     <AllVideo
       class="self-center"
-      :class="isSide ? 'col-5' : 'col-7'"
+      :class="isSide ? 'col-7' : 'col-8'"
       :gameUserOrder="gameSet.gameUserOrder"
       :isSide="isSide"
       :emailData="gameSet.gameUserList.value"
     />
-    <!-- 일반인인지 라이어인지, 제시어 알려 주는 부분
-    <div v-if="gameSet.liar == userId">당신은 라이어 입니다.</div>
-    <div v-if="isLiar">당신은 라이어 입니다.</div>
-    <div v-else>제시어는 {{ gameSet.suggestion }} 입니다.</div> -->
   </div>
 
-  <VoteModal v-if="voteNow" :userList="tmpUserList" @vote="heIsLiar" />
+  <VoteModal
+    v-if="voteNow"
+    :userList="tmpUserList"
+    :nicknameList="nicknameList"
+    @vote="heIsLiar"
+  />
 
   <liarInputModal v-if="liarInputNow" @answer="liarFinalInput" />
 </template>
@@ -161,12 +162,16 @@ const props = defineProps({
   tmpGameResult: {
     type: String,
   },
+  liargameNicknameList: {
+    type: Array,
+  },
 })
 const gameSet = reactive({ ...props.setting })
 const voteNow = ref(false)
 const liarInputNow = ref(false)
 const gameResultModal = ref(false)
 const tmpGameResult = ref("")
+const nicknameList = ref([])
 
 watchEffect(() => {
   console.log(gameSet.gameIdx)
@@ -176,16 +181,10 @@ watchEffect(() => {
   liarInputNow.value = props.tmpliarInputModal
   gameResultModal.value = props.tmpGameResultModal
   tmpGameResult.value = props.tmpGameResult
+  nicknameList.value = props.liargameNicknameList
 })
 // 역기서 부터 게임 입니다.
-//여긴 game web socket
-console.log("여기는 왜 안들어 가 있는거야?", gameSet.gameUserOrder)
-// const gameSetting = function () {
-//   gameSet.maxRound = 5
-//   gameSet.suggestion = "사자"
-//   shuffle(userList.value)
-//   gameSet.liar = pickLiar(userList.value)
-// }
+
 const gameIdxUp = function () {
   console.log(gameSet.gameUserList)
   props.session
@@ -220,7 +219,6 @@ const liarFinalInput = function (inputValue) {
   liarInputNow.value = false
   let result = true
   if (inputValue == gameSet.suggestion) {
-    console.log("정답이다 멍청아")
     result = false
   }
   console.log(result)

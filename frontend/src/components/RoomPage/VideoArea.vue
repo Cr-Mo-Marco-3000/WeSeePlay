@@ -1,22 +1,5 @@
 <template>
   <div class="video-area" :class="{ 'video-area-on-sidebar': isSide }">
-    <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
-    <button
-      v-if="isGameMode === 1"
-      style="position: absolute; top: 1rem"
-      @click="callmyNameGameStart"
-    >
-      이건 왜 안떠요Game On/Off 이게 콜마네
-    </button>
-    <!-- 이 버튼 어차피 나중에 날릴 것이므로 -->
-    <button
-      v-if="isGameMode === 1"
-      style="position: absolute; top: 1rem"
-      @click="selectingCategory = true"
-    >
-      Game On/Off
-    </button>
-
     <!-- isGameMode가 참이면 GameVideo가 나오게 하고, false라면 MeetingVideo가 나오게 짰어-->
     <CallMyNameVideo
       v-if="isGameMode === 3"
@@ -38,6 +21,7 @@
       :tmpliarInputModal="tmpliarInputModal"
       :tmpGameResultModal="tmpGameResultModal"
       :tmpGameResult="tmpGameResult"
+      :liargameNicknameList="liargameNicknameList"
     />
     <MeetingVideo
       v-if="isGameMode === 1"
@@ -55,14 +39,19 @@
   />
   <LiarWaitingModal
     v-if="isLiarWaiting"
-    :liar="gameSet.liar"
+    :liar="liargameLiar"
+    :liarStream="liarStream"
     @close="isLiarWaiting = false"
   />
 
   <LiarResultModal
     v-if="tmpGameResultModal"
     :whoWin="tmpGameResult"
+    :liar="liargameLiar"
     :gameSet="gameSet"
+    :suggestion="resultSuggestion"
+    :liarInput="liarIncorrectInput"
+    :liarStream="liarStream"
     @close="tmpGameResultModal = false"
   />
 
@@ -72,6 +61,8 @@
     :winner="callMyNameGameResultWinner"
     :isWin="callMyNameGameResult"
     :suggestion="callMyNameMyName"
+    :winnerVideo="callMyNameGameWinnerVideo"
+    :myEmail="state.myUserName"
   />
 </template>
 
@@ -84,7 +75,7 @@ import LiarWaitingModal from "@/components/RoomPage/game/liargame/modal/LiarWait
 import LiarResultModal from "@/components/RoomPage/game/liargame/modal/LiarResultModal.vue"
 import CallmynameResultModal from "@/components/RoomPage/game/callmyname/modal/CallmynameResultModal.vue"
 
-import { ref, defineProps, watchEffect } from "vue"
+import { ref, defineProps, watchEffect, defineEmits } from "vue"
 import store from "@/store"
 import { useRouter } from "vue-router"
 import { useStore } from "vuex"
@@ -96,6 +87,7 @@ import axios from "axios"
 import $axios from "axios"
 import { reactive, onBeforeUnmount, onMounted } from "vue"
 import { OpenVidu } from "openvidu-browser"
+import Swal from "sweetalert2"
 // import UserVideo from "./components/UserVideo.vue"
 
 $axios.defaults.headers.post["Content-Type"] = "application/json"
@@ -103,10 +95,14 @@ $axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*"
 
 // 다른 파일에서와는 다르게, 얘가 useStore임
 const usestore = useStore()
+const emit = defineEmits(["tbs", "tbl", "heygettopbar", "returnLiar"])
 
-const isGameMode = ref(store.getters.getRoomInfo.game)
+const isGameMode = ref(1)
 const router = useRouter()
+
 const initSetting = function () {
+  liargameNicknameList.value = []
+  liargameLiar.value = ""
   gameSet = reactive({
     gameIdx: 0,
     isGameNow: 0,
@@ -132,7 +128,8 @@ const callMyNameGameIdx = ref(0)
 const callMyNameCoolDown = ref(3)
 const callMyNameMyName = ref("")
 const callMyNameGameResultWinner = ref("")
-const callMyNameGameResult = ref(false)
+const callMyNameGameWinnerVideo = ref()
+const callMyNameGameResult = ref(1)
 let callMyNamegameSet = reactive({
   isGameNow: 0,
   suggestion: [],
@@ -145,27 +142,26 @@ let callMyNamegameSet = reactive({
   gameResultModal: false,
   userList: [],
 })
-// const callMyNameInitSetting = function () {
-//   callMyNameGameIdx = ref(0)
-//   callMyNameMyName = ref("")
-//   callMyNameCoolDown = ref(3)
-//   callMyNamegameSet = reactive({
-//     isGameNow: 0,
-//     suggestion: [],
-//     maxRound: 0,
-//     targetPlayer: [],
-//     nontargetPlayer: [],
-//     passedTurn: 0,
-//     passedRound: 0,
-//     gameUserOrder: [],
-//     gameResult: false,
-//     gameResultWinner: "",
-//     gameResultModal: false,
-//     userList: [],
-//   })
-// }
+const callMyNameInitSetting = function () {
+  callMyNameGameIdx.value = 0
+  callMyNameCoolDown.value = 3
+  callMyNameMyName.value = ""
+  callMyNameGameResultWinner.value = ""
+  callMyNameGameResult.value = 1
+  callMyNamegameSet = reactive({
+    isGameNow: 0,
+    suggestion: [],
+    maxRound: 0,
+    targetPlayer: [],
+    nontargetPlayer: [],
+    passedTurn: 0,
+    passedRound: 0,
+    gameUserOrder: [],
+    gameResultModal: false,
+    userList: [],
+  })
+}
 const callmyNameGameStart = async function () {
-  await api.room.editRoom(state.mySessionId, { game: 3 })
   callMyNameCoolDown.value = 3
   callMyNameGameIdx.value = 0
   callMyNamegameSet.userList = []
@@ -181,9 +177,9 @@ const callmyNameGameStart = async function () {
   })
   callMyNamegameSet.userList.push(state.myUserName)
   callMyNamegameSet.maxRound = 5
-  callMyNamegameSet.suggestion = ["아이유", "산타클로스", "뽀로로"]
+  const nameApiRequest = await api.game.getcallmyname()
+  callMyNamegameSet.suggestion = nameApiRequest.data.wordList
   shuffle(callMyNamegameSet.userList)
-
   state.session
     .signal({
       data: callMyNamegameSet.suggestion.join(),
@@ -209,7 +205,7 @@ const callmyNameGameStart = async function () {
     .catch((error) => {
       console.error(error)
     })
-
+  await api.room.editRoom(state.mySessionId, { game: 3 })
   state.session
     .signal({
       data: "3," + String(callMyNamegameSet.maxRound),
@@ -224,12 +220,15 @@ const callmyNameGameStart = async function () {
     })
 }
 //////////////////////////////////////////////////
-watchEffect(() => {
-  isGameMode.value = store.getters.getRoomInfo.game
-})
+
 // 게임 정보
 const isLiarWaiting = ref(false)
+const liargameLiar = ref("")
 const selectingCategory = ref(false)
+const liarIncorrectInput = ref("")
+const resultSuggestion = ref("")
+const liarStream = ref()
+const liargameNicknameList = ref([])
 let gameSet = reactive({
   gameIdx: 0,
   isGameNow: 0,
@@ -265,7 +264,7 @@ function pickLiar(array) {
   const randomPosition = Math.floor(Math.random() * array.length)
   return array[randomPosition]
 }
-const gameStart = async function () {
+const gameStart = async function (data) {
   await api.room.editRoom(state.mySessionId, { game: 2 })
   gameSet.gameUserOrder = [] // 초기화
   gameSet.gameUserList.value = []
@@ -276,7 +275,9 @@ const gameStart = async function () {
   })
   gameSet.gameUserList.value.push(state.myUserName)
   gameSet.maxRound = 5
-  gameSet.suggestion = "사자"
+  gameSet.suggestion = data.suggestion
+  const liarCategory = data.category
+  resultSuggestion.value = data.suggestion
   shuffle(gameSet.gameUserList.value)
   gameSet.liar = pickLiar(gameSet.gameUserList.value)
   state.session
@@ -304,9 +305,15 @@ const gameStart = async function () {
     .catch((error) => {
       console.error(error)
     })
+
+  const liarGameData = {
+    suggestion: gameSet.suggestion,
+    maxRound: gameSet.maxRound,
+    category: liarCategory,
+  }
   state.session
     .signal({
-      data: "2," + gameSet.suggestion + "," + String(gameSet.maxRound),
+      data: JSON.stringify(liarGameData),
       to: [],
       type: "gameStart",
     })
@@ -319,6 +326,15 @@ const gameStart = async function () {
 }
 const userList = ref([]) // Component에 넘겨줄 user list
 const props = defineProps({
+  isLiarGameStart: {
+    type: Number,
+  },
+  isCallMyStart: {
+    type: Number,
+  },
+  isQuit: {
+    type: Number,
+  },
   isSide: {
     type: Boolean,
     required: true,
@@ -338,7 +354,69 @@ const props = defineProps({
     type: Object,
   },
 })
-
+// 강제 종료
+watchEffect(async () => {
+  if (props.isQuit === 2) {
+    state.session
+      .signal({
+        data: 1,
+        to: [],
+        type: "quitgame",
+      })
+      .then(() => {
+        console.log("quitgame")
+      })
+      .catch((error) => {
+        console.error(error)
+      })
+  }
+  emit("heygettopbar")
+})
+//라이어 게임 시작
+watchEffect(() => {
+  if (props.isLiarGameStart === 2) {
+    // console.log("일단 찾아보자", isGameMode.value)
+    // if (parseInt(isGameMode.value) !== 1) {
+    //   Swal.fire({
+    //     title: "이미 게임중입니다.",
+    //     text: `진행 중인 게임을 먼저 종료해 주세요.`,
+    //     icon: "info",
+    //   })
+    // } else
+    if (state.subscribers.length > 1) {
+      selectingCategory.value = true
+    } else {
+      Swal.fire({
+        title: "Liar Game 인원수 부족!",
+        text: `3인 이상 플레이 가능`,
+        icon: "info",
+      })
+    }
+    emit("returnLiar")
+  }
+})
+// 콜 마이 네임 시작 isCallMyStart
+watchEffect(() => {
+  // if (isGameMode.value !== 1) {
+  //   Swal.fire({
+  //     title: "이미 게임중입니다.",
+  //     text: `진행 중인 게임을 먼저 종료해 주세요.`,
+  //     icon: "info",
+  //   })
+  // } else
+  if (props.isCallMyStart === 2) {
+    if (state.subscribers.length > 1) {
+      callmyNameGameStart()
+    } else {
+      Swal.fire({
+        title: "Call My Name 인원수 부족!",
+        text: `3인 이상 플레이 가능`,
+        icon: "info",
+      })
+    }
+    emit("returnCallmyname")
+  }
+})
 // 이쪽은 샘플로 넣을 User 수 정하는 거 (최종본에는 지울 내용)
 const customNumber = ref(10)
 for (let i = 1; i < customNumber.value; i++) {
@@ -375,41 +453,17 @@ watchEffect(() => {
   }
   hostEmail.value = store.getters.getRoomInfo.hostEmail
 })
-// const toggleAudio = () => {
-//   vidoman.publishAudio = !vidoman.publishAudio
-//   if (vidoman.publishAudio) {
-//     state.publisher.publishAudio(true)
-//   } else {
-//     state.publisher.publishAudio(false)
-//   }
-// }
+
 const endGame = async function (result) {
   await api.room.editRoom(state.mySessionId, { game: 1 })
-  result = Boolean(result)
   tmpGameResult.value = result
   tmpGameResultModal.value = true
-  // if (result) {
-  //   if (gameSet.liar === state.myUserName) {
-  //     gameSet.gameResult = "유저 승리"
-  //   } else {
-  //     gameSet.gameResult = "라이어 패배"
-  //   }
-  // } else {
-  //   console.log("여기까지 온거 아냐?")
-  //   if (gameSet.liar === state.myUserName) {
-  //     gameSet.gameResult = "라이어 승리"
-  //   } else {
-  //     gameSet.gameResult = "유저 패배"
-  //   }
-  // }
-  // setTimeout(() => {
-  //   tmpGameResult.value = gameSet.gameResultModal
-  // }, 5000)
+
   initSetting()
   isGameMode.value = 1
+  store.dispatch("editRoomGame", 1)
 }
 
-const isLiar = ref(false)
 const tmpNum = ref(0)
 const tmpvote = ref(false)
 const tmpliarInputModal = ref(false)
@@ -417,14 +471,13 @@ const tmpUserList = ref([])
 const tmpGameResultModal = ref(false)
 const tmpGameResult = ref(false)
 
+const isLiar = ref(false)
+const topBarSuggestion = ref("")
+
 const joinSession = () => {
   // --- Get an OpenVidu object ---
-  console.log("오픈 비두 시작!")
   state.mySessionId = props.roomId
-
   state.OV = new OpenVidu()
-  console.log("%cSTATE 시작 전", "color: white; background: red")
-  console.log(state)
   // --- Init a session ---
   state.session = state.OV.initSession()
   // On every new Stream received...
@@ -436,41 +489,26 @@ const joinSession = () => {
   })
   // 메시지 캐치하는 부분
   state.session.on("signal:this is chat", (e) => {
-    console.log("여기까진 되니?")
-    const userList = usestore.getters.getUserInfo
-    const rawMessage = e.data
-    let splitIdx = -1
-    for (let i = 0; i < rawMessage.length; i++) {
-      if (rawMessage[i] === ":") {
-        splitIdx = i
-        break
-      }
-    }
-    const Email = rawMessage.slice(0, splitIdx - 1)
-    const Message = rawMessage.slice(splitIdx + 2, rawMessage.length) + " "
-    let userNickname = ""
-    userList.forEach((userInfo) => {
-      if (userInfo.userEmail === Email) {
-        userNickname = userInfo.userNickname
-        return
-      }
-    })
+    const rawMessage = JSON.parse(e.data)
+    const { nickname, message } = rawMessage
+
     const sendTime = new Date().toLocaleTimeString().slice(0, -3)
     const messageObject = {
-      userNickname: userNickname,
-      content: Message,
+      userNickname: nickname,
+      content: message,
       sendTime: sendTime,
       isDifferentNameAndTime: true,
     }
+
     const exMessage = usestore.getters.getChattings.at(-1)
+
     if (
       exMessage &&
-      exMessage.userNickname === userNickname &&
+      exMessage.userNickname === nickname &&
       exMessage.sendTime === sendTime
     ) {
       messageObject.isDifferentNameAndTime = false
     }
-    console.log("왜안들감?")
     usestore.dispatch("addMessage", messageObject)
   })
 
@@ -486,26 +524,35 @@ const joinSession = () => {
     console.warn(exception)
   })
   state.session.on("signal:get out of this room!", (data) => {
-    console.log(data.data)
     if (state.myUserName !== data.data) {
-      leaveSession()
-      router.push({ name: "mainpage" })
+      setTimeout(() => {
+        let isHostLeave = 1
+        state.subscribers.forEach(function (element) {
+          if (
+            data.data === JSON.parse(element.stream.connection.data).clientData
+          ) {
+            isHostLeave = 0
+          }
+        })
+        if (isHostLeave) {
+          router.push({ name: "mainpage" })
+        }
+      }, 5000)
     }
   })
   //call my name game
-  state.session.on("signal:callMyNamegameStart", (data) => {
+  state.session.on("signal:callMyNamegameStart", async (data) => {
     let info = data.data.split(",")
-    isGameMode.value = parseInt(info[0])
     callMyNameGameIdx.value = 0
     callMyNameCoolDown.value = 3
     callMyNamegameSet.maxRound = parseInt(info[1])
+    isGameMode.value = parseInt(info[0])
+    store.dispatch("editRoomGame", 3)
   })
   state.session.on("signal:callMyNamegameSuggestion", (data) => {
-    console.log(data.data)
     callMyNamegameSet.suggestion = data.data.split(",")
   })
-  state.session.on("signal:callMyNamegameOrder", (data) => {
-    console.log(data.data)
+  state.session.on("signal:callMyNamegameOrder", async (data) => {
     callMyNamegameSet.userList = data.data.split(",")
     callMyNamegameSet.targetPlayer = callMyNamegameSet.userList.slice(0, 3)
     callMyNamegameSet.nontargetPlayer = callMyNamegameSet.userList.slice(3)
@@ -526,8 +573,7 @@ const joinSession = () => {
       }
     }
   })
-  state.session.on("signal:Call my name, idx up", (data) => {
-    console.log(data.data)
+  state.session.on("signal:Call my name, idx up", () => {
     callMyNameGameIdx.value += 1
     if (callMyNameGameIdx.value >= 3) {
       callMyNameGameIdx.value = 0
@@ -538,45 +584,73 @@ const joinSession = () => {
     // 모든 사용자 gameidx증가
   })
   state.session.on("signal:callMynameChooseCorrect", async (info) => {
+    callMyNameGameResult.value = 1
     let data = parseInt(info.data)
     if (!data) {
       callMyNameGameResultWinner.value = callMyNamegameSet.userList[0]
+      callMyNameGameWinnerVideo.value = callMyNamegameSet.gameUserOrder[0]
     } else {
       callMyNameGameResultWinner.value = callMyNamegameSet.userList[data]
+      callMyNameGameWinnerVideo.value = callMyNamegameSet.gameUserOrder[data]
     }
     for (let i = 0; i < 3; i++) {
       if (callMyNamegameSet.userList[i] === state.myUserName) {
         callMyNameMyName.value = callMyNamegameSet.suggestion[i]
       }
+      if (
+        callMyNamegameSet.userList[i] === state.myUserName &&
+        state.myUserName !== callMyNameGameResultWinner.value
+      ) {
+        callMyNameGameResult.value = 3
+      }
     }
 
     if (state.myUserName === callMyNameGameResultWinner.value) {
-      callMyNameGameResult.value = true
+      callMyNameGameResult.value = 2
+    }
+    if (state.myUserName === hostEmail.value) {
       await api.room.editRoom(state.mySessionId, { game: 1 })
     }
+
     callMyNamegameSet.gameResultModal = true
     isGameMode.value = 1
+    store.dispatch("editRoomGame", 1)
   })
-  state.session.on("signal:callMynamechooseIncorrect", (data) => {
-    console.log("잘못된 값을 적었다~", data.data)
-  })
+  state.session.on("signal:callMynamechooseIncorrect", () => {})
 
   // liar Game
   state.session.on("signal:gameStart", (data) => {
-    console.log("게임이 시작 되었는가?????????????")
-    let info = data.data.split(",")
-    console.log(info)
-    gameSet.suggestion = info[1]
-    gameSet.maxRound = parseInt(info[2])
-    isGameMode.value = parseInt(info[0])
+    const { suggestion, maxRound, category } = JSON.parse(data.data)
+
+    gameSet.suggestion = suggestion
+    topBarSuggestion.value = suggestion
+    resultSuggestion.value = suggestion
+    emit("tbs", topBarSuggestion.value)
+    console.log("%c maxRound는! ", "color: white; background: black", maxRound)
+    gameSet.maxRound = Number(maxRound)
+    isGameMode.value = 2
     gameSet.isGameNow = true
-    store.dispatch("setGameSet", gameSet)
+
+    Swal.fire({
+      title: "Liar Game 시작!",
+      text: `카테고리: ${category}`,
+      icon: "info",
+    })
+
+    store.dispatch("editRoomGame", 2)
   })
   state.session.on("signal:whoIsLiar", (data) => {
-    console.log(data.data)
+    liargameLiar.value = data.data
     gameSet.liar = data.data
     if (gameSet.liar == state.myUserName) {
       isLiar.value = true
+    } else {
+      isLiar.value = false
+    }
+    if (isLiar.value) {
+      emit("tbl", 1)
+    } else {
+      emit("tbl", 2)
     }
   })
   state.session.on("signal:gameOrder", (data) => {
@@ -591,16 +665,26 @@ const joinSession = () => {
         ) {
           // console.log(JSON.parse(element.stream.connection.data).clientData)
           gameSet.gameUserOrder.push(element)
+          liargameNicknameList.value.push(
+            JSON.parse(element.stream.connection.data).userNickname
+          )
           flag = 1
         }
       })
       if (!flag) {
         gameSet.gameUserOrder.push(state.publisher)
+        liargameNicknameList.value.push(
+          JSON.parse(state.publisher.stream.connection.data).userNickname
+        )
+      }
+    }
+    for (let q = 0; q < gameSet.gameUserList.value.length; q++) {
+      if (gameSet.gameUserList.value[q] === gameSet.liar) {
+        liarStream.value = gameSet.gameUserOrder[q]
       }
     }
   })
-  state.session.on("signal:gameIdxUp", (data) => {
-    console.log(data.data)
+  state.session.on("signal:gameIdxUp", () => {
     let flag = 0
     gameSet.gameIdx += 1
     if (gameSet.gameIdx >= gameSet.gameUserList.value.length) {
@@ -613,15 +697,12 @@ const joinSession = () => {
     // 모든 사용자 gameidx증가
     if (flag && gameSet.passedRound > 1) {
       // 만약에 라운드가 넘어갔다면 투표
-      console.log("왜 투표를 안하나요")
       gameSet.isVoteNow = true
       tmpvote.value = gameSet.isVoteNow
       gameSet.isVoteNow = false
     }
-    console.log("gameSet.gameIdx : ", gameSet.gameIdx)
   })
   state.session.on("signal:heIsLiar", (data) => {
-    console.log(data.data)
     const suspect = data.data
     if (suspect == "skip") {
       gameSet.skipNum += 1
@@ -642,12 +723,51 @@ const joinSession = () => {
       gameSet.gameUserList.value.length ==
       gameSet.skipNum + gameSet.voteNum
     ) {
+      // 스킵 된 경우  alert 창 여기에다가 띄우면 됨
+      if (gameSet.skipNum >= gameSet.voteNum) {
+        if (gameSet.passedRound < 4) {
+          Swal.fire({
+            title: `${gameSet.passedRound + 1}번째 라운드로 넘어갑니다.`,
+            text: "라이어를 찾지 못해 스킵 되었습니다.",
+            icon: "info",
+          })
+        }
+        if (gameSet.passedRound === 4) {
+          Swal.fire({
+            title: `마지막 라운드로 넘어갑니다.`,
+            text: "라이어를 찾지 못해 스킵 되었습니다.",
+            icon: "info",
+          })
+        }
+      }
       if (gameSet.skipNum < gameSet.voteNum) {
         // 스킵 되지 않은 경우
+        let isSame = ref(false)
         for (const [key, value] of Object.entries(gameSet.votingProcess)) {
           if (value > maxValue) {
             maxValue = value
             maxKey = key
+            isSame.value = false
+          } else if (value === maxValue) {
+            isSame.value = true
+          }
+        }
+        if (isSame.value === true) {
+          maxValue = 0
+          gameSet.skipNum += 1000
+          if (gameSet.passedRound < 4) {
+            Swal.fire({
+              title: `${gameSet.passedRound + 1}번째 라운드로 넘어갑니다.`,
+              text: "라이어를 찾지 못해 스킵 되었습니다.",
+              icon: "info",
+            })
+          }
+          if (gameSet.passedRound === 4) {
+            Swal.fire({
+              title: `마지막 라운드로 넘어갑니다.`,
+              text: "라이어를 찾지 못해 스킵 되었습니다.",
+              icon: "info",
+            })
           }
         }
       }
@@ -660,6 +780,8 @@ const joinSession = () => {
         isEnd = true
       }
       if (maxValue) {
+        // 여기에서 maxKey가 가장 많이 지목 당한 사람
+        console.log("가장 많이 지목 당한 사람", maxKey)
         if (maxKey == gameSet.liar) {
           if (state.myUserName == gameSet.liar) {
             gameSet.liarInputModal = true
@@ -670,6 +792,11 @@ const joinSession = () => {
           }
         } else {
           isEnd = true
+          Swal.fire({
+            title: "라이어를 찾지 못했습니다!",
+            text: `잘못된 대상이 지목 되었습니다.`,
+            icon: "info",
+          })
         }
       }
       if (isEnd) {
@@ -684,9 +811,18 @@ const joinSession = () => {
   state.session.on("signal:liarInput", (data) => {
     tmpliarInputModal.value = gameSet.liarInputModal
     const [result, inputValue] = [...data.data.split(",")]
-    gameSet.liarInput = inputValue
+    liarIncorrectInput.value = inputValue
     isLiarWaiting.value = false
-    endGame(result)
+    endGame(JSON.parse(result))
+  })
+  state.session.on("signal:quitgame", async () => {
+    if (state.myUserName === hostEmail.value) {
+      await api.room.editRoom(state.mySessionId, { game: 1 })
+    }
+    initSetting()
+    callMyNameInitSetting()
+    isGameMode.value = 1
+    store.dispatch("editRoomGame", 1)
   })
   // 'getToken' method is simulating what your server-side should do.
   // 'token' parameter should be retrieved and returned by your own backend
@@ -724,11 +860,6 @@ const joinSession = () => {
 }
 const leaveSession = () => {
   // --- Leave the session by calling 'disconnect' method over the Session object ---
-  console.log(
-    "야야야야야야야야야야야야야야야야",
-    state.myUserName,
-    hostEmail.value
-  )
   if (state.myUserName === hostEmail.value) {
     state.session
       .signal({
@@ -827,10 +958,9 @@ watchEffect(() => {
   }
 })
 const sendMsg = (data) => {
-  console.log(data)
   state.session
     .signal({
-      data: state.myUserName + " : " + data,
+      data: JSON.stringify(data),
       to: [],
       type: "this is chat",
     })
@@ -858,40 +988,12 @@ onMounted(async () => {
       method: "GET",
       headers: { authorization: "Bearer " + localStorage.getItem("token") },
     })
-    console.log(response)
     userId.value = response.data.userEmail
     state.myUserName = userId.value
   } catch (err) {
     console.log(err)
   }
-  console.log("본인 아이디요", userId.value)
 
-  // try {
-  //   const response = await axios({
-  //     method: 'GET',
-  //     headers: { authorization: "Bearer " + localStorage.getItem("token") },
-  //     url: api.room.roomInfo(roomID),
-  //   })
-
-  //   if (response.status === 200) {
-  //     dispatch('setRoomInfo', response.data)
-  //   } else {
-  //     Swal.fire({
-  //       icon: 'error',
-  //       text: '존재하지 않는 방입니다',
-  //     })
-  //     router.push({ name: 'errorpage', params: { errorname: '404' } })
-  //   }
-  // } catch (err) {
-  //   Swal.fire({
-  //     icon: 'error',
-  //     text: '잘못된 접근입니다',
-  //   })
-  //   router.push({ name: 'errorpage', params: { errorname: '500' } })
-  // }
-  console.log("룸 번호요", props.roomId)
-
-  console.log("본인 아이디요", userId.value)
   joinSession()
   // joinGameSession()
 })

@@ -25,14 +25,12 @@ export default {
   props: [],
   setup(props, context) {
     setTimeout(function () {
-      // socket 보내는거
       context.emit("answer")
     }, 15000)
 
     const inputKeyword = ref("")
     const submitKeyword = function () {
       context.emit("answer", inputKeyword.value)
-      // socet 통신 코드 작성
     }
     return { inputKeyword, submitKeyword }
   },

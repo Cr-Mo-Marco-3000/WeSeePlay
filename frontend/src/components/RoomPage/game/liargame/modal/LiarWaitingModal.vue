@@ -21,18 +21,23 @@
 </template>
 
 <script>
-import { ref } from "vue"
+import { ref, watchEffect } from "vue"
 
 export default {
   name: "LiarWaitingModal",
   emits: ["close"],
-  props: [],
+  props: ["liar", "liarStream"],
   setup(props, context) {
     setTimeout(function () {
       context.emit("close")
     }, 30000)
 
-    const liarNickname = ref("원찬호")
+    const liarNickname = ref("")
+    watchEffect(() => {
+      liarNickname.value = JSON.parse(
+        props.liarStream.stream.connection.data
+      ).userNickname
+    })
 
     return { liarNickname }
   },

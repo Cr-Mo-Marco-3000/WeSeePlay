@@ -28,5 +28,5 @@ console.log(props.roomInfo)
 </script>
 
 <style scoped>
-@import url('../../../../src/assets/roompage/sidearea.css');
+@import url("../../../../src/assets/roompage/sidearea.css");
 </style>

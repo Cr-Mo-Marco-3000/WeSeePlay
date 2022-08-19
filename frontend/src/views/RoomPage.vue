@@ -1,5 +1,12 @@
 <template>
-  <TopBar v-if="isGameMode !== 1" :isHost="isHost" />
+  <TopBar
+    v-if="isGameMode !== 1"
+    :isHost="isHost"
+    :isGameMode="isGameMode"
+    :suggestion="liarSuggestion"
+    :isLiar="isLiar"
+    @quitGame="quitGame"
+  />
   <div class="main-area">
     <VideoArea
       :isSide="Boolean(isSide)"
@@ -7,12 +14,22 @@
       :isVideoOpen="isVideoOpen"
       :isAudeoOpen="isAudeoOpen"
       :chatData="chatData"
+      :isQuit="isQuit"
+      :isLiarGameStart="isLiarGameStart"
+      :isCallMyStart="isCallMyStart"
+      @tbs="getSuggestion"
+      @tbl="getLiar"
+      @heygettopbar="quitReturn"
+      @returnLiar="clickLiargameReturn"
+      @returnCallmyname="clickCallmynameReturn"
     />
     <SideArea
       class="self-center"
       v-if="isSide !== 0"
       @send-message="sideFromRoom"
       :isGameMode="isGameMode"
+      @click-liargame="clickLiargame"
+      @click-callmyname="clickCallmyname"
     />
   </div>
   <BottomBar
@@ -39,6 +56,42 @@ import { useStore } from "vuex"
 import api from "@/api/api"
 import Swal from "sweetalert2"
 
+//라이어 게임 에밋
+const liarSuggestion = ref("")
+const isLiar = ref(false)
+const getSuggestion = function (data) {
+  liarSuggestion.value = data
+}
+const getLiar = function (data) {
+  console.log("데이타는 왜 안바뀌는거 같니")
+  isLiar.value = data
+}
+
+//탑 바 게임 끝내기
+const isQuit = ref(1)
+const quitGame = function () {
+  isQuit.value = 2
+}
+const quitReturn = function () {
+  isQuit.value = 1
+}
+
+//라이어 게임 클릭
+const isLiarGameStart = ref(1)
+const clickLiargame = function () {
+  isLiarGameStart.value = 2
+}
+const clickLiargameReturn = function () {
+  isLiarGameStart.value = 1
+}
+// 콜마이 네임
+const isCallMyStart = ref(1)
+const clickCallmyname = function () {
+  isCallMyStart.value = 2
+}
+const clickCallmynameReturn = function () {
+  isCallMyStart.value = 1
+}
 // video toggle
 const isVideoOpen = ref(true)
 const isAudeoOpen = ref(true)
@@ -49,7 +102,7 @@ const roomId = route.params.roomId
 const store = useStore()
 
 const chatData = ref({
-  chatData: "",
+  chatData: {},
   chatCount: 0,
 })
 
@@ -60,7 +113,7 @@ const sideFromRoom = function (e) {
 }
 
 // 게임 모드 판별하는 변수
-const isGameMode = ref(store.getters.getRoomInfo.game)
+const isGameMode = ref(1)
 
 // 본인이 호스트인지 판별하는 변수
 const isHost = ref(false)
@@ -143,7 +196,7 @@ onBeforeUnmount(async () => {
   border: solid 1px black;
 }
 .main-area {
-  top: 5rem;
+  top: 3rem;
   bottom: 5rem;
   position: absolute;
   left: 3vw;

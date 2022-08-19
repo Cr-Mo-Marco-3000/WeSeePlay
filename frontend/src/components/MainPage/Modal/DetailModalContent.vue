@@ -32,7 +32,9 @@
   </div>
   <div v-else class="user-input room-pw-input">
     <span>비밀번호</span>
-    <span> 비공개 방입니다.</span>
+    <span style="color: #625eef; font-size: 0.9rem; margin-top: 0.2rem">
+      비공개 방입니다.</span
+    >
     <input v-model="passwordInput" type="password" />
   </div>
 

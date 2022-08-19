@@ -18,7 +18,11 @@
       :roomInfo="roomInfo"
       @send-message-from-me="chatFromSide"
     />
-    <GameArea v-if="sideBarStatus === '3'" />
+    <GameArea
+      v-if="sideBarStatus === '3'"
+      @click-liargame="$emit('click-liargame')"
+      @click-callmyname="$emit('click-callmyname')"
+    />
   </div>
 </template>
 
@@ -26,6 +30,7 @@
 // eslint-disable-next-line
 import { ref, watchEffect, defineEmits, defineProps } from "vue"
 import { useStore } from "vuex"
+import api from "@/api/api"
 import GameArea from "./sidearea/GameArea.vue"
 import ChattingArea from "./sidearea/ChattingArea.vue"
 import ParticipantArea from "./sidearea/ParticipantArea.vue"
@@ -34,11 +39,12 @@ const emit = defineEmits(["chatFromSide"])
 defineProps({
   isGameMode: Number,
 })
-const msgData = ref("")
-const chatFromSide = function (data) {
-  console.log("this is isOkay", data)
-  msgData.value = data
-  emit("send-message", data)
+const msgData = {}
+const chatFromSide = function (msg) {
+  console.log("this is isOkay", msg)
+  msgData.message = msg
+  msgData.nickname = store.getters.me.userNickname
+  emit("send-message", msgData)
 }
 
 // 사이드바 열고 닫는 부분
@@ -49,17 +55,18 @@ const closeSidebar = () => {
 }
 const sideBarStatus = ref("0")
 
-watchEffect(() => {
-  sideBarStatus.value = store.getters.get_sidebar
-})
-
 // 유저 정보 출력
 const roomUserInfo = ref([])
 const roomInfo = ref({})
 
 watchEffect(() => {
-  roomUserInfo.value = store.getters.getUserInfo
   roomInfo.value = store.getters.getRoomInfo
+})
+
+watchEffect(async () => {
+  const res = await api.room.roomInfo(roomInfo.value.roomId)
+  sideBarStatus.value = store.getters.get_sidebar
+  roomUserInfo.value = res.data.joinUsers
 })
 </script>
 
