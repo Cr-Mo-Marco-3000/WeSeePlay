@@ -1,22 +1,15 @@
 <template>
-  <div class="row justify-center items-center">
-    <a class="col-1" @click.stop="getPageUser(currentPage - 1)">
-      <img class="arrow" src="@/assets/leftArrow.png" />
-    </a>
-    <!-- min width를 줘서 일정 크기 이하로 줄어들었을 때만 겹치게 함 -->
-    <div class="row col-10 justify-center">
+  <div class="row justify-center items-center q-mt-xl">
+    <div class="row justify-center" :class="isSide ? 'col-12' : 'col-10'">
       <video-item
-        v-for="(user, idx) in pageUsers"
+        v-for="(user, idx) in userList"
         :key="idx"
         :user="user"
         :userEmail="emailData[idx]"
-        class="self-center"
-        :class="isSide ? 'col-12' : 'col-6'"
+        class="self-center q-mb-md"
+        :class="grid"
       />
     </div>
-    <a class="col-1" @click.stop="getPageUser(currentPage + 1)">
-      <img class="arrow" src="@/assets/rightArrow.png" />
-    </a>
   </div>
 </template>
 
@@ -28,10 +21,6 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  users: {
-    type: Array,
-    required: true,
-  },
   gameUserOrder: {
     type: Array,
     required: true,
@@ -41,47 +30,38 @@ const props = defineProps({
     required: true,
   },
 })
+const userList = ref([])
+const numUser = ref(0)
+const grid = ref("col-6")
 
-// pagination 관련
-const userStream = [...props.gameUserOrder]
-const currentPage = ref(0)
-const userLimit = ref(6)
-const maxPage = ref(0)
-const pageUsers = ref()
-const sInd = ref(0)
-const eInd = ref(0)
-
-const getPageUser = function (page) {
-  if (page > maxPage.value || page < 0) {
-    console.log("유효한 페이지 범위를 벗어났습니다.", page)
-    return
-  }
-  if (page == maxPage.value) {
-    sInd.value = userStream.length - userLimit.value
-    sInd.value = sInd.value < 0 ? 0 : sInd.value
-    eInd.value = userStream.length
-  } else {
-    sInd.value = page * currentPage.value
-    eInd.value = sInd.value + userLimit.value
-  }
-  console.log("유효한 페이지 범위!.", page)
-  pageUsers.value = userStream.slice(sInd.value, eInd.value)
-  currentPage.value = page
-  console.log("새로운 유저 리스트: ", pageUsers.value)
+if (numUser.value < 6) {
+  grid.value = "col-6"
+} else {
+  grid.value = "col-4"
 }
-getPageUser(0)
-
 watchEffect(() => {
-  props.isSide
-  userLimit.value = props.isSide ? 3 : 6
-  maxPage.value = parseInt((userStream.length - 1) / userLimit.value)
-  getPageUser(0)
+  userList.value = []
+  userList.value = [...props.gameUserOrder]
+  numUser.value = userList.value.length
+  if (numUser.value === 2) {
+    grid.value = "col-7"
+  } else if (numUser.value < 7) {
+    grid.value = "col-5"
+  } else if (numUser.value > 9 && props.isSide === false) {
+    grid.value = "col-3"
+  } else {
+    grid.value = "col-4"
+  }
 })
 </script>
 
 <style scoped>
 .all-video-box {
   padding-bottom: 25%;
+}
+
+.too-many {
+  width: 50%;
 }
 
 .arrow {

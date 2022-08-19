@@ -17,7 +17,7 @@
           채팅으로 생각을 전하는 건 어떨까요?<br />
         </p>
       </div>
-      <img class="logo-img" src="../../../assets/logo.png" />
+      <img class="carousel-gif" src="../../../assets/thirdCarousel.gif" />
     </div>
   </div>
 </template>

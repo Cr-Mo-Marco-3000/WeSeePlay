@@ -83,8 +83,8 @@ input[type="password"]:disabled {
   background: #574dc4;
 }
 
-.room-create-error-msg{
+.room-create-error-msg {
   position: relative;
   height: 0px;
-  color: #695eef;
+  color: #e31818;
 }

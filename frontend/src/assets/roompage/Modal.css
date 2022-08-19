@@ -71,23 +71,24 @@
 
 .user-item,
 .skip-btn {
-  margin: 0.3rem 0.5rem;
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem;
-  background: #c9c5f1;
-  border-radius: 10px;
+  /* margin: 0.3rem 0.5rem; */
+  padding: 0.3rem 0.5rem;
   border: none;
-  outline: none;
+}
+
+.name-box {
+  background: #c9c5f1;
+  color: black;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0.5rem;
 }
 
 .skip-btn {
   justify-content: center;
-}
-
-.user-item input {
-  accent-color: #695eef;
-  width: 1rem;
+  background: #c9c5f1;
+  width: 100%;
+  color: black;
 }
 
 .order-text {

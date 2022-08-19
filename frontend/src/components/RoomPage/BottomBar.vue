@@ -98,10 +98,10 @@ import Swal from "sweetalert2"
 const router = useRouter()
 
 // 마이크가 오픈되어 있지 않음 => 기본값
-const isMicOpen = ref(false)
+const isMicOpen = ref(true)
 
 // 비디오도 오픈되어 있지 않음 => 기본값
-const isVideoOpen = ref(false)
+const isVideoOpen = ref(true)
 const onOffMic = function () {
   isMicOpen.value = !isMicOpen.value
   if (isMicOpen.value === true) {
