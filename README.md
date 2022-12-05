@@ -17,7 +17,7 @@
 
 + 개요
 
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img  src="./assets/Logo.PNG"  height="200"  alt="Logo 이미지가 없습니다."/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img  src="./assets/logo.png"  height="200"  alt="Logo 이미지가 없습니다."/>
 
 	* 서비스 명 : We See Play 
 	* 슬로건 : We See! We Play!
@@ -51,7 +51,7 @@
 
 최대한 디테일하게 기능에 대한 조건을 작성하였습니다.<br>
 
-<img  src="./assets/기능정의서.PNG"  height="600"  alt="기능 정의서 이미지가 없습니다."/><br>
+<img  src="./assets/definition.png"  height="600"  alt="기능 정의서 이미지가 없습니다."/><br>
 
   
 
@@ -62,11 +62,11 @@
 * ### 서비스 화면
 
 시작 페이지<br><br>
-<img  src="./assets/start_page1.PNG"  height="400"  alt="start_page1 이미지가 없습니다."/>
-<img  src="./assets/start_page2.PNG"  height="400"  alt="start_page2 이미지가 없습니다."/><br><br>
+<img  src="./assets/start_page1.png"  height="400"  alt="start_page1 이미지가 없습니다."/>
+<img  src="./assets/start_page2.png"  height="400"  alt="start_page2 이미지가 없습니다."/><br><br>
 
 회원가입 페이지<br><br>
-<img  src="./assets/register.PNG"  height="400"  alt="register 이미지가 없습니다."/><br><br>
+<img  src="./assets/register.png"  height="400"  alt="register 이미지가 없습니다."/><br><br>
 
 카카오 로그인<br><br>
 <img  src="./assets/kakao_login.gif"  height="400"  alt="kakao_login gif가 없습니다."/><br><br>
@@ -90,7 +90,7 @@ Call My Name Game<br><br>
 
 ## [2&nbsp;기술&nbsp;스택](#목차)
 
-<img  src="https://img.shields.io/badge/vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white"><img  src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"><img  src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"><img  src="https://img.shields.io/badge/gitlab-FC6D26?style=for-the-badge&logo=GitLab&logoColor=white"><img  src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira&logoColor=white"><img  src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white"><img  src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white"><img  src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white"><img  src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white"><img  src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white"><img  src="https://img.shields.io/badge/Eclipse IDE-2C2255?style=for-the-badge&logo=Eclipse IDE&logoColor=white"><img  src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"><img  src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white"><img  src="https://img.shields.io/badge/Quasar-1976D2?style=for-the-badge&logo=Quasar&logoColor=white"><img  src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white"><img  src="https://img.shields.io/badge/SonarLint-CB2029?style=for-the-badge&logo=SonarLint&logoColor=white"><img  src="https://img.shields.io/badge/Mattermost-0058CC?style=for-the-badge&logo=Mattermost&logoColor=white"><img  src="https://img.shields.io/badge/Let's Encrypt-003A70?style=for-the-badge&logo=Let's Encrypt&logoColor=white"><img  src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=white"><img  src="https://img.shields.io/badge/Amazon AWS-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white"><img  src="https://img.shields.io/badge/Amazon EC2-FF9900?style=for-the-badge&logo=Amazon EC2&logoColor=white"><img  src="https://img.shields.io/badge/Kakao-FFCD00?style=for-the-badge&logo=Kakao&logoColor=white"><img  src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=Windows&logoColor=white"><img  src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"><img  src="./assets/OpenVidu.PNG"  height="30"  alt="OpenVidu 이미지가 없습니다."/>
+<img  src="https://img.shields.io/badge/vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white"><img  src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"><img  src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"><img  src="https://img.shields.io/badge/gitlab-FC6D26?style=for-the-badge&logo=GitLab&logoColor=white"><img  src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=Jira&logoColor=white"><img  src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white"><img  src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white"><img  src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white"><img  src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white"><img  src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white"><img  src="https://img.shields.io/badge/Eclipse IDE-2C2255?style=for-the-badge&logo=Eclipse IDE&logoColor=white"><img  src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white"><img  src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white"><img  src="https://img.shields.io/badge/Quasar-1976D2?style=for-the-badge&logo=Quasar&logoColor=white"><img  src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white"><img  src="https://img.shields.io/badge/SonarLint-CB2029?style=for-the-badge&logo=SonarLint&logoColor=white"><img  src="https://img.shields.io/badge/Mattermost-0058CC?style=for-the-badge&logo=Mattermost&logoColor=white"><img  src="https://img.shields.io/badge/Let's Encrypt-003A70?style=for-the-badge&logo=Let's Encrypt&logoColor=white"><img  src="https://img.shields.io/badge/NGINX-009639?style=for-the-badge&logo=NGINX&logoColor=white"><img  src="https://img.shields.io/badge/Amazon AWS-232F3E?style=for-the-badge&logo=Amazon AWS&logoColor=white"><img  src="https://img.shields.io/badge/Amazon EC2-FF9900?style=for-the-badge&logo=Amazon EC2&logoColor=white"><img  src="https://img.shields.io/badge/Kakao-FFCD00?style=for-the-badge&logo=Kakao&logoColor=white"><img  src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=Windows&logoColor=white"><img  src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"><img  src="./assets/OpenVidu.png"  height="30"  alt="OpenVidu 이미지가 없습니다."/>
 
 * ### Openvidu<br>
 다양한 프레임워크에서 사용 가능하며 그에 따른 튜토리얼을 <a href="https://openvidu.io/tutorials">DOC</a>에서 찾아 볼 수 있습니다. OpenVidu 공식 문서를 통해 간단하게 사용할 수 있으며, 해당 프로젝트에서는 `component/RoomPage/VideoArea`에서 확인 할 수있습니다. 
@@ -109,11 +109,11 @@ Spring Boot를 사용했으며 DB는 MySQL, 연동엔 JPA를 사용했습니다.
 
 또한 서버 배포를 위해 Certbot을 이용한 SSL인증서를 적용하여 https 프로토콜을 사용하도록 구현했습니다.<br><br>
 
-<img  src="./assets/Https.PNG"  height="150"  alt="Https 이미지가 없습니다."/>  <br><br>
+<img  src="./assets/Https.png"  height="150"  alt="Https 이미지가 없습니다."/>  <br><br>
 
 팀원 간 협의하여 Restful한 API를 설계하도록 고민하였고 Notion에 기록했습니다.<br><br>
 
-<img  src="./assets/Rest_API.PNG"  height="450"  alt="Rest API 이미지가 없습니다."/>  <br>
+<img  src="./assets/Rest_API.png"  height="450"  alt="Rest API 이미지가 없습니다."/>  <br>
 
   
 
@@ -129,7 +129,7 @@ Spring Boot를 사용했으며 DB는 MySQL, 연동엔 JPA를 사용했습니다.
 
 * ### 라이어 게임<br><br>
 
-<img  src="./assets/Liar_game_logo.PNG"  height="90"  alt="Liar game 이미지가 없습니다."/>  <br><br>
+<img  src="./assets/Liar_game_logo.png"  height="90"  alt="Liar game 이미지가 없습니다."/>  <br><br>
 
 시스템에 의해 선정된 제시어를 한명만 제외하고 모든 참여자들에게 알려줍니다.
 
@@ -141,7 +141,7 @@ Spring Boot를 사용했으며 DB는 MySQL, 연동엔 JPA를 사용했습니다.
 
 * ### Call My Name<br><br>
 
-<img  src="./assets/call_my_name_logo.PNG"  height="80"  alt="Liar game 이미지가 없습니다."/>  <br><br>
+<img  src="./assets/call_my_name_logo.png"  height="80"  alt="Liar game 이미지가 없습니다."/>  <br><br>
 
 런닝맨에서 양세찬 게임으로도 불리는 Call My Name 입니다.
 
@@ -164,11 +164,11 @@ Spring Boot를 사용했으며 DB는 MySQL, 연동엔 JPA를 사용했습니다.
 
 <br><br>
 
-<img  src="./assets/Notion_1.PNG"  alt="Notion 이미지가 없습니다."/><br>
+<img  src="./assets/Notion_1.png"  alt="Notion 이미지가 없습니다."/><br>
 
-<img  src="./assets/Notion_2.PNG"  alt="Notion 이미지가 없습니다."/>
+<img  src="./assets/Notion_2.png"  alt="Notion 이미지가 없습니다."/>
 
-<img  src="./assets/Notion_3.PNG"  alt="Notion 이미지가 없습니다."/>  <br>
+<img  src="./assets/Notion_3.png"  alt="Notion 이미지가 없습니다."/>  <br>
 
   
 
@@ -195,8 +195,8 @@ Dev Branch에서 통합 테스트를 하고 Main Branch는 문제 없이 최종�
 
 <br><br>
 
-<img  src="./assets/Jira_Backlog.PNG"  alt="Jira 이미지가 없습니다."/><br><br>
+<img  src="./assets/Jira_Backlog.png"  alt="Jira 이미지가 없습니다."/><br><br>
 
 처음 적용 하다보니 작업에 대한 시간을 정확하게 할당하지 못하여 미숙한 부분이 많았지만 Burndown Chart는 우하향 그래프를 그리고 있습니다.<br><br>
 
-<img  src="./assets/Jira_Burndown_chart.PNG"  alt="Jira 이미지가 없습니다."/><br><br>
+<img  src="./assets/Jira_Burndown_chart.png"  alt="Jira 이미지가 없습니다."/><br><br>
