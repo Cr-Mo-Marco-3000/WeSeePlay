@@ -17,7 +17,7 @@
 
 + 개요
 
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img  src="./assets/logo.png"  height="200"  alt="Logo 이미지가 없습니다."/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img  src="./assets/Logo.png"  height="200"  alt="Logo 이미지가 없습니다."/>
 
 	* 서비스 명 : We See Play 
 	* 슬로건 : We See! We Play!
